@@ -4,67 +4,64 @@ import javax.swing.*;
 import java.awt.*;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import java.io.File;
 
 public class GameFrame extends JFrame {
+    private JPanel userBoardPanel;
+    private JPanel selectionPanel;
+    private JPanel opponentPanel;
+
     public GameFrame() {
-        mainFrame();
+        initializeFrame();
+        createPanels();
+        addPanelsToMainFrame();
     }
 
-    private void mainFrame() {
+    private void initializeFrame() {
         //TODO rename Battle shits to battleship lol
-        JFrame frame = new JFrame("Battle shits");
-        JPanel mainPanel = new JPanel(new GridLayout(1, 3));
-        JPanel userBoardPanel = new JPanel();
-        JPanel selectionPanel = new JPanel(new GridLayout(8,1));
-        JPanel opponentPanel = new JPanel();
-        ImageIcon image;
+        setTitle("Battle shits");
+        setSize(1280, 720);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    }
 
-        //Set size of entire frame
-        frame.setSize(1280, 720);
-        //center the frame
-        frame.setLocationRelativeTo(null);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    private void createPanels() {
+        selectionPanel = new JPanel(new GridLayout(8, 1));
+        selectionPanel.setBackground(Color.decode("#19A7FF"));
 
-        //Code to add Battle Ship Image
-        try {
-            image = new ImageIcon("src/images/logo.png");
+        // Load and display the logo
+        ImageIcon image = new ImageIcon("src/images/logo.png");
+        if (new File("src/images/logo.png").exists()) {
             JLabel imageLogo = new JLabel(image);
             selectionPanel.add(imageLogo);
-        } catch (Exception e) {
-            System.out.print("Image cannot be found");
+        } else {
+            System.out.println("Image not found");
         }
 
-        // Label for Language Dropdown
-        JPanel languageMenu = new JPanel();
-        JLabel languageLabel = new JLabel("Languages: ");
+        // Language dropdown
         String[] languages = {"English", "French"};
-        JComboBox languageButton = new JComboBox(languages);
-
-        // Combine Label and Button into single Panel and then add to selection panel
-        languageMenu.add(languageLabel);
+        JComboBox<String> languageButton = new JComboBox<>(languages);
+        JPanel languageMenu = new JPanel();
+        languageMenu.setBackground(Color.decode("#19A7FF"));
+        languageMenu.add(new JLabel("Languages: "));
         languageMenu.add(languageButton);
         selectionPanel.add(languageMenu);
 
-        // Design and Randomize button Panel
+        // Design and Randomize buttons
         JButton designBoard = new JButton("Design");
         JButton randBoard = new JButton("Randomize");
         JPanel designOptions = new JPanel();
-
-        // Combine Design and Randomize button into single Panel and then add to selection panel
+        designOptions.setBackground(Color.decode("#19A7FF"));
         designOptions.add(designBoard);
         designOptions.add(randBoard);
         selectionPanel.add(designOptions);
 
-        // Create the Label for Dimensions
-        JLabel dimLabel = new JLabel("Dimensions:");
-
-        // Create the dropdown for dimensions
+        // Dimensions dropdown
         Integer[] dimensions = {4, 5, 6, 7, 8, 9, 10};
         JComboBox<Integer> dimensionComboBox = new JComboBox<>(dimensions);
-
-        // Add dimLabel and dimensions to dimensionsPanel then add that to selectionPanel
         JPanel dimensionsPanel = new JPanel();
-        dimensionsPanel.add(dimLabel);
+        dimensionsPanel.setBackground(Color.decode("#19A7FF"));
+        dimensionsPanel.add(new JLabel("Dimensions:"));
         dimensionsPanel.add(dimensionComboBox);
         selectionPanel.add(dimensionsPanel);
 
@@ -73,22 +70,19 @@ public class GameFrame extends JFrame {
         //formula from
         //int result = (selectedDimension * (selectedDimension + 1) * (selectedDimension + 2)) / 6;
 
-        //set colors of panels
+        // Set the colors of remaining panels
+        opponentPanel = new JPanel();
         opponentPanel.setBackground(Color.decode("#FF990D"));
-        userBoardPanel.setBackground(Color.orange);
-        designOptions.setBackground(Color.decode("#19A7FF"));
-        selectionPanel.setBackground(Color.decode("#19A7FF"));
-        languageMenu.setBackground(Color.decode("#19A7FF"));
-        dimensionsPanel.setBackground(Color.decode("#19A7FF"));
 
-        //Add panels to the main panel
-        mainPanel.add(userBoardPanel);
-        mainPanel.add(selectionPanel);
-        mainPanel.add(opponentPanel);
-
-        //get content and make frame visible
-        frame.getContentPane().add(mainPanel);
-        frame.setVisible(true);
+        userBoardPanel = new JPanel();
+        userBoardPanel.setBackground(Color.ORANGE);
     }
 
+    private void addPanelsToMainFrame() {
+        Container contentPane = getContentPane();
+        contentPane.setLayout(new GridLayout(1, 3));
+        contentPane.add(userBoardPanel);
+        contentPane.add(selectionPanel);
+        contentPane.add(opponentPanel);
+    }
 }
