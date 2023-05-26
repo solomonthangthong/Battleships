@@ -22,14 +22,20 @@ public class GameFrame extends JFrame {
         JComboBox languageButton = new JComboBox(languages);
         ImageIcon image;
 
+        //Set size of entire frame
         frame.setSize(1280, 720);
+        //center the frame
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+        //set colors of panels
+        opponentPanel.setBackground(Color.decode("#FF990D"));
         userBoardPanel.setBackground(Color.orange);
-        mainPanel.add(userBoardPanel);
-
         selectionPanel.setBackground(Color.decode("#19A7FF"));
+
+
+
+        //Code to add Battle Ship Image
         try {
             image = new ImageIcon("src/images/logo.png");
             JLabel imageLogo = new JLabel(image);
@@ -38,14 +44,34 @@ public class GameFrame extends JFrame {
         } catch (Exception e) {
             System.out.print("Image cannot be found");
         }
+
+        // Create the label for Dimensions
+        JLabel label = new JLabel("Dimensions:");
+        selectionPanel.add(label);
+
+        // Create the dropdown for dimensions
+        Integer[] dimensions = {4, 5, 6, 7, 8, 9, 10};
+        JComboBox<Integer> dimensionComboBox = new JComboBox<>(dimensions);
+        selectionPanel.add(dimensionComboBox);
+
+        //need to add action listener to get value from this formula
+        //int dimensionSelected = (int) dimensionComboBox.getSelectedItem();
+        //formula from
+        //int result = (selectedDimension * (selectedDimension + 1) * (selectedDimension + 2)) / 6;
+
+        //Code for user panel Grid
+
+
+
         selectionPanel.add(languageLabel);
         selectionPanel.add(languageButton);
 
+       //Add panels to the main panel
+        mainPanel.add(userBoardPanel);
         mainPanel.add(selectionPanel);
-
-        opponentPanel.setBackground(Color.decode("#FF990D"));
         mainPanel.add(opponentPanel);
 
+        //get content and make frame visible
         frame.getContentPane().add(mainPanel);
         frame.setVisible(true);
     }
