@@ -46,8 +46,8 @@ public class GameFrame extends JFrame {
         }
 
         // Create the label for Dimensions
-        JLabel label = new JLabel("Dimensions:");
-        selectionPanel.add(label);
+        JLabel dimLabel = new JLabel("Dimensions:");
+        selectionPanel.add(dimLabel);
 
         // Create the dropdown for dimensions
         Integer[] dimensions = {4, 5, 6, 7, 8, 9, 10};
@@ -56,7 +56,7 @@ public class GameFrame extends JFrame {
 
         //need to add action listener to get value from this formula
         //int dimensionSelected = (int) dimensionComboBox.getSelectedItem();
-        //formula from
+        //formula from assignment doc
         //int result = (selectedDimension * (selectedDimension + 1) * (selectedDimension + 2)) / 6;
 
         //Code for user panel Grid
