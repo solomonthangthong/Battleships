@@ -5,7 +5,10 @@ import java.awt.*;
 
 public class GameFrame extends JFrame {
     private JFrame frame;
-    private JPanel panel;
+    private JPanel mainPanel;
+    private JPanel userBoardPanel;
+    private JPanel selectionPanel;
+    private JPanel opponentPanel;
     private ImageIcon logo;
 
     public GameFrame() {
@@ -18,12 +21,21 @@ public class GameFrame extends JFrame {
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+        mainPanel = new JPanel(new GridLayout(1,3));
 
+        userBoardPanel = new JPanel();
+        userBoardPanel.setBackground(Color.orange);
+        mainPanel.add(userBoardPanel);
 
-        panel = new JPanel();
-        panel.setBackground(Color.orange);
+        selectionPanel = new JPanel();
+        selectionPanel.setBackground(Color.decode("#19A7FF"));
+        mainPanel.add(selectionPanel);
 
-        frame.add(panel, BorderLayout.CENTER);
+        opponentPanel = new JPanel();
+        opponentPanel.setBackground(Color.decode("#FF990D"));
+        mainPanel.add(opponentPanel);
+
+        frame.getContentPane().add(mainPanel);
 
         frame.setVisible(true);
     }
