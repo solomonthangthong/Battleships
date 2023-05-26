@@ -2,6 +2,8 @@ package jap;
 
 import javax.swing.*;
 import java.awt.*;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 
 public class GameFrame extends JFrame {
     public GameFrame() {
@@ -9,12 +11,13 @@ public class GameFrame extends JFrame {
     }
 
     private void mainFrame() {
-
+        //TODO rename Battle shits to battleship lol
         JFrame frame = new JFrame("Battle shits");
-        JPanel mainPanel = new JPanel(new GridLayout(1,3));
+        JPanel mainPanel = new JPanel(new GridLayout(1, 3));
         JPanel userBoardPanel = new JPanel();
         JPanel selectionPanel = new JPanel();
         JPanel opponentPanel = new JPanel();
+        ImageIcon image;
 
         frame.setSize(1280, 720);
         frame.setLocationRelativeTo(null);
@@ -24,13 +27,19 @@ public class GameFrame extends JFrame {
         mainPanel.add(userBoardPanel);
 
         selectionPanel.setBackground(Color.decode("#19A7FF"));
+        try {
+            image = new ImageIcon("src/images/logo.png");
+            JLabel imageLogo = new JLabel(image);
+            selectionPanel.add(imageLogo);
+        } catch (Exception e) {
+            System.out.print("Image cannot be found");
+        }
         mainPanel.add(selectionPanel);
 
         opponentPanel.setBackground(Color.decode("#FF990D"));
         mainPanel.add(opponentPanel);
 
         frame.getContentPane().add(mainPanel);
-
         frame.setVisible(true);
     }
 
