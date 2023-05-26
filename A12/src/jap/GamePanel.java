@@ -1,4 +1,9 @@
 package jap;
 
-public class GamePanel {
+import javax.swing.JPanel;
+import javax.swing.JLabel;
+
+public class GamePanel extends JPanel {
+    
 }
+
