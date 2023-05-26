@@ -2,7 +2,6 @@
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
-A12.iml
 .idea
 
 ### Eclipse ###
