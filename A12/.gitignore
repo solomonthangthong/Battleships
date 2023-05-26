@@ -2,8 +2,8 @@
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
-/A12.iml
-/.idea
+A12.iml
+.idea
 
 ### Eclipse ###
 .apt_generated
@@ -16,4 +16,3 @@ out/
 bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
-
