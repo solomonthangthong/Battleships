@@ -73,11 +73,11 @@ public class GameFrame extends JFrame {
         selectionPanel.add(languageMenu);
 
         JButton designBoard = new JButton("Design");
-        JButton randboard = new JButton("Randomize");
+        JButton randBoard = new JButton("Randomize");
         JPanel designOptions = new JPanel();
         designOptions.setBackground(Color.decode("#19A7FF"));
         designOptions.add(designBoard);
-        designOptions.add(randboard);
+        designOptions.add(randBoard);
         selectionPanel.add(designOptions);
 
        //Add panels to the main panel
