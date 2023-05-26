@@ -15,11 +15,8 @@ public class GameFrame extends JFrame {
         JFrame frame = new JFrame("Battle shits");
         JPanel mainPanel = new JPanel(new GridLayout(1, 3));
         JPanel userBoardPanel = new JPanel();
-        JPanel selectionPanel = new JPanel();
+        JPanel selectionPanel = new JPanel(new GridLayout(8,1));
         JPanel opponentPanel = new JPanel();
-        String[] languages = {"English", "French"};
-        JLabel languageLabel = new JLabel("Languages: ");
-        JComboBox languageButton = new JComboBox(languages);
         ImageIcon image;
 
         //Set size of entire frame
@@ -40,7 +37,6 @@ public class GameFrame extends JFrame {
             image = new ImageIcon("src/images/logo.png");
             JLabel imageLogo = new JLabel(image);
             selectionPanel.add(imageLogo);
-            selectionPanel.add(Box.createVerticalStrut(100));
         } catch (Exception e) {
             System.out.print("Image cannot be found");
         }
@@ -65,6 +61,24 @@ public class GameFrame extends JFrame {
 
         selectionPanel.add(languageLabel);
         selectionPanel.add(languageButton);
+
+        JPanel languageMenu = new JPanel();
+        JLabel languageLabel = new JLabel("Languages: ");
+        String[] languages = {"English", "French"};
+        JComboBox languageButton = new JComboBox(languages);
+
+        languageMenu.setBackground(Color.decode("#19A7FF"));
+        languageMenu.add(languageLabel);
+        languageMenu.add(languageButton);
+        selectionPanel.add(languageMenu);
+
+        JButton designBoard = new JButton("Design");
+        JButton randboard = new JButton("Randomize");
+        JPanel designOptions = new JPanel();
+        designOptions.setBackground(Color.decode("#19A7FF"));
+        designOptions.add(designBoard);
+        designOptions.add(randboard);
+        selectionPanel.add(designOptions);
 
        //Add panels to the main panel
         mainPanel.add(userBoardPanel);
