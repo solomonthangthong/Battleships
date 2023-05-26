@@ -25,13 +25,6 @@ public class GameFrame extends JFrame {
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        //set colors of panels
-        opponentPanel.setBackground(Color.decode("#FF990D"));
-        userBoardPanel.setBackground(Color.orange);
-        selectionPanel.setBackground(Color.decode("#19A7FF"));
-
-
-
         //Code to add Battle Ship Image
         try {
             image = new ImageIcon("src/images/logo.png");
@@ -41,46 +34,54 @@ public class GameFrame extends JFrame {
             System.out.print("Image cannot be found");
         }
 
-        // Create the label for Dimensions
-        JLabel dimLabel = new JLabel("Dimensions:");
-        selectionPanel.add(dimLabel);
-
-        // Create the dropdown for dimensions
-        Integer[] dimensions = {4, 5, 6, 7, 8, 9, 10};
-        JComboBox<Integer> dimensionComboBox = new JComboBox<>(dimensions);
-        selectionPanel.add(dimensionComboBox);
-
-        //need to add action listener to get value from this formula
-        //int dimensionSelected = (int) dimensionComboBox.getSelectedItem();
-        //formula from assignment doc
-        //int result = (selectedDimension * (selectedDimension + 1) * (selectedDimension + 2)) / 6;
-
-        //Code for user panel Grid
-
-
-
-        selectionPanel.add(languageLabel);
-        selectionPanel.add(languageButton);
-
+        // Label for Language Dropdown
         JPanel languageMenu = new JPanel();
         JLabel languageLabel = new JLabel("Languages: ");
         String[] languages = {"English", "French"};
         JComboBox languageButton = new JComboBox(languages);
 
-        languageMenu.setBackground(Color.decode("#19A7FF"));
+        // Combine Label and Button into single Panel and then add to selection panel
         languageMenu.add(languageLabel);
         languageMenu.add(languageButton);
         selectionPanel.add(languageMenu);
 
+        // Design and Randomize button Panel
         JButton designBoard = new JButton("Design");
         JButton randBoard = new JButton("Randomize");
         JPanel designOptions = new JPanel();
-        designOptions.setBackground(Color.decode("#19A7FF"));
+
+        // Combine Design and Randomize button into single Panel and then add to selection panel
         designOptions.add(designBoard);
         designOptions.add(randBoard);
         selectionPanel.add(designOptions);
 
-       //Add panels to the main panel
+        // Create the Label for Dimensions
+        JLabel dimLabel = new JLabel("Dimensions:");
+
+        // Create the dropdown for dimensions
+        Integer[] dimensions = {4, 5, 6, 7, 8, 9, 10};
+        JComboBox<Integer> dimensionComboBox = new JComboBox<>(dimensions);
+
+        // Add dimLabel and dimensions to dimensionsPanel then add that to selectionPanel
+        JPanel dimensionsPanel = new JPanel();
+        dimensionsPanel.add(dimLabel);
+        dimensionsPanel.add(dimensionComboBox);
+        selectionPanel.add(dimensionsPanel);
+
+        //need to add action listener to get value from this formula
+        //int dimensionSelected = (int) dimensionComboBox.getSelectedItem();
+        //formula from
+        //int result = (selectedDimension * (selectedDimension + 1) * (selectedDimension + 2)) / 6;
+
+        //set colors of panels
+        opponentPanel.setBackground(Color.decode("#FF990D"));
+        userBoardPanel.setBackground(Color.orange);
+        designOptions.setBackground(Color.decode("#19A7FF"));
+        selectionPanel.setBackground(Color.decode("#19A7FF"));
+        languageMenu.setBackground(Color.decode("#19A7FF"));
+        dimensionsPanel.setBackground(Color.decode("#19A7FF"));
+
+        //Add panels to the main panel
         mainPanel.add(userBoardPanel);
         mainPanel.add(selectionPanel);
         mainPanel.add(opponentPanel);
