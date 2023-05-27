@@ -26,8 +26,9 @@ public class GameFrame extends JFrame {
     }
 
     private void createPanels() {
-        selectionPanel = new JPanel(new GridLayout(8, 1));
+        selectionPanel = new JPanel();
         selectionPanel.setBackground(Color.decode("#19A7FF"));
+        selectionPanel.setBorder(BorderFactory.createEmptyBorder(0,69,0,69));
 
         // Load and display the logo
         ImageIcon image = new ImageIcon("src/images/logo.png");
@@ -73,16 +74,18 @@ public class GameFrame extends JFrame {
         // Set the colors of remaining panels
         opponentPanel = new JPanel();
         opponentPanel.setBackground(Color.decode("#FF990D"));
+        opponentPanel.setBorder(BorderFactory.createEmptyBorder(0,255,0,255));
 
         userBoardPanel = new JPanel();
+        userBoardPanel.setBorder(BorderFactory.createEmptyBorder(0,255,0,255));
         userBoardPanel.setBackground(Color.ORANGE);
     }
 
     private void addPanelsToMainFrame() {
         Container contentPane = getContentPane();
-        contentPane.setLayout(new GridLayout(1, 3));
-        contentPane.add(userBoardPanel);
-        contentPane.add(selectionPanel);
-        contentPane.add(opponentPanel);
+        contentPane.setLayout(new BorderLayout());
+        contentPane.add(userBoardPanel, BorderLayout.WEST);
+        contentPane.add(selectionPanel, BorderLayout.CENTER);
+        contentPane.add(opponentPanel, BorderLayout.EAST);
     }
 }
