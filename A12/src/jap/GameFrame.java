@@ -216,7 +216,6 @@ public class GameFrame extends JFrame implements ActionListener {
     public void playBackgroundMusic(String musicFile) {
         try {
             //state the path where audio file is found
-            File file = new File("resources/" + musicFile);
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(musicFile).getAbsoluteFile());
             //get the audio clip defined in AudioSystem
             Clip clip = AudioSystem.getClip();
