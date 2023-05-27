@@ -24,7 +24,8 @@ public class GameFrame extends JFrame implements ActionListener {
     private JButton randBoard;
     private JLabel controlPanelText;
     private JComboBox<Integer> dimensionComboBox;
-
+    private JButton reset;
+    private JButton play;
 
     public GameFrame() {
         initializeFrame();
@@ -39,8 +40,7 @@ public class GameFrame extends JFrame implements ActionListener {
     }
 
     private void initializeFrame() {
-        //TODO rename Battle shits to battleship lol
-        setTitle("Battle shits");
+        setTitle("Battleship");
         setSize(1280, 720);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -99,7 +99,7 @@ public class GameFrame extends JFrame implements ActionListener {
 
         //Control panel code
         JPanel controlPanel = new JPanel();
-        controlPanel.setPreferredSize(new Dimension(200,350));
+        controlPanel.setPreferredSize(new Dimension(200, 350));
         controlPanel.setBorder(BorderFactory.createRaisedBevelBorder());
 
         //add scrollable panel within the control panel
@@ -107,7 +107,7 @@ public class GameFrame extends JFrame implements ActionListener {
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane.setPreferredSize(new Dimension(180, 320));
 
-       // control panel text code
+        // control panel text code
         controlPanelText = new JLabel("<html>");
         // set the text to appear at the top and left
         controlPanelText.setVerticalAlignment(JLabel.TOP);
@@ -115,9 +115,27 @@ public class GameFrame extends JFrame implements ActionListener {
         //Add the control panel text and scroll pane to the control panel
         controlPanel.add(controlPanelText);
         controlPanel.add(scrollPane);
-        //set veiwport so that text appears inside scrollPane
+        //set veiw port so that text appears inside scrollPane
         scrollPane.setViewportView(controlPanelText);
         selectionPanel.add(controlPanel);
+
+        JLabel time = new JLabel("Time: ");
+        JPanel timeDisplay = new JPanel();
+        JPanel timeContainer = new JPanel();
+        timeDisplay.setBorder(BorderFactory.createRaisedBevelBorder());
+        timeDisplay.setPreferredSize(new Dimension(55,30));
+        timeContainer.add(time);
+        timeContainer.add(timeDisplay);
+        timeContainer.setBackground(Color.decode("#19A7FF"));
+        selectionPanel.add(timeContainer);
+
+        reset = new JButton("Reset");
+        reset.addActionListener(this);
+        selectionPanel.add(reset);
+
+        play = new JButton("Play");
+        play.addActionListener(this);
+        selectionPanel.add(play);
 
         // Set the colors of remaining panels
         opponentPanel = new JPanel();
@@ -208,7 +226,11 @@ public class GameFrame extends JFrame implements ActionListener {
         } else if (eventSource == randBoard) {
             gameAction.historyLog(eventSource, controlPanelText);
             gameAction.randBoard();
-        } else if (eventSource == dimensionComboBox){
+        } else if (eventSource == dimensionComboBox) {
+            gameAction.historyLog(eventSource, controlPanelText);
+        } else if (eventSource == reset) {
+            gameAction.historyLog(eventSource, controlPanelText);
+        } else if (eventSource == play) {
             gameAction.historyLog(eventSource, controlPanelText);
         }
     }

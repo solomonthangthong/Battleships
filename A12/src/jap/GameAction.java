@@ -16,11 +16,11 @@ public class GameAction {
             // Check whether we pass String or Int JComboBox
             if (selectedItem instanceof String) {
                 selectedLanguage = (String) comboBox.getSelectedItem();
-                //output the old gamelog text + the new text
+                //output the old game log text + the new text
                 controlPanelText.setText(currentGameLog + "Language set to " + selectedLanguage + "<br>");
             } else if (selectedItem instanceof Integer) {
                 selectedDimension = (Integer) comboBox.getSelectedItem();
-                //output the old gamelog text + the new text
+                //output the old game log text + the new text
                 controlPanelText.setText(currentGameLog + "Dimensions set to " + selectedDimension + "<br>");
             }
             //when design is clicked,print btn
@@ -39,6 +39,6 @@ public class GameAction {
     }
 
     protected void randBoard() {
-        System.out.print("It clicks");
+
     }
 }
