@@ -3,7 +3,8 @@ package jap;
 import javax.swing.*;
 
 public class GameAction {
-    public void languageButton(JComboBox<String> languageButton){
+
+    protected void languageButton(JComboBox<String> languageButton){
         String selectedLanguage = (String) languageButton.getSelectedItem();
         if (selectedLanguage.equals("English")) {
             System.out.println("English language set");
@@ -11,7 +12,7 @@ public class GameAction {
             System.out.println("French language set");
         }
     }
-    public void designBoard(){
+    protected void designBoard(){
         System.out.println("It clicks");
         /* New JFrame for pop-up window to design board */
         JFrame designFrame = new JFrame();
@@ -20,7 +21,7 @@ public class GameAction {
         designFrame.setVisible(true);
     }
 
-    public void randBoard(){
+    protected void randBoard(){
         System.out.print("It clicks");
     }
 }
