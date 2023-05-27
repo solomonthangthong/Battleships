@@ -7,16 +7,15 @@ import javax.swing.JLabel;
 import java.io.File;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Objects;
 
-public class GameFrame extends JFrame implements ActionListener{
+public class GameFrame extends JFrame implements ActionListener {
     private JPanel userBoardPanel;
     private JPanel selectionPanel;
     private JPanel opponentPanel;
     private JComboBox<String> languageButton;
     private JButton designBoard;
+    private JButton randBoard;
     private JLabel controlPanelText;
-
 
 
     public GameFrame() {
@@ -36,8 +35,8 @@ public class GameFrame extends JFrame implements ActionListener{
     private void createPanels() {
         selectionPanel = new JPanel();
         selectionPanel.setBackground(Color.decode("#19A7FF"));
-        selectionPanel.setBorder(BorderFactory.createEmptyBorder(0,69,0,69));
-
+        /* Potentially do not need this border, if left and right sides use Preferred Size */
+        selectionPanel.setBorder(BorderFactory.createEmptyBorder(0, 69, 0, 69));
 
         // Load and display the logo
         ImageIcon image = new ImageIcon("src/images/logo.png");
@@ -61,7 +60,8 @@ public class GameFrame extends JFrame implements ActionListener{
         // Design and Randomize buttons
         designBoard = new JButton("Design");
         designBoard.addActionListener(this);
-        JButton randBoard = new JButton("Randomize");
+        randBoard = new JButton("Randomize");
+        randBoard.addActionListener(this);
         JPanel designOptions = new JPanel();
         designOptions.setBackground(Color.decode("#19A7FF"));
         designOptions.add(designBoard);
@@ -106,11 +106,11 @@ public class GameFrame extends JFrame implements ActionListener{
 
         // Set the colors of remaining panels
         opponentPanel = new JPanel();
-        opponentPanel.setPreferredSize(new Dimension(520,119));
+        opponentPanel.setPreferredSize(new Dimension(520, 119));
         opponentPanel.setBackground(Color.decode("#FF990D"));
 
         userBoardPanel = new JPanel();
-        userBoardPanel.setPreferredSize(new Dimension(520,119));
+        userBoardPanel.setPreferredSize(new Dimension(520, 119));
         userBoardPanel.setBackground(Color.ORANGE);
     }
 
