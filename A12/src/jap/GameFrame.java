@@ -7,14 +7,16 @@ import javax.swing.JLabel;
 import java.io.File;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Objects;
 
 public class GameFrame extends JFrame implements ActionListener{
     private JPanel userBoardPanel;
     private JPanel selectionPanel;
     private JPanel opponentPanel;
-    private JPanel controlPanel;
     private JComboBox<String> languageButton;
+    private JButton designBoard;
     private JLabel controlPanelText;
+
 
 
     public GameFrame() {
@@ -36,6 +38,7 @@ public class GameFrame extends JFrame implements ActionListener{
         selectionPanel.setBackground(Color.decode("#19A7FF"));
         selectionPanel.setBorder(BorderFactory.createEmptyBorder(0,69,0,69));
 
+
         // Load and display the logo
         ImageIcon image = new ImageIcon("src/images/logo.png");
         if (new File("src/images/logo.png").exists()) {
@@ -56,7 +59,8 @@ public class GameFrame extends JFrame implements ActionListener{
         selectionPanel.add(languageMenu);
 
         // Design and Randomize buttons
-        JButton designBoard = new JButton("Design");
+        designBoard = new JButton("Design");
+        designBoard.addActionListener(this);
         JButton randBoard = new JButton("Randomize");
         JPanel designOptions = new JPanel();
         designOptions.setBackground(Color.decode("#19A7FF"));
@@ -78,10 +82,26 @@ public class GameFrame extends JFrame implements ActionListener{
         //formula from
         //int result = (selectedDimension * (selectedDimension + 1) * (selectedDimension + 2)) / 6;
 
-        controlPanel = new JPanel();
+        //Control panel code
+        JPanel controlPanel = new JPanel();
         controlPanel.setPreferredSize(new Dimension(200,350));
-        //controlPanel.setBorder(BorderFactory.createEmptyBorder(265,185,0,0));
         controlPanel.setBorder(BorderFactory.createRaisedBevelBorder());
+
+        //add scrollable panel within the control panel
+        JScrollPane scrollPane = new JScrollPane();
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.setPreferredSize(new Dimension(180, 320));
+
+       // control panel text code
+        controlPanelText = new JLabel("<html>");
+        // set the text to appear at the top and left
+        controlPanelText.setVerticalAlignment(JLabel.TOP);
+        controlPanelText.setHorizontalAlignment(JLabel.LEFT);
+        //Add the control panel text and scroll pane to the control panel
+        controlPanel.add(controlPanelText);
+        controlPanel.add(scrollPane);
+        //set veiwport so that text appears inside scrollPane
+        scrollPane.setViewportView(controlPanelText);
         selectionPanel.add(controlPanel);
 
         // Set the colors of remaining panels
@@ -105,9 +125,19 @@ public class GameFrame extends JFrame implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         Object eventSource = e.getSource();
+        String currentGameLog = controlPanelText.getText();
         if (eventSource == languageButton){
-            System.out.println("Language button toggled");
+            //cast selected item to string
+            String selectedLanguage = (String) languageButton.getSelectedItem();
+            //get text currently in game log to later append it
 
+            //output the old gamelog text + the new text
+            controlPanelText.setText( currentGameLog +"Language set to " + selectedLanguage + "<br>");
+
+        }
+        else if(eventSource == designBoard ){
+
+            controlPanelText.setText( currentGameLog + " Design button clicked " +  "<br>");
         }
     }
 }
