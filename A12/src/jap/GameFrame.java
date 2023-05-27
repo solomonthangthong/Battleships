@@ -124,7 +124,17 @@ public class GameFrame extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        /*Initialize GameAction (where the logic exists for test cases) */
+        GameAction gameAction = new GameAction();
+
         Object eventSource = e.getSource();
+        if (eventSource == languageButton) {
+            gameAction.languageButton(languageButton);
+        } else if (eventSource == designBoard) {
+            gameAction.designBoard();
+        } else if (eventSource == randBoard) {
+            gameAction.randBoard();
+        }
         String currentGameLog = controlPanelText.getText();
         if (eventSource == languageButton){
             //cast selected item to string
