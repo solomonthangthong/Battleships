@@ -12,7 +12,10 @@ public class GameFrame extends JFrame implements ActionListener{
     private JPanel userBoardPanel;
     private JPanel selectionPanel;
     private JPanel opponentPanel;
+    private JPanel controlPanel;
     private JComboBox<String> languageButton;
+    private JLabel controlPanelText;
+
 
     public GameFrame() {
         initializeFrame();
@@ -75,13 +78,19 @@ public class GameFrame extends JFrame implements ActionListener{
         //formula from
         //int result = (selectedDimension * (selectedDimension + 1) * (selectedDimension + 2)) / 6;
 
+        controlPanel = new JPanel();
+        controlPanel.setPreferredSize(new Dimension(200,350));
+        //controlPanel.setBorder(BorderFactory.createEmptyBorder(265,185,0,0));
+        controlPanel.setBorder(BorderFactory.createRaisedBevelBorder());
+        selectionPanel.add(controlPanel);
+
         // Set the colors of remaining panels
         opponentPanel = new JPanel();
+        opponentPanel.setPreferredSize(new Dimension(520,119));
         opponentPanel.setBackground(Color.decode("#FF990D"));
-        opponentPanel.setBorder(BorderFactory.createEmptyBorder(0,255,0,255));
 
         userBoardPanel = new JPanel();
-        userBoardPanel.setBorder(BorderFactory.createEmptyBorder(0,255,0,255));
+        userBoardPanel.setPreferredSize(new Dimension(520,119));
         userBoardPanel.setBackground(Color.ORANGE);
     }
 
@@ -98,6 +107,7 @@ public class GameFrame extends JFrame implements ActionListener{
         Object eventSource = e.getSource();
         if (eventSource == languageButton){
             System.out.println("Language button toggled");
+
         }
     }
 }
