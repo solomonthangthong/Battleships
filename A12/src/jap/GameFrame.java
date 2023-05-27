@@ -128,7 +128,6 @@ public class GameFrame extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         /*Initialize GameAction (where the logic exists for test cases) */
         GameAction gameAction = new GameAction();
-
         Object eventSource = e.getSource();
         if (eventSource == languageButton) {
             gameAction.historyLog(eventSource, controlPanelText);

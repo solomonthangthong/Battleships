@@ -29,7 +29,6 @@ public class GameAction {
     }
 
     protected void designBoard() {
-        System.out.println("It clicks");
         /* New JFrame for pop-up window to design board */
         JFrame designFrame = new JFrame();
         designFrame.setLocationRelativeTo(null);
