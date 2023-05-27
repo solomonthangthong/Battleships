@@ -16,6 +16,7 @@ public class GameFrame extends JFrame implements ActionListener {
     private JButton designBoard;
     private JButton randBoard;
     private JLabel controlPanelText;
+    private JComboBox<Integer> dimensionComboBox;
 
 
     public GameFrame() {
@@ -70,7 +71,7 @@ public class GameFrame extends JFrame implements ActionListener {
 
         // Dimensions dropdown
         Integer[] dimensions = {4, 5, 6, 7, 8, 9, 10};
-        JComboBox<Integer> dimensionComboBox = new JComboBox<>(dimensions);
+        dimensionComboBox = new JComboBox<>(dimensions);
         JPanel dimensionsPanel = new JPanel();
         dimensionsPanel.setBackground(Color.decode("#19A7FF"));
         dimensionsPanel.add(new JLabel("Dimensions:"));
@@ -129,25 +130,15 @@ public class GameFrame extends JFrame implements ActionListener {
 
         Object eventSource = e.getSource();
         if (eventSource == languageButton) {
-            gameAction.languageButton(languageButton);
+            gameAction.historyLog(eventSource, controlPanelText);
         } else if (eventSource == designBoard) {
+            gameAction.historyLog(eventSource, controlPanelText);
             gameAction.designBoard();
         } else if (eventSource == randBoard) {
+            gameAction.historyLog(eventSource, controlPanelText);
             gameAction.randBoard();
-        }
-        String currentGameLog = controlPanelText.getText();
-        if (eventSource == languageButton){
-            //cast selected item to string
-            String selectedLanguage = (String) languageButton.getSelectedItem();
-            //get text currently in game log to later append it
-
-            //output the old gamelog text + the new text
-            controlPanelText.setText( currentGameLog +"Language set to " + selectedLanguage + "<br>");
-
-        }
-        else if(eventSource == designBoard ){
-
-            controlPanelText.setText( currentGameLog + " Design button clicked " +  "<br>");
+        } else if (eventSource == dimensionComboBox){
+            gameAction.historyLog(eventSource, controlPanelText);
         }
     }
 }
