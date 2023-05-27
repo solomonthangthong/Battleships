@@ -26,7 +26,7 @@ public class GameFrame extends JFrame implements ActionListener {
     private JComboBox<Integer> dimensionComboBox;
     private JButton reset;
     private JButton play;
-    private  JButton[][] userButtons;
+    private JButton[][] userButtons;
 
     public GameFrame() {
         initializeFrame();
@@ -166,7 +166,8 @@ public class GameFrame extends JFrame implements ActionListener {
         //create the buttons in a for loop
         for (int i = 0; i < numRows; i++) {
             for (int j = 0; j < numCols; j++) {
-                JButton userButton = new JButton();
+                /* Find a better function to use aside from this name, because this names the buttons but the history track almost there */
+                JButton userButton = new JButton("Pos" + i + j);
                 userButton.addActionListener(this);
                 userButton.setPreferredSize(new Dimension(50, 50));
                 userButton.setBackground(Color.blue);
@@ -238,9 +239,9 @@ public class GameFrame extends JFrame implements ActionListener {
         } else if (eventSource == play) {
             gameAction.historyLog(eventSource, controlPanelText);
         } else {
-            for (int i = 0; i < userButtons.length; i++){
-                for (int j = 0; j < userButtons[i].length; j++){
-                    if (eventSource == userButtons[i][j]){
+            for (JButton[] row : userButtons) {
+                for (JButton button : row) {
+                    if (eventSource == button) {
                         gameAction.historyLog(eventSource, controlPanelText);
                         System.out.println("DOES IT CLICK?");
                     }
@@ -249,3 +250,4 @@ public class GameFrame extends JFrame implements ActionListener {
         }
     }
 }
+
