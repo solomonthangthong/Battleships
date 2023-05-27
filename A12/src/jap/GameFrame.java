@@ -72,6 +72,7 @@ public class GameFrame extends JFrame implements ActionListener {
         // Dimensions dropdown
         Integer[] dimensions = {4, 5, 6, 7, 8, 9, 10};
         dimensionComboBox = new JComboBox<>(dimensions);
+        dimensionComboBox.addActionListener(this);
         JPanel dimensionsPanel = new JPanel();
         dimensionsPanel.setBackground(Color.decode("#19A7FF"));
         dimensionsPanel.add(new JLabel("Dimensions:"));
