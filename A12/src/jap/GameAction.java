@@ -8,6 +8,7 @@ public class GameAction {
         String currentGameLog = controlPanelText.getText();
         String selectedLanguage;
         Integer selectedDimension;
+        //more buttons to be added defined here
 
         if (eventSource instanceof JComboBox) {
             JComboBox<?> comboBox = (JComboBox<?>) eventSource;
@@ -22,6 +23,7 @@ public class GameAction {
                 //output the old gamelog text + the new text
                 controlPanelText.setText(currentGameLog + "Dimensions set to " + selectedDimension + "<br>");
             }
+            //when design is clicked,print btn
         } else if (eventSource instanceof JButton) {
             JButton button = (JButton) eventSource;
             controlPanelText.setText(currentGameLog + button.getText() + " clicked " + "<br>");

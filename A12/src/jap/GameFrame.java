@@ -30,6 +30,9 @@ public class GameFrame extends JFrame implements ActionListener {
         initializeFrame();
         createPanels();
         addPanelsToMainFrame();
+        //update create userboard and create opponent board to take in result of DIM formula
+        createUserBoard(4);
+        createOpponentBoard(4);
         //play background music
         String musicFile = "resources/backgroundMusic.wav";
         playBackgroundMusic(musicFile);
@@ -134,6 +137,48 @@ public class GameFrame extends JFrame implements ActionListener {
         contentPane.add(opponentPanel, BorderLayout.EAST);
     }
 
+    public void createUserBoard(int dimension){
+        //manually manipulate dimensions for now - update input param dimension with formula result
+    dimension = dimension*2;
+    int numRows= dimension;
+    int numCols= dimension;
+        JPanel userGrid = new JPanel(new GridLayout(numRows, numCols));
+    //create the buttons in a for loop
+    for (int i=0; i<numRows;i++){
+        for (int j=0;j<numCols;j++){
+            JButton userButton = new JButton();
+            userButton.setPreferredSize(new Dimension(50,50));
+            userButton.setBackground(Color.blue);
+
+         userGrid.add(userButton);
+        }
+    }
+    //add grid to panel
+    userBoardPanel.add(userGrid);
+    }
+
+    public void createOpponentBoard(int dimension){
+        //manually manipulate dimensions for now - update input param dimension with formula result
+        dimension = dimension*2;
+        int numRows= dimension;
+        int numCols= dimension;
+        JPanel opponentGrid = new JPanel(new GridLayout(numRows, numCols));
+        //create the buttons in a for loop
+        for (int i=0; i<numRows;i++){
+            for (int j=0;j<numCols;j++){
+                JButton opponentButton = new JButton();
+                //set size of each button
+                opponentButton.setPreferredSize(new Dimension(50,50));
+                opponentButton.setBackground(Color.red);
+                //add buttons to grid
+                opponentGrid.add(opponentButton);
+            }
+        }
+        //add grid to panel
+        opponentPanel.add(opponentGrid);
+    }
+
+
     public void playBackgroundMusic(String musicFile) {
         try {
             //state the path where audio file is found
@@ -158,6 +203,7 @@ public class GameFrame extends JFrame implements ActionListener {
             gameAction.historyLog(eventSource, controlPanelText);
         } else if (eventSource == designBoard) {
             gameAction.historyLog(eventSource, controlPanelText);
+            //pop up box
             gameAction.designBoard();
         } else if (eventSource == randBoard) {
             gameAction.historyLog(eventSource, controlPanelText);
