@@ -5,11 +5,14 @@ import java.awt.*;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import java.io.File;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class GameFrame extends JFrame {
+public class GameFrame extends JFrame implements ActionListener{
     private JPanel userBoardPanel;
     private JPanel selectionPanel;
     private JPanel opponentPanel;
+    private JComboBox<String> languageButton;
 
     public GameFrame() {
         initializeFrame();
@@ -33,7 +36,7 @@ public class GameFrame extends JFrame {
         // Load and display the logo
         ImageIcon image = new ImageIcon("src/images/logo.png");
         if (new File("src/images/logo.png").exists()) {
-            JLabel imageLogo = new JLabel(image);
+            JButton imageLogo = new JButton(image);
             selectionPanel.add(imageLogo);
         } else {
             System.out.println("Image not found");
@@ -41,7 +44,8 @@ public class GameFrame extends JFrame {
 
         // Language dropdown
         String[] languages = {"English", "French"};
-        JComboBox<String> languageButton = new JComboBox<>(languages);
+        languageButton = new JComboBox<>(languages);
+        languageButton.addActionListener(this);
         JPanel languageMenu = new JPanel();
         languageMenu.setBackground(Color.decode("#19A7FF"));
         languageMenu.add(new JLabel("Languages: "));
@@ -87,5 +91,13 @@ public class GameFrame extends JFrame {
         contentPane.add(userBoardPanel, BorderLayout.WEST);
         contentPane.add(selectionPanel, BorderLayout.CENTER);
         contentPane.add(opponentPanel, BorderLayout.EAST);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        Object eventSource = e.getSource();
+        if (eventSource == languageButton){
+            System.out.println("Language button toggled");
+        }
     }
 }
