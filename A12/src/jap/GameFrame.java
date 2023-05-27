@@ -175,11 +175,13 @@ public class GameFrame extends JFrame implements ActionListener {
                 /* Find a better function to use aside from this name, because this names the buttons but the history track almost there */
                 JButton userButton = new JButton();
                 userButton.setName("Pos " + (i+1) + "," + (j+1));
+                //add action lister for every button
                 userButton.addActionListener(this);
                 userButton.setPreferredSize(new Dimension(50, 50));
                 userButton.setBackground(Color.blue);
 
                 userGrid.add(userButton);
+                //assign the button in the array
                 userButtons[i][j] = userButton;
             }
         }
@@ -267,4 +269,3 @@ public class GameFrame extends JFrame implements ActionListener {
         }
     }
 }
-
