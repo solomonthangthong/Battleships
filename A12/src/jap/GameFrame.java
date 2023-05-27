@@ -26,6 +26,7 @@ public class GameFrame extends JFrame implements ActionListener {
     private JComboBox<Integer> dimensionComboBox;
     private JButton reset;
     private JButton play;
+    private  JButton[][] userButtons;
 
     public GameFrame() {
         initializeFrame();
@@ -123,7 +124,7 @@ public class GameFrame extends JFrame implements ActionListener {
         JPanel timeDisplay = new JPanel();
         JPanel timeContainer = new JPanel();
         timeDisplay.setBorder(BorderFactory.createRaisedBevelBorder());
-        timeDisplay.setPreferredSize(new Dimension(55,30));
+        timeDisplay.setPreferredSize(new Dimension(55, 30));
         timeContainer.add(time);
         timeContainer.add(timeDisplay);
         timeContainer.setBackground(Color.decode("#19A7FF"));
@@ -155,38 +156,41 @@ public class GameFrame extends JFrame implements ActionListener {
         contentPane.add(opponentPanel, BorderLayout.EAST);
     }
 
-    public void createUserBoard(int dimension){
+    public void createUserBoard(int dimension) {
         //manually manipulate dimensions for now - update input param dimension with formula result
-    dimension = dimension*2;
-    int numRows= dimension;
-    int numCols= dimension;
+        dimension = dimension * 2;
+        int numRows = dimension;
+        int numCols = dimension;
         JPanel userGrid = new JPanel(new GridLayout(numRows, numCols));
-    //create the buttons in a for loop
-    for (int i=0; i<numRows;i++){
-        for (int j=0;j<numCols;j++){
-            JButton userButton = new JButton();
-            userButton.setPreferredSize(new Dimension(50,50));
-            userButton.setBackground(Color.blue);
+        userButtons = new JButton[numRows][numCols];
+        //create the buttons in a for loop
+        for (int i = 0; i < numRows; i++) {
+            for (int j = 0; j < numCols; j++) {
+                JButton userButton = new JButton();
+                userButton.addActionListener(this);
+                userButton.setPreferredSize(new Dimension(50, 50));
+                userButton.setBackground(Color.blue);
 
-         userGrid.add(userButton);
+                userGrid.add(userButton);
+                userButtons[i][j] = userButton;
+            }
         }
-    }
-    //add grid to panel
-    userBoardPanel.add(userGrid);
+        //add grid to panel
+        userBoardPanel.add(userGrid);
     }
 
-    public void createOpponentBoard(int dimension){
+    public void createOpponentBoard(int dimension) {
         //manually manipulate dimensions for now - update input param dimension with formula result
-        dimension = dimension*2;
-        int numRows= dimension;
-        int numCols= dimension;
+        dimension = dimension * 2;
+        int numRows = dimension;
+        int numCols = dimension;
         JPanel opponentGrid = new JPanel(new GridLayout(numRows, numCols));
         //create the buttons in a for loop
-        for (int i=0; i<numRows;i++){
-            for (int j=0;j<numCols;j++){
+        for (int i = 0; i < numRows; i++) {
+            for (int j = 0; j < numCols; j++) {
                 JButton opponentButton = new JButton();
                 //set size of each button
-                opponentButton.setPreferredSize(new Dimension(50,50));
+                opponentButton.setPreferredSize(new Dimension(50, 50));
                 opponentButton.setBackground(Color.red);
                 //add buttons to grid
                 opponentGrid.add(opponentButton);
@@ -202,7 +206,7 @@ public class GameFrame extends JFrame implements ActionListener {
             //state the path where audio file is found
             File file = new File("resources/" + musicFile);
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(musicFile).getAbsoluteFile());
-           //get the audio clip defined in AudioSystem
+            //get the audio clip defined in AudioSystem
             Clip clip = AudioSystem.getClip();
             clip.open(audioInputStream);
             //open and loop the clip
@@ -212,6 +216,7 @@ public class GameFrame extends JFrame implements ActionListener {
             e.printStackTrace();
         }
     }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         /*Initialize GameAction (where the logic exists for test cases) */
@@ -232,6 +237,15 @@ public class GameFrame extends JFrame implements ActionListener {
             gameAction.historyLog(eventSource, controlPanelText);
         } else if (eventSource == play) {
             gameAction.historyLog(eventSource, controlPanelText);
+        } else {
+            for (int i = 0; i < userButtons.length; i++){
+                for (int j = 0; j < userButtons[i].length; j++){
+                    if (eventSource == userButtons[i][j]){
+                        gameAction.historyLog(eventSource, controlPanelText);
+                        System.out.println("DOES IT CLICK?");
+                    }
+                }
+            }
         }
     }
 }
