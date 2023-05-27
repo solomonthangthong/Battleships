@@ -7,6 +7,13 @@ import javax.swing.JLabel;
 import java.io.File;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.Objects;
+//imports for sound effects
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 
 public class GameFrame extends JFrame implements ActionListener {
     private JPanel userBoardPanel;
@@ -23,6 +30,9 @@ public class GameFrame extends JFrame implements ActionListener {
         initializeFrame();
         createPanels();
         addPanelsToMainFrame();
+        //play background music
+        String musicFile = "resources/backgroundMusic.wav";
+        playBackgroundMusic(musicFile);
     }
 
     private void initializeFrame() {
@@ -124,6 +134,21 @@ public class GameFrame extends JFrame implements ActionListener {
         contentPane.add(opponentPanel, BorderLayout.EAST);
     }
 
+    public void playBackgroundMusic(String musicFile) {
+        try {
+            //state the path where audio file is found
+            File file = new File("resources/" + musicFile);
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(musicFile).getAbsoluteFile());
+           //get the audio clip defined in AudioSystem
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            //open and loop the clip
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
+            clip.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     @Override
     public void actionPerformed(ActionEvent e) {
         /*Initialize GameAction (where the logic exists for test cases) */
