@@ -27,12 +27,13 @@ public class GameFrame extends JFrame implements ActionListener {
     private JButton reset;
     private JButton play;
     private JButton[][] userButtons;
+    private JButton[][] opponentGridButtons;
 
     public GameFrame() {
         initializeFrame();
         createPanels();
         addPanelsToMainFrame();
-        //update create userboard and create opponent board to take in result of DIM formula
+        //update create user board and create opponent board to take in result of DIM formula
         createUserBoard(4);
         createOpponentBoard(4);
         //play background music
@@ -65,6 +66,7 @@ public class GameFrame extends JFrame implements ActionListener {
         // Language dropdown
         String[] languages = {"English", "French"};
         languageButton = new JComboBox<>(languages);
+        languageButton.setName("Languages");
         languageButton.addActionListener(this);
         JPanel languageMenu = new JPanel();
         languageMenu.setBackground(Color.decode("#19A7FF"));
@@ -74,8 +76,10 @@ public class GameFrame extends JFrame implements ActionListener {
 
         // Design and Randomize buttons
         designBoard = new JButton("Design");
+        designBoard.setName("Design");
         designBoard.addActionListener(this);
         randBoard = new JButton("Randomize");
+        randBoard.setName("Randomize");
         randBoard.addActionListener(this);
         JPanel designOptions = new JPanel();
         designOptions.setBackground(Color.decode("#19A7FF"));
@@ -116,7 +120,7 @@ public class GameFrame extends JFrame implements ActionListener {
         //Add the control panel text and scroll pane to the control panel
         controlPanel.add(controlPanelText);
         controlPanel.add(scrollPane);
-        //set veiw port so that text appears inside scrollPane
+        //set view port so that text appears inside scrollPane
         scrollPane.setViewportView(controlPanelText);
         selectionPanel.add(controlPanel);
 
@@ -131,10 +135,12 @@ public class GameFrame extends JFrame implements ActionListener {
         selectionPanel.add(timeContainer);
 
         reset = new JButton("Reset");
+        reset.setName("Reset");
         reset.addActionListener(this);
         selectionPanel.add(reset);
 
         play = new JButton("Play");
+        play.setName("Play");
         play.addActionListener(this);
         selectionPanel.add(play);
 
@@ -167,7 +173,8 @@ public class GameFrame extends JFrame implements ActionListener {
         for (int i = 0; i < numRows; i++) {
             for (int j = 0; j < numCols; j++) {
                 /* Find a better function to use aside from this name, because this names the buttons but the history track almost there */
-                JButton userButton = new JButton("Pos" + i + j);
+                JButton userButton = new JButton();
+                userButton.setName("Pos " + (i+1) + "," + (j+1));
                 userButton.addActionListener(this);
                 userButton.setPreferredSize(new Dimension(50, 50));
                 userButton.setBackground(Color.blue);
@@ -186,15 +193,19 @@ public class GameFrame extends JFrame implements ActionListener {
         int numRows = dimension;
         int numCols = dimension;
         JPanel opponentGrid = new JPanel(new GridLayout(numRows, numCols));
+        opponentGridButtons = new JButton[numRows][numCols];
         //create the buttons in a for loop
         for (int i = 0; i < numRows; i++) {
             for (int j = 0; j < numCols; j++) {
                 JButton opponentButton = new JButton();
+                opponentButton.setName(("Opp Pos " + (i+1) + "," + (j+1)));
+                opponentButton.addActionListener(this);
                 //set size of each button
                 opponentButton.setPreferredSize(new Dimension(50, 50));
                 opponentButton.setBackground(Color.red);
                 //add buttons to grid
                 opponentGrid.add(opponentButton);
+                opponentGridButtons[i][j] = opponentButton;
             }
         }
         //add grid to panel
@@ -243,7 +254,14 @@ public class GameFrame extends JFrame implements ActionListener {
                 for (JButton button : row) {
                     if (eventSource == button) {
                         gameAction.historyLog(eventSource, controlPanelText);
-                        System.out.println("DOES IT CLICK?");
+                    }
+                }
+            }
+
+            for (JButton[] row : opponentGridButtons) {
+                for (JButton button : row) {
+                    if (eventSource == button) {
+                        gameAction.historyLog(eventSource, controlPanelText);
                     }
                 }
             }

@@ -26,7 +26,7 @@ public class GameAction {
             //when design is clicked,print btn
         } else if (eventSource instanceof JButton) {
             JButton button = (JButton) eventSource;
-            controlPanelText.setText(currentGameLog + button.getText() + " clicked " + "<br>");
+            controlPanelText.setText(currentGameLog + button.getName() + " clicked " + "<br>");
         }
     }
 
