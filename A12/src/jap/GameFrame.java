@@ -174,7 +174,7 @@ public class GameFrame extends JFrame implements ActionListener {
             for (int j = 0; j < numCols; j++) {
                 /* Find a better function to use aside from this name, because this names the buttons but the history track almost there */
                 JButton userButton = new JButton();
-                userButton.setName("Pos " + (i+1) + "," + (j+1));
+                userButton.setName("Pos " + (i + 1) + "," + (j + 1));
                 //add action lister for every button
                 userButton.addActionListener(this);
                 userButton.setPreferredSize(new Dimension(50, 50));
@@ -185,12 +185,9 @@ public class GameFrame extends JFrame implements ActionListener {
                 userButtons[i][j] = userButton;
             }
         }
-        //add grid to panel
-        userBoardPanel.add(userGrid);
 
         //make a new column panel to hold column label
         JPanel columnLabelsPanel = new JPanel(new GridLayout(1, numCols));
-
         //add column and row numbers on user Grid
         for (int k = 0; k < numCols; k++) {
             //make  new label for each col
@@ -215,11 +212,12 @@ public class GameFrame extends JFrame implements ActionListener {
             //add row labels to labels panel
             rowLabelPanel.add(rowLabel);
         }
-//add row and column label panels and position west(left) and south(bottom)
-        userBoardPanel.add(rowLabelPanel, BorderLayout.WEST);
-        userBoardPanel.add(columnLabelsPanel, BorderLayout.SOUTH);
+        //add row and column label panels and position west(left) and south(bottom)
+        userBoardPanel.add(rowLabelPanel);
         //add the user selection hit box and center it
         userBoardPanel.add(userGrid, BorderLayout.CENTER);
+        userBoardPanel.add(columnLabelsPanel);
+
     }
 
     public void createOpponentBoard(int dimension) {
@@ -233,7 +231,7 @@ public class GameFrame extends JFrame implements ActionListener {
         for (int i = 0; i < numRows; i++) {
             for (int j = 0; j < numCols; j++) {
                 JButton opponentButton = new JButton();
-                opponentButton.setName(("Opp Pos " + (i+1) + "," + (j+1)));
+                opponentButton.setName(("Opp Pos " + (i + 1) + "," + (j + 1)));
                 opponentButton.addActionListener(this);
                 //set size of each button
                 opponentButton.setPreferredSize(new Dimension(50, 50));
@@ -243,8 +241,39 @@ public class GameFrame extends JFrame implements ActionListener {
                 opponentGridButtons[i][j] = opponentButton;
             }
         }
-        //add grid to panel
-        opponentPanel.add(opponentGrid);
+
+        //make a new column panel to hold column label
+        JPanel columnLabelsPanel = new JPanel(new GridLayout(1, numCols));
+        //add column and row numbers on user Grid
+        for (int k = 0; k < numCols; k++) {
+            //make  new label for each col
+            JLabel columnLabels = new JLabel(String.valueOf(k + 1));
+            //set same dimensions as selection box
+            columnLabels.setPreferredSize(new Dimension(50, 50));
+            columnLabels.setHorizontalAlignment(SwingConstants.CENTER);
+            //add column labels to the panel
+            columnLabelsPanel.add(columnLabels);
+
+
+        }
+        //make a new row panel to hold the labels
+        JPanel rowLabelPanel = new JPanel(new GridLayout(numRows, 1));
+        for (int i = 0; i < numRows; i++) {
+            //make a new label for each row
+            JLabel rowLabel = new JLabel(String.valueOf(i + 1));
+            //same dimension as selection box
+            rowLabel.setPreferredSize(new Dimension(50, 50));
+            //center text in box
+            rowLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            //add row labels to labels panel
+            rowLabelPanel.add(rowLabel);
+        }
+
+        //add row and column label panels and position west(left) and south(bottom)
+        opponentPanel.add(rowLabelPanel);
+        //add the user selection hit box and center it
+        opponentPanel.add(opponentGrid, BorderLayout.CENTER);
+        opponentPanel.add(columnLabelsPanel);
     }
 
 
