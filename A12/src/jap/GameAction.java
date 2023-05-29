@@ -30,7 +30,7 @@ public class GameAction {
         }
     }
 
-    protected void designBoard() {
+    protected void designBoatPlacement() {
         /* New JFrame for pop-up window to design board */
         JFrame designFrame = new JFrame();
         designFrame.setLocationRelativeTo(null);
@@ -38,7 +38,7 @@ public class GameAction {
         designFrame.setVisible(true);
     }
 
-    protected void randBoard() {
+    protected void randBoatPlacement() {
 
     }
 }

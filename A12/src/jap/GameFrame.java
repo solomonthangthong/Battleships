@@ -13,16 +13,18 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 
 public class GameFrame extends JFrame implements ActionListener {
-    private JPanel userBoardPanel;
+    private JPanel userPanel;
     private JPanel selectionPanel;
     private JPanel opponentPanel;
     private JComboBox<String> languageButton;
-    private JButton designBoard;
-    private JButton randBoard;
+    private JButton designBoatPlacement;
+    private JButton randBoatPlacement;
     private JLabel controlPanelText;
     private JComboBox<Integer> dimensionComboBox;
     private JButton reset;
     private JButton play;
+    private JPanel userGrid;
+    private JPanel opponentGrid;
     private JButton[][] userButtons;
     private JButton[][] opponentGridButtons;
     private JButton lifeUser;
@@ -32,8 +34,8 @@ public class GameFrame extends JFrame implements ActionListener {
         createPanels();
         addPanelsToMainFrame();
         //update create user board and create opponent board to take in result of DIM formula
-        createUserBoard(4);
-        createOpponentBoard(4);
+        createBoard(4, userPanel, userGrid, userButtons);
+       // createOpponentBoard(4);
         //play background music
         String musicFile = "resources/backgroundMusic.wav";
         playBackgroundMusic(musicFile);
@@ -73,16 +75,16 @@ public class GameFrame extends JFrame implements ActionListener {
         selectionPanel.add(languageMenu);
 
         // Design and Randomize buttons
-        designBoard = new JButton("Design");
-        designBoard.setName("Design");
-        designBoard.addActionListener(this);
-        randBoard = new JButton("Randomize");
-        randBoard.setName("Randomize");
-        randBoard.addActionListener(this);
+        designBoatPlacement = new JButton("Design");
+        designBoatPlacement.setName("Design");
+        designBoatPlacement.addActionListener(this);
+        randBoatPlacement = new JButton("Randomize");
+        randBoatPlacement.setName("Randomize");
+        randBoatPlacement.addActionListener(this);
         JPanel designOptions = new JPanel();
         designOptions.setBackground(Color.decode("#19A7FF"));
-        designOptions.add(designBoard);
-        designOptions.add(randBoard);
+        designOptions.add(designBoatPlacement);
+        designOptions.add(randBoatPlacement);
         selectionPanel.add(designOptions);
 
         // Dimensions dropdown
@@ -152,35 +154,32 @@ public class GameFrame extends JFrame implements ActionListener {
         lifeUser.setName("Life");
         lifeUser.addActionListener(this);
 
-        userBoardPanel = new JPanel();
-        userBoardPanel.setPreferredSize(new Dimension(520, 119));
-        userBoardPanel.setBackground(Color.ORANGE);
+        userPanel = new JPanel();
+        userPanel.setPreferredSize(new Dimension(520, 119));
+        userPanel.setBackground(Color.ORANGE);
 
     }
 
     private void addPanelsToMainFrame() {
         Container contentPane = getContentPane();
         contentPane.setLayout(new BorderLayout());
-        contentPane.add(userBoardPanel, BorderLayout.WEST);
+        contentPane.add(userPanel, BorderLayout.WEST);
         contentPane.add(selectionPanel, BorderLayout.CENTER);
         contentPane.add(opponentPanel, BorderLayout.EAST);
     }
 
-    public void createUserBoard(int dimension) {
+    public void createBoard(int dimension, JPanel actorPanel, JPanel actorGrid, JButton[][] buttonForGrid) {
         int buttonSize = Math.min(50, 200 / dimension); // Adjust the button size based on dimension
         int labelSize = Math.min(50, 200 / dimension); // Adjust the button size based on dimension
 
         // Calculate the new button and label sizes based on the dimension
 
-
-
-
         //manually manipulate dimensions for now - update input param dimension with formula result
         dimension = dimension * 2;
         int numRows = dimension;
         int numCols = dimension;
-        JPanel userGrid = new JPanel(new GridLayout(numRows, numCols));
-        userButtons = new JButton[numRows][numCols];
+        actorGrid = new JPanel(new GridLayout(numRows, numCols));
+        buttonForGrid = new JButton[numRows][numCols];
         //create the buttons in a for loop
         for (int i = 0; i < numRows; i++) {
             for (int j = 0; j < numCols; j++) {
@@ -192,9 +191,9 @@ public class GameFrame extends JFrame implements ActionListener {
                 userButton.setPreferredSize(new Dimension(buttonSize,buttonSize));
                 userButton.setBackground(Color.blue);
 
-                userGrid.add(userButton);
+                actorGrid.add(userButton);
                 //assign the button in the array
-                userButtons[i][j] = userButton;
+                buttonForGrid[i][j] = userButton;
             }
         }
 
@@ -227,75 +226,75 @@ public class GameFrame extends JFrame implements ActionListener {
             rowLabelPanel.add(rowLabel);
         }
         //add row and column label panels and position west(left) and south(bottom)
-        userBoardPanel.add(rowLabelPanel);
+        actorPanel.add(rowLabelPanel);
         //add the user selection hit box and center it
-        userBoardPanel.add(userGrid, BorderLayout.CENTER);
-        userBoardPanel.add(columnLabelsPanel,BorderLayout.CENTER);
+        actorPanel.add(actorGrid, BorderLayout.CENTER);
+        actorPanel.add(columnLabelsPanel,BorderLayout.CENTER);
         //userBoardPanel.add(lifeUser,BorderLayout.CENTER);
 
     }
 
-    public void createOpponentBoard(int dimension) {
-        int buttonSize = Math.min(50, 200 / dimension); // Adjust the button size based on dimension
-        int labelSize = Math.min(50, 200 / dimension); // Adjust the button size based on dimension
-
-        //manually manipulate dimensions for now - update input param dimension with formula result
-        dimension = dimension * 2;
-        int numRows = dimension;
-        int numCols = dimension;
-        JPanel opponentGrid = new JPanel(new GridLayout(numRows, numCols));
-        opponentGridButtons = new JButton[numRows][numCols];
-        //create the buttons in a for loop
-        for (int i = 0; i < numRows; i++) {
-            for (int j = 0; j < numCols; j++) {
-                JButton opponentButton = new JButton();
-                opponentButton.setName(("Opp Pos " + (i + 1) + "," + (j + 1)));
-                opponentButton.addActionListener(this);
-                //set size of each button
-                opponentButton.setPreferredSize(new Dimension(buttonSize, buttonSize));
-                opponentButton.setBackground(Color.red);
-                //add buttons to grid
-                opponentGrid.add(opponentButton);
-                opponentGridButtons[i][j] = opponentButton;
-            }
-        }
-
-        //make a new column panel to hold column label
-        JPanel columnLabelsPanel = new JPanel(new GridLayout(1, numCols));
-        columnLabelsPanel.setBorder(BorderFactory.createEmptyBorder(0, 50, 0, 0));
-
-        //add column and row numbers on user Grid
-        for (int k = 0; k < numCols; k++) {
-            //make  new label for each col
-            JLabel columnLabels = new JLabel(String.valueOf(k + 1));
-            //set same dimensions as selection box
-            columnLabels.setPreferredSize(new Dimension(labelSize, labelSize));
-            columnLabels.setHorizontalAlignment(SwingConstants.CENTER);
-            //add column labels to the panel
-            columnLabelsPanel.add(columnLabels);
-
-
-        }
-        //make a new row panel to hold the labels
-        JPanel rowLabelPanel = new JPanel(new GridLayout(numRows, 1));
-        for (int i = 0; i < numRows; i++) {
-            //make a new label for each row
-            JLabel rowLabel = new JLabel(String.valueOf(i + 1));
-            //same dimension as selection box
-            rowLabel.setPreferredSize(new Dimension(labelSize, labelSize));
-            //center text in box
-            rowLabel.setHorizontalAlignment(SwingConstants.CENTER);
-            //add row labels to labels panel
-            rowLabelPanel.add(rowLabel);
-        }
-
-        //add row and column label panels and position west(left) and south(bottom)
-        opponentPanel.add(rowLabelPanel);
-        //add the user selection hit box and center it
-        opponentPanel.add(opponentGrid, BorderLayout.CENTER);
-        opponentPanel.add(columnLabelsPanel);
-    }
-
+//    public void createOpponentBoard(int dimension) {
+//        int buttonSize = Math.min(50, 200 / dimension); // Adjust the button size based on dimension
+//        int labelSize = Math.min(50, 200 / dimension); // Adjust the button size based on dimension
+//
+//        //manually manipulate dimensions for now - update input param dimension with formula result
+//        dimension = dimension * 2;
+//        int numRows = dimension;
+//        int numCols = dimension;
+//        JPanel opponentGrid = new JPanel(new GridLayout(numRows, numCols));
+//        opponentGridButtons = new JButton[numRows][numCols];
+//        //create the buttons in a for loop
+//        for (int i = 0; i < numRows; i++) {
+//            for (int j = 0; j < numCols; j++) {
+//                JButton opponentButton = new JButton();
+//                opponentButton.setName(("Opp Pos " + (i + 1) + "," + (j + 1)));
+//                opponentButton.addActionListener(this);
+//                //set size of each button
+//                opponentButton.setPreferredSize(new Dimension(buttonSize, buttonSize));
+//                opponentButton.setBackground(Color.red);
+//                //add buttons to grid
+//                opponentGrid.add(opponentButton);
+//                opponentGridButtons[i][j] = opponentButton;
+//            }
+//        }
+//
+//        //make a new column panel to hold column label
+//        JPanel columnLabelsPanel = new JPanel(new GridLayout(1, numCols));
+//        columnLabelsPanel.setBorder(BorderFactory.createEmptyBorder(0, 50, 0, 0));
+//
+//        //add column and row numbers on user Grid
+//        for (int k = 0; k < numCols; k++) {
+//            //make  new label for each col
+//            JLabel columnLabels = new JLabel(String.valueOf(k + 1));
+//            //set same dimensions as selection box
+//            columnLabels.setPreferredSize(new Dimension(labelSize, labelSize));
+//            columnLabels.setHorizontalAlignment(SwingConstants.CENTER);
+//            //add column labels to the panel
+//            columnLabelsPanel.add(columnLabels);
+//
+//
+//        }
+//        //make a new row panel to hold the labels
+//        JPanel rowLabelPanel = new JPanel(new GridLayout(numRows, 1));
+//        for (int i = 0; i < numRows; i++) {
+//            //make a new label for each row
+//            JLabel rowLabel = new JLabel(String.valueOf(i + 1));
+//            //same dimension as selection box
+//            rowLabel.setPreferredSize(new Dimension(labelSize, labelSize));
+//            //center text in box
+//            rowLabel.setHorizontalAlignment(SwingConstants.CENTER);
+//            //add row labels to labels panel
+//            rowLabelPanel.add(rowLabel);
+//        }
+//
+//        //add row and column label panels and position west(left) and south(bottom)
+//        opponentPanel.add(rowLabelPanel);
+//        //add the user selection hit box and center it
+//        opponentPanel.add(opponentGrid, BorderLayout.CENTER);
+//        opponentPanel.add(columnLabelsPanel);
+//    }
+//
 
     public void playBackgroundMusic(String musicFile) {
         try {
@@ -319,29 +318,23 @@ public class GameFrame extends JFrame implements ActionListener {
         GameAction gameAction = new GameAction();
         Object eventSource = e.getSource();
         Clip clickClip = createAudioClip();
+
         if (eventSource == languageButton) {
             clickClip.start();
             gameAction.historyLog(eventSource, controlPanelText);
-        } else if (eventSource == designBoard) {
+        } else if (eventSource == designBoatPlacement) {
             clickClip.start();
             gameAction.historyLog(eventSource, controlPanelText);
             //pop up box
-            gameAction.designBoard();
-        } else if (eventSource == randBoard) {
+            gameAction.designBoatPlacement();
+        } else if (eventSource == randBoatPlacement) {
             clickClip.start();
             gameAction.historyLog(eventSource, controlPanelText);
-            gameAction.randBoard();
+            gameAction.randBoatPlacement();
         } else if (eventSource == dimensionComboBox) {
             int selectedDimension = (int) dimensionComboBox.getSelectedItem();
             clickClip.start();
-            userBoardPanel.removeAll();
-            opponentPanel.removeAll();
-            createOpponentBoard(selectedDimension);
-            createUserBoard(selectedDimension);
-            opponentPanel.revalidate();
-            userBoardPanel.revalidate();
-            opponentPanel.repaint();
-            userBoardPanel.repaint();
+            resizeBoard(selectedDimension, userPanel, opponentPanel);
             gameAction.historyLog(eventSource, controlPanelText);
 
         } else if (eventSource == reset) {
@@ -383,5 +376,16 @@ public class GameFrame extends JFrame implements ActionListener {
         }
         //return nothing if there is error
         return null;
+    }
+
+    private void resizeBoard(Integer selectedDimension, JPanel userBoardPanel, JPanel opponentPanel){
+        userBoardPanel.removeAll();
+        opponentPanel.removeAll();
+        createBoard(selectedDimension, userPanel, userGrid, userButtons);
+        //createUserBoard(selectedDimension);
+        opponentPanel.revalidate();
+        userBoardPanel.revalidate();
+        opponentPanel.repaint();
+        userBoardPanel.repaint();
     }
 }
