@@ -26,15 +26,13 @@ public class GameFrame extends JFrame implements ActionListener {
     private JPanel userGrid;
     private JPanel opponentGrid;
     private JButton[][] userButtons;
-    private JButton[][] opponentGridButtons;
+    private JButton[][] opponentButtons;
     private JButton lifeUser;
 
     public GameFrame() {
         initializeFrame();
         createPanels();
         addPanelsToMainFrame();
-        //update create user board and create opponent board to take in result of DIM formula
-        createBoard(4, userPanel, userGrid, userButtons);
        // createOpponentBoard(4);
         //play background music
         String musicFile = "resources/backgroundMusic.wav";
@@ -49,6 +47,7 @@ public class GameFrame extends JFrame implements ActionListener {
     }
 
     private void createPanels() {
+        GameAction gameAction = new GameAction();
         selectionPanel = new JPanel();
         selectionPanel.setBackground(Color.decode("#19A7FF"));
         /* Potentially do not need this border, if left and right sides use Preferred Size */
@@ -160,15 +159,7 @@ public class GameFrame extends JFrame implements ActionListener {
 
     }
 
-    private void addPanelsToMainFrame() {
-        Container contentPane = getContentPane();
-        contentPane.setLayout(new BorderLayout());
-        contentPane.add(userPanel, BorderLayout.WEST);
-        contentPane.add(selectionPanel, BorderLayout.CENTER);
-        contentPane.add(opponentPanel, BorderLayout.EAST);
-    }
-
-    public void createBoard(int dimension, JPanel actorPanel, JPanel actorGrid, JButton[][] buttonForGrid) {
+    public void createBoard(int dimension, JPanel actorPanel, JButton[][] buttonForGrid) {
         int buttonSize = Math.min(50, 200 / dimension); // Adjust the button size based on dimension
         int labelSize = Math.min(50, 200 / dimension); // Adjust the button size based on dimension
 
@@ -178,7 +169,7 @@ public class GameFrame extends JFrame implements ActionListener {
         dimension = dimension * 2;
         int numRows = dimension;
         int numCols = dimension;
-        actorGrid = new JPanel(new GridLayout(numRows, numCols));
+        JPanel actorGrid = new JPanel(new GridLayout(numRows, numCols));
         buttonForGrid = new JButton[numRows][numCols];
         //create the buttons in a for loop
         for (int i = 0; i < numRows; i++) {
@@ -296,6 +287,17 @@ public class GameFrame extends JFrame implements ActionListener {
 //    }
 //
 
+    private void addPanelsToMainFrame() {
+        //update create user board and create opponent board to take in result of DIM formula
+        createBoard(4, userPanel, userButtons);
+        createBoard(4, opponentPanel,opponentButtons);
+        Container contentPane = getContentPane();
+        contentPane.setLayout(new BorderLayout());
+        contentPane.add(userPanel, BorderLayout.WEST);
+        contentPane.add(selectionPanel, BorderLayout.CENTER);
+        contentPane.add(opponentPanel, BorderLayout.EAST);
+    }
+
     public void playBackgroundMusic(String musicFile) {
         try {
             //state the path where audio file is found
@@ -352,7 +354,7 @@ public class GameFrame extends JFrame implements ActionListener {
                 }
             }
 
-            for (JButton[] row : opponentGridButtons) {
+            for (JButton[] row : opponentButtons) {
                 for (JButton button : row) {
                     if (eventSource == button) {
                         gameAction.historyLog(eventSource, controlPanelText);
@@ -378,14 +380,14 @@ public class GameFrame extends JFrame implements ActionListener {
         return null;
     }
 
-    private void resizeBoard(Integer selectedDimension, JPanel userBoardPanel, JPanel opponentPanel){
+    private void resizeBoard(Integer selectedDimension, JPanel userBoardPanel, JPanel opponentBoardPanel){
         userBoardPanel.removeAll();
-        opponentPanel.removeAll();
-        createBoard(selectedDimension, userPanel, userGrid, userButtons);
-        //createUserBoard(selectedDimension);
-        opponentPanel.revalidate();
+        opponentBoardPanel.removeAll();
+        createBoard(selectedDimension, userPanel, userButtons);
+        createBoard(selectedDimension, opponentPanel, opponentButtons);
+        opponentBoardPanel.revalidate();
         userBoardPanel.revalidate();
-        opponentPanel.repaint();
+        opponentBoardPanel.repaint();
         userBoardPanel.repaint();
     }
 }

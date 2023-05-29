@@ -1,6 +1,7 @@
 package jap;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class GameAction {
     protected <T> void historyLog(T eventSource, JLabel controlPanelText) {
