@@ -7,6 +7,7 @@ import javax.swing.JLabel;
 import java.io.File;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.Serializable;
 //imports for sound effects
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -15,7 +16,11 @@ import javax.sound.sampled.Clip;
 /**
  * The main frame of the Battleship application.
  */
-public class GameFrame extends JFrame implements ActionListener {
+public class GameFrame extends JFrame implements ActionListener, Serializable {
+    /**
+     *  ensure serialized data can be deserialized correctly, if there are changes in the class structure or fields
+     */
+    private static final long serialVersionUID = 1L;
     /**
      * Panel for displaying user actor playing board.
      */
