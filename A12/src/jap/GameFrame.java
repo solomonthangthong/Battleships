@@ -12,6 +12,7 @@ import java.io.Serializable;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.swing.border.EmptyBorder;
 
 /**
  * The main frame of the Battleship application.
@@ -70,9 +71,13 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
      */
     private JButton[][] opponentButtons;
     /**
-     * Button for life status.
+     * Button for user actor status.
      */
-    private JButton lifeUser;
+    private JPanel lifeUser;
+    /**
+     * Button for machine actor status.
+     */
+    private JPanel lifeMachine;
 
     /**
      * Creates a new instance of the GameFrame class.
@@ -82,8 +87,8 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
         createPanels();
         addPanelsToMainFrame();
         //update create user board and create opponent board to take in result of DIM formula
-        userButtons = createBoard(4, userPanel, true);
-        opponentButtons = createBoard(4, opponentPanel, false);
+        userButtons = createBoard(4, userPanel, lifeUser,true);
+        opponentButtons = createBoard(4, opponentPanel, lifeMachine,false);
         //play background music
         String musicFile = "resources/backgroundMusic.wav";
       //  playBackgroundMusic(musicFile);
@@ -93,7 +98,7 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
      * Method to set up parameters for GUI window
      */
     private void initializeFrame() {
-        setTitle("Battleship");
+        setTitle("Battleship by: Andrew Lorimer & Solomon Thangthong");
         setSize(1280, 720);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -105,7 +110,7 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
      */
     private void createPanels() {
         selectionPanel = new JPanel();
-        selectionPanel.setBackground(Color.decode("#19A7FF"));
+        selectionPanel.setBackground(Color.decode("#8119FF"));
         /* Potentially do not need this border, if left and right sides use Preferred Size */
         selectionPanel.setBorder(BorderFactory.createEmptyBorder(0, 69, 0, 69));
 
@@ -124,7 +129,7 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
         languageButton.setName("Languages");
         languageButton.addActionListener(this);
         JPanel languageMenu = new JPanel();
-        languageMenu.setBackground(Color.decode("#19A7FF"));
+        languageMenu.setBackground(Color.decode("#8119FF"));
         languageMenu.add(new JLabel("Languages: "));
         languageMenu.add(languageButton);
         selectionPanel.add(languageMenu);
@@ -137,7 +142,7 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
         randBoatPlacement.setName("Randomize");
         randBoatPlacement.addActionListener(this);
         JPanel designOptions = new JPanel();
-        designOptions.setBackground(Color.decode("#19A7FF"));
+        designOptions.setBackground(Color.decode("#8119FF"));
         designOptions.add(designBoatPlacement);
         designOptions.add(randBoatPlacement);
         selectionPanel.add(designOptions);
@@ -147,7 +152,7 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
         dimensionComboBox = new JComboBox<>(dimensions);
         dimensionComboBox.addActionListener(this);
         JPanel dimensionsPanel = new JPanel();
-        dimensionsPanel.setBackground(Color.decode("#19A7FF"));
+        dimensionsPanel.setBackground(Color.decode("#8119FF"));
         dimensionsPanel.add(new JLabel("Dimensions:"));
         dimensionsPanel.add(dimensionComboBox);
         selectionPanel.add(dimensionsPanel);
@@ -186,7 +191,7 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
         timeDisplay.setPreferredSize(new Dimension(55, 30));
         timeContainer.add(time);
         timeContainer.add(timeDisplay);
-        timeContainer.setBackground(Color.decode("#19A7FF"));
+        timeContainer.setBackground(Color.decode("#8119FF"));
         selectionPanel.add(timeContainer);
 
         reset = new JButton("Reset");
@@ -204,15 +209,29 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
         opponentPanel.setPreferredSize(new Dimension(520, 119));
         opponentPanel.setBackground(Color.decode("#FF990D"));
 
-        //set opponent life bar
-        lifeUser = new JButton("Life");
-        lifeUser.setName("Life");
-        lifeUser.addActionListener(this);
-
         userPanel = new JPanel();
         userPanel.setPreferredSize(new Dimension(520, 119));
         userPanel.setBackground(Color.ORANGE);
 
+        //set user actor life bar
+        lifeUser = new JPanel();
+        lifeUser.setBackground(Color.ORANGE);
+        JButton lifeUserHealthBar = new JButton();
+        lifeUserHealthBar.setName("Life 2");
+        lifeUserHealthBar.setPreferredSize(new Dimension(250, 25));
+        lifeUserHealthBar.addActionListener(this);
+        lifeUser.add(new JLabel("Life 1"));
+        lifeUser.add(lifeUserHealthBar);
+
+        //set opponent actor life bar
+        lifeMachine = new JPanel();
+        lifeMachine.setBackground(Color.decode("#FF990D"));
+        JButton lifeMachineHealthBar = new JButton();
+        lifeMachineHealthBar.setName("Life 2");
+        lifeMachineHealthBar.setPreferredSize(new Dimension(250, 25));
+        lifeMachineHealthBar.addActionListener(this);
+        lifeMachine.add(new JLabel("Life 2"));
+        lifeMachine.add(lifeMachineHealthBar);
     }
 
     /**
@@ -233,7 +252,7 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
      * @param whichActor - True = user actor, false = machine actor
      * @return - Button Array
      */
-    public JButton[][] createBoard(int dimension, JPanel actorPanel, Boolean whichActor) {
+    public JButton[][] createBoard(int dimension, JPanel actorPanel, JPanel lifeStatus, Boolean whichActor) {
         int buttonSize = Math.min(50, 200 / dimension); // Adjust the button size based on dimension
         int labelSize = Math.min(50, 200 / dimension); // Adjust the button size based on dimension
 
@@ -259,9 +278,9 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
                 userButton.addActionListener(this);
                 userButton.setPreferredSize(new Dimension(buttonSize, buttonSize));
                 if (whichActor) {
-                    userButton.setBackground(Color.blue);
+                    userButton.setBackground(Color.decode("#19A7FF"));
                 } else {
-                    userButton.setBackground(Color.red);
+                    userButton.setBackground(Color.decode("#FFC800"));
                 }
                 actorGrid.add(userButton);
                 //assign the button in the array
@@ -297,11 +316,13 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
             //add row labels to labels panel
             rowLabelPanel.add(rowLabel);
         }
+
         //add row and column label panels and position west(left) and south(bottom)
         actorPanel.add(rowLabelPanel);
         //add the user selection hit box and  center it
         actorPanel.add(actorGrid, BorderLayout.CENTER);
         actorPanel.add(columnLabelsPanel, BorderLayout.CENTER);
+        actorPanel.add(lifeStatus);
         //userBoardPanel.add(lifeUser,BorderLayout.CENTER);
         return buttonForGrid;
     }
@@ -402,8 +423,8 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
     private void resizeBoard(Integer selectedDimension, JPanel userBoardPanel, JPanel opponentBoardPanel) {
         userBoardPanel.removeAll();
         opponentBoardPanel.removeAll();
-        userButtons = createBoard(selectedDimension, userPanel, true);
-        opponentButtons = createBoard(selectedDimension, opponentPanel, false);
+        userButtons = createBoard(selectedDimension, userPanel, lifeUser,true);
+        opponentButtons = createBoard(selectedDimension, opponentPanel, lifeMachine,false);
         opponentBoardPanel.revalidate();
         userBoardPanel.revalidate();
         opponentBoardPanel.repaint();
