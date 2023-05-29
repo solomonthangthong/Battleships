@@ -7,9 +7,6 @@ import javax.swing.JLabel;
 import java.io.File;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.util.Objects;
 //imports for sound effects
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -28,6 +25,7 @@ public class GameFrame extends JFrame implements ActionListener {
     private JButton play;
     private JButton[][] userButtons;
     private JButton[][] opponentGridButtons;
+    private JButton lifeUser;
 
     public GameFrame() {
         initializeFrame();
@@ -149,9 +147,15 @@ public class GameFrame extends JFrame implements ActionListener {
         opponentPanel.setPreferredSize(new Dimension(520, 119));
         opponentPanel.setBackground(Color.decode("#FF990D"));
 
+        //set opponent life bar
+        lifeUser= new JButton("Life");
+        lifeUser.setName("Life");
+        lifeUser.addActionListener(this);
+
         userBoardPanel = new JPanel();
         userBoardPanel.setPreferredSize(new Dimension(520, 119));
         userBoardPanel.setBackground(Color.ORANGE);
+
     }
 
     private void addPanelsToMainFrame() {
@@ -163,6 +167,14 @@ public class GameFrame extends JFrame implements ActionListener {
     }
 
     public void createUserBoard(int dimension) {
+        int buttonSize = Math.min(50, 200 / dimension); // Adjust the button size based on dimension
+        int labelSize = Math.min(50, 200 / dimension); // Adjust the button size based on dimension
+
+        // Calculate the new button and label sizes based on the dimension
+
+
+
+
         //manually manipulate dimensions for now - update input param dimension with formula result
         dimension = dimension * 2;
         int numRows = dimension;
@@ -177,7 +189,7 @@ public class GameFrame extends JFrame implements ActionListener {
                 userButton.setName("Pos " + (i + 1) + "," + (j + 1));
                 //add action lister for every button
                 userButton.addActionListener(this);
-                userButton.setPreferredSize(new Dimension(50, 50));
+                userButton.setPreferredSize(new Dimension(buttonSize,buttonSize));
                 userButton.setBackground(Color.blue);
 
                 userGrid.add(userButton);
@@ -188,12 +200,13 @@ public class GameFrame extends JFrame implements ActionListener {
 
         //make a new column panel to hold column label
         JPanel columnLabelsPanel = new JPanel(new GridLayout(1, numCols));
+        columnLabelsPanel.setBorder(BorderFactory.createEmptyBorder(0, 1000, 0, 1000)); // Add left padding
         //add column and row numbers on user Grid
         for (int k = 0; k < numCols; k++) {
             //make  new label for each col
             JLabel columnLabels = new JLabel(String.valueOf(k + 1));
             //set same dimensions as selection box
-            columnLabels.setPreferredSize(new Dimension(50, 50));
+            columnLabels.setPreferredSize(new Dimension(labelSize,labelSize));
             columnLabels.setHorizontalAlignment(SwingConstants.CENTER);
             //add column labels to the panel
             columnLabelsPanel.add(columnLabels);
@@ -202,11 +215,12 @@ public class GameFrame extends JFrame implements ActionListener {
         }
         //make a new row panel to hold the labels
         JPanel rowLabelPanel = new JPanel(new GridLayout(numRows, 1));
+        columnLabelsPanel.setBorder(BorderFactory.createEmptyBorder(0, 50, 0, 0));
         for (int i = 0; i < numRows; i++) {
             //make a new label for each row
             JLabel rowLabel = new JLabel(String.valueOf(i + 1));
             //same dimension as selection box
-            rowLabel.setPreferredSize(new Dimension(50, 50));
+            rowLabel.setPreferredSize(new Dimension(labelSize,labelSize));
             //center text in box
             rowLabel.setHorizontalAlignment(SwingConstants.CENTER);
             //add row labels to labels panel
@@ -216,11 +230,15 @@ public class GameFrame extends JFrame implements ActionListener {
         userBoardPanel.add(rowLabelPanel);
         //add the user selection hit box and center it
         userBoardPanel.add(userGrid, BorderLayout.CENTER);
-        userBoardPanel.add(columnLabelsPanel);
+        userBoardPanel.add(columnLabelsPanel,BorderLayout.CENTER);
+        //userBoardPanel.add(lifeUser,BorderLayout.CENTER);
 
     }
 
     public void createOpponentBoard(int dimension) {
+        int buttonSize = Math.min(50, 200 / dimension); // Adjust the button size based on dimension
+        int labelSize = Math.min(50, 200 / dimension); // Adjust the button size based on dimension
+
         //manually manipulate dimensions for now - update input param dimension with formula result
         dimension = dimension * 2;
         int numRows = dimension;
@@ -234,7 +252,7 @@ public class GameFrame extends JFrame implements ActionListener {
                 opponentButton.setName(("Opp Pos " + (i + 1) + "," + (j + 1)));
                 opponentButton.addActionListener(this);
                 //set size of each button
-                opponentButton.setPreferredSize(new Dimension(50, 50));
+                opponentButton.setPreferredSize(new Dimension(buttonSize, buttonSize));
                 opponentButton.setBackground(Color.red);
                 //add buttons to grid
                 opponentGrid.add(opponentButton);
@@ -244,12 +262,14 @@ public class GameFrame extends JFrame implements ActionListener {
 
         //make a new column panel to hold column label
         JPanel columnLabelsPanel = new JPanel(new GridLayout(1, numCols));
+        columnLabelsPanel.setBorder(BorderFactory.createEmptyBorder(0, 50, 0, 0));
+
         //add column and row numbers on user Grid
         for (int k = 0; k < numCols; k++) {
             //make  new label for each col
             JLabel columnLabels = new JLabel(String.valueOf(k + 1));
             //set same dimensions as selection box
-            columnLabels.setPreferredSize(new Dimension(50, 50));
+            columnLabels.setPreferredSize(new Dimension(labelSize, labelSize));
             columnLabels.setHorizontalAlignment(SwingConstants.CENTER);
             //add column labels to the panel
             columnLabelsPanel.add(columnLabels);
@@ -262,7 +282,7 @@ public class GameFrame extends JFrame implements ActionListener {
             //make a new label for each row
             JLabel rowLabel = new JLabel(String.valueOf(i + 1));
             //same dimension as selection box
-            rowLabel.setPreferredSize(new Dimension(50, 50));
+            rowLabel.setPreferredSize(new Dimension(labelSize, labelSize));
             //center text in box
             rowLabel.setHorizontalAlignment(SwingConstants.CENTER);
             //add row labels to labels panel
@@ -285,6 +305,7 @@ public class GameFrame extends JFrame implements ActionListener {
             Clip clip = AudioSystem.getClip();
             clip.open(audioInputStream);
             //open and loop the clip
+
             clip.loop(Clip.LOOP_CONTINUOUSLY);
             clip.start();
         } catch (Exception e) {
@@ -297,20 +318,37 @@ public class GameFrame extends JFrame implements ActionListener {
         /*Initialize GameAction (where the logic exists for test cases) */
         GameAction gameAction = new GameAction();
         Object eventSource = e.getSource();
+        Clip clickClip = createAudioClip();
         if (eventSource == languageButton) {
+            clickClip.start();
             gameAction.historyLog(eventSource, controlPanelText);
         } else if (eventSource == designBoard) {
+            clickClip.start();
             gameAction.historyLog(eventSource, controlPanelText);
             //pop up box
             gameAction.designBoard();
         } else if (eventSource == randBoard) {
+            clickClip.start();
             gameAction.historyLog(eventSource, controlPanelText);
             gameAction.randBoard();
         } else if (eventSource == dimensionComboBox) {
+            int selectedDimension = (int) dimensionComboBox.getSelectedItem();
+            clickClip.start();
+            userBoardPanel.removeAll();
+            opponentPanel.removeAll();
+            createOpponentBoard(selectedDimension);
+            createUserBoard(selectedDimension);
+            opponentPanel.revalidate();
+            userBoardPanel.revalidate();
+            opponentPanel.repaint();
+            userBoardPanel.repaint();
             gameAction.historyLog(eventSource, controlPanelText);
+
         } else if (eventSource == reset) {
+            clickClip.start();
             gameAction.historyLog(eventSource, controlPanelText);
         } else if (eventSource == play) {
+            clickClip.start();
             gameAction.historyLog(eventSource, controlPanelText);
         } else {
             for (JButton[] row : userButtons) {
@@ -329,5 +367,21 @@ public class GameFrame extends JFrame implements ActionListener {
                 }
             }
         }
+    }
+//later we can pass parameter to specifiy click sound or blast sound from a strike on selection hitbox,
+    private Clip createAudioClip() {
+        try {
+            //create 2nd audio input stream so 2 sounds can occur at same time
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("resources/click.wav").getAbsoluteFile());
+            //get clip from audio file and open it
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            //return the click sound
+            return clip;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //return nothing if there is error
+        return null;
     }
 }
