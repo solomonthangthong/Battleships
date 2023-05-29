@@ -4,6 +4,12 @@ import javax.swing.*;
 import java.awt.*;
 
 public class GameAction {
+    /**
+     * Generic method to print control panel history log in GUI.
+     * @param eventSource - Generic parameter, could be JButton, JComboBox.
+     * @param controlPanelText - JLabel use to extract .getName().
+     * @param <T> - Type of elements passed from GameFrame.
+     */
     protected <T> void historyLog(T eventSource, JLabel controlPanelText) {
         //cast selected item to string
         String currentGameLog = controlPanelText.getText();
@@ -31,6 +37,9 @@ public class GameAction {
         }
     }
 
+    /**
+     * Pop-up window to design ship placement for user actor.
+     */
     protected void designBoatPlacement() {
         /* New JFrame for pop-up window to design board */
         JFrame designFrame = new JFrame();
@@ -39,6 +48,9 @@ public class GameAction {
         designFrame.setVisible(true);
     }
 
+    /**
+     * Rnadomize ship placement for machine, and if user desires to randomize.
+     */
     protected void randBoatPlacement() {
 
     }

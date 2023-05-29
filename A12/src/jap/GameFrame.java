@@ -12,21 +12,66 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 
+/**
+ * The main frame of the Battleship application.
+ */
 public class GameFrame extends JFrame implements ActionListener {
+    /**
+     * Panel for displaying user actor playing board.
+     */
     private JPanel userPanel;
+    /**
+     * Panel for control panel related options.
+     */
     private JPanel selectionPanel;
+    /**
+     * Panel to display where user actor will find opponent ship location.
+     */
     private JPanel opponentPanel;
+    /**
+     * Combobox to change GUI language.
+     */
     private JComboBox<String> languageButton;
+    /**
+     * Button to open new window to design boat placement.
+     */
     private JButton designBoatPlacement;
+    /**
+     * Button to randomize both actor ship placement.
+     */
     private JButton randBoatPlacement;
+    /**
+     * Label for controlPanel history box.
+     */
     private JLabel controlPanelText;
+    /**
+     * Combobox for changing board dimension size.
+     */
     private JComboBox<Integer> dimensionComboBox;
+    /**
+     * Button to reset the game.
+     */
     private JButton reset;
+    /**
+     * Button to start the game.
+     */
     private JButton play;
+    /**
+     * Array of clickable buttons on user actor board.
+     */
     private JButton[][] userButtons;
+    /**
+     * Array of clickable buttons on opponent board.
+     */
     private JButton[][] opponentButtons;
+    /**
+     * Button for life status.
+     */
     private JButton lifeUser;
 
+    /**
+     * Creates a new instance of the GameFrame class.
+     */
     public GameFrame() {
         initializeFrame();
         createPanels();
@@ -39,6 +84,9 @@ public class GameFrame extends JFrame implements ActionListener {
         playBackgroundMusic(musicFile);
     }
 
+    /**
+     * Method to set up parameters for GUI window
+     */
     private void initializeFrame() {
         setTitle("Battleship");
         setSize(1280, 720);
@@ -46,6 +94,10 @@ public class GameFrame extends JFrame implements ActionListener {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
+    /**
+     * Creates and configure panels for user interface.
+     * Called internally for initialization.
+     */
     private void createPanels() {
         selectionPanel = new JPanel();
         selectionPanel.setBackground(Color.decode("#19A7FF"));
@@ -158,6 +210,9 @@ public class GameFrame extends JFrame implements ActionListener {
 
     }
 
+    /**
+     * Add created panels into the main frame.
+     */
     private void addPanelsToMainFrame() {
         Container contentPane = getContentPane();
         contentPane.setLayout(new BorderLayout());
@@ -166,6 +221,13 @@ public class GameFrame extends JFrame implements ActionListener {
         contentPane.add(opponentPanel, BorderLayout.EAST);
     }
 
+    /**
+     * Creates clickable buttons based on dimension size. Player can click the button and attempt to locate enemy ship
+     * @param dimension - Board dimension size, default is 4
+     * @param actorPanel - User or Opponent JPanel
+     * @param whichActor - True = user actor, false = machine actor
+     * @return - Button Array
+     */
     public JButton[][] createBoard(int dimension, JPanel actorPanel, Boolean whichActor) {
         int buttonSize = Math.min(50, 200 / dimension); // Adjust the button size based on dimension
         int labelSize = Math.min(50, 200 / dimension); // Adjust the button size based on dimension
@@ -183,7 +245,7 @@ public class GameFrame extends JFrame implements ActionListener {
             for (int j = 0; j < numCols; j++) {
                 /* Find a better function to use aside from this name, because this names the buttons but the history track almost there */
                 JButton userButton = new JButton();
-                if (whichActor == true) {
+                if (whichActor) {
                     userButton.setName(actor1 + (i + 1) + "," + (j + 1));
                 } else {
                     userButton.setName(actor2 + (i + 1) + "," + (j + 1));
@@ -191,7 +253,7 @@ public class GameFrame extends JFrame implements ActionListener {
                 //add action lister for every button
                 userButton.addActionListener(this);
                 userButton.setPreferredSize(new Dimension(buttonSize, buttonSize));
-                if (whichActor == true) {
+                if (whichActor) {
                     userButton.setBackground(Color.blue);
                 } else {
                     userButton.setBackground(Color.red);
@@ -239,6 +301,9 @@ public class GameFrame extends JFrame implements ActionListener {
         return buttonForGrid;
     }
 
+    /**
+     * @param musicFile
+     */
     public void playBackgroundMusic(String musicFile) {
         try {
             //state the path where audio file is found
@@ -255,6 +320,10 @@ public class GameFrame extends JFrame implements ActionListener {
         }
     }
 
+    /**
+     * Executed when action event occurs
+     * @param e the event represented as user action
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         /*Initialize GameAction (where the logic exists for test cases) */
@@ -292,6 +361,9 @@ public class GameFrame extends JFrame implements ActionListener {
         }
     }
 
+    /**
+     * @return
+     */
     //later we can pass parameter to specify click sound or blast sound from a strike on selection hit box,
     private Clip createAudioClip() {
         try {
@@ -309,6 +381,13 @@ public class GameFrame extends JFrame implements ActionListener {
         return null;
     }
 
+    /**
+     * When dimension JComboBox is changed, this method clears both actor board panels, and creates new board
+     * based on the size of the dimension selected.
+     * @param selectedDimension - user determined size of board.
+     * @param userBoardPanel - user actor panel.
+     * @param opponentBoardPanel - machine actor panel.
+     */
     private void resizeBoard(Integer selectedDimension, JPanel userBoardPanel, JPanel opponentBoardPanel) {
         userBoardPanel.removeAll();
         opponentBoardPanel.removeAll();
@@ -320,6 +399,13 @@ public class GameFrame extends JFrame implements ActionListener {
         userBoardPanel.repaint();
     }
 
+    /**
+     * Loop through array of buttons to find user action event
+     * Created method to reduce for loop duplication
+     * @param buttons - either actor button array
+     * @param eventSource - Object event action
+     * @param controlPanelText - JLabel passed, and then later uses .getName() to extract information
+     */
     private void boardButtonEvent(JButton[][] buttons, Object eventSource, JLabel controlPanelText) {
         GameAction gameAction = new GameAction();
         for (JButton[] row : buttons) {
