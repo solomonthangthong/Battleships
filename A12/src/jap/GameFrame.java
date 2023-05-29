@@ -23,8 +23,6 @@ public class GameFrame extends JFrame implements ActionListener {
     private JComboBox<Integer> dimensionComboBox;
     private JButton reset;
     private JButton play;
-    private JPanel userGrid;
-    private JPanel opponentGrid;
     private JButton[][] userButtons;
     private JButton[][] opponentButtons;
     private JButton lifeUser;
@@ -33,7 +31,9 @@ public class GameFrame extends JFrame implements ActionListener {
         initializeFrame();
         createPanels();
         addPanelsToMainFrame();
-       // createOpponentBoard(4);
+        //update create user board and create opponent board to take in result of DIM formula
+        userButtons = createBoard(4, userPanel, true);
+        opponentButtons = createBoard(4, opponentPanel, false);
         //play background music
         String musicFile = "resources/backgroundMusic.wav";
         playBackgroundMusic(musicFile);
@@ -47,7 +47,6 @@ public class GameFrame extends JFrame implements ActionListener {
     }
 
     private void createPanels() {
-        GameAction gameAction = new GameAction();
         selectionPanel = new JPanel();
         selectionPanel.setBackground(Color.decode("#19A7FF"));
         /* Potentially do not need this border, if left and right sides use Preferred Size */
@@ -149,7 +148,7 @@ public class GameFrame extends JFrame implements ActionListener {
         opponentPanel.setBackground(Color.decode("#FF990D"));
 
         //set opponent life bar
-        lifeUser= new JButton("Life");
+        lifeUser = new JButton("Life");
         lifeUser.setName("Life");
         lifeUser.addActionListener(this);
 
@@ -159,29 +158,44 @@ public class GameFrame extends JFrame implements ActionListener {
 
     }
 
-    public void createBoard(int dimension, JPanel actorPanel, JButton[][] buttonForGrid) {
+    private void addPanelsToMainFrame() {
+        Container contentPane = getContentPane();
+        contentPane.setLayout(new BorderLayout());
+        contentPane.add(userPanel, BorderLayout.WEST);
+        contentPane.add(selectionPanel, BorderLayout.CENTER);
+        contentPane.add(opponentPanel, BorderLayout.EAST);
+    }
+
+    public JButton[][] createBoard(int dimension, JPanel actorPanel, Boolean whichActor) {
         int buttonSize = Math.min(50, 200 / dimension); // Adjust the button size based on dimension
         int labelSize = Math.min(50, 200 / dimension); // Adjust the button size based on dimension
-
-        // Calculate the new button and label sizes based on the dimension
 
         //manually manipulate dimensions for now - update input param dimension with formula result
         dimension = dimension * 2;
         int numRows = dimension;
         int numCols = dimension;
+        String actor1 = "Pos ";
+        String actor2 = "Opp Pos ";
         JPanel actorGrid = new JPanel(new GridLayout(numRows, numCols));
-        buttonForGrid = new JButton[numRows][numCols];
+        JButton[][] buttonForGrid = new JButton[numRows][numCols];
         //create the buttons in a for loop
         for (int i = 0; i < numRows; i++) {
             for (int j = 0; j < numCols; j++) {
                 /* Find a better function to use aside from this name, because this names the buttons but the history track almost there */
                 JButton userButton = new JButton();
-                userButton.setName("Pos " + (i + 1) + "," + (j + 1));
+                if (whichActor == true) {
+                    userButton.setName(actor1 + (i + 1) + "," + (j + 1));
+                } else {
+                    userButton.setName(actor2 + (i + 1) + "," + (j + 1));
+                }
                 //add action lister for every button
                 userButton.addActionListener(this);
-                userButton.setPreferredSize(new Dimension(buttonSize,buttonSize));
-                userButton.setBackground(Color.blue);
-
+                userButton.setPreferredSize(new Dimension(buttonSize, buttonSize));
+                if (whichActor == true) {
+                    userButton.setBackground(Color.blue);
+                } else {
+                    userButton.setBackground(Color.red);
+                }
                 actorGrid.add(userButton);
                 //assign the button in the array
                 buttonForGrid[i][j] = userButton;
@@ -196,7 +210,7 @@ public class GameFrame extends JFrame implements ActionListener {
             //make  new label for each col
             JLabel columnLabels = new JLabel(String.valueOf(k + 1));
             //set same dimensions as selection box
-            columnLabels.setPreferredSize(new Dimension(labelSize,labelSize));
+            columnLabels.setPreferredSize(new Dimension(labelSize, labelSize));
             columnLabels.setHorizontalAlignment(SwingConstants.CENTER);
             //add column labels to the panel
             columnLabelsPanel.add(columnLabels);
@@ -210,7 +224,7 @@ public class GameFrame extends JFrame implements ActionListener {
             //make a new label for each row
             JLabel rowLabel = new JLabel(String.valueOf(i + 1));
             //same dimension as selection box
-            rowLabel.setPreferredSize(new Dimension(labelSize,labelSize));
+            rowLabel.setPreferredSize(new Dimension(labelSize, labelSize));
             //center text in box
             rowLabel.setHorizontalAlignment(SwingConstants.CENTER);
             //add row labels to labels panel
@@ -220,82 +234,9 @@ public class GameFrame extends JFrame implements ActionListener {
         actorPanel.add(rowLabelPanel);
         //add the user selection hit box and center it
         actorPanel.add(actorGrid, BorderLayout.CENTER);
-        actorPanel.add(columnLabelsPanel,BorderLayout.CENTER);
+        actorPanel.add(columnLabelsPanel, BorderLayout.CENTER);
         //userBoardPanel.add(lifeUser,BorderLayout.CENTER);
-
-    }
-
-//    public void createOpponentBoard(int dimension) {
-//        int buttonSize = Math.min(50, 200 / dimension); // Adjust the button size based on dimension
-//        int labelSize = Math.min(50, 200 / dimension); // Adjust the button size based on dimension
-//
-//        //manually manipulate dimensions for now - update input param dimension with formula result
-//        dimension = dimension * 2;
-//        int numRows = dimension;
-//        int numCols = dimension;
-//        JPanel opponentGrid = new JPanel(new GridLayout(numRows, numCols));
-//        opponentGridButtons = new JButton[numRows][numCols];
-//        //create the buttons in a for loop
-//        for (int i = 0; i < numRows; i++) {
-//            for (int j = 0; j < numCols; j++) {
-//                JButton opponentButton = new JButton();
-//                opponentButton.setName(("Opp Pos " + (i + 1) + "," + (j + 1)));
-//                opponentButton.addActionListener(this);
-//                //set size of each button
-//                opponentButton.setPreferredSize(new Dimension(buttonSize, buttonSize));
-//                opponentButton.setBackground(Color.red);
-//                //add buttons to grid
-//                opponentGrid.add(opponentButton);
-//                opponentGridButtons[i][j] = opponentButton;
-//            }
-//        }
-//
-//        //make a new column panel to hold column label
-//        JPanel columnLabelsPanel = new JPanel(new GridLayout(1, numCols));
-//        columnLabelsPanel.setBorder(BorderFactory.createEmptyBorder(0, 50, 0, 0));
-//
-//        //add column and row numbers on user Grid
-//        for (int k = 0; k < numCols; k++) {
-//            //make  new label for each col
-//            JLabel columnLabels = new JLabel(String.valueOf(k + 1));
-//            //set same dimensions as selection box
-//            columnLabels.setPreferredSize(new Dimension(labelSize, labelSize));
-//            columnLabels.setHorizontalAlignment(SwingConstants.CENTER);
-//            //add column labels to the panel
-//            columnLabelsPanel.add(columnLabels);
-//
-//
-//        }
-//        //make a new row panel to hold the labels
-//        JPanel rowLabelPanel = new JPanel(new GridLayout(numRows, 1));
-//        for (int i = 0; i < numRows; i++) {
-//            //make a new label for each row
-//            JLabel rowLabel = new JLabel(String.valueOf(i + 1));
-//            //same dimension as selection box
-//            rowLabel.setPreferredSize(new Dimension(labelSize, labelSize));
-//            //center text in box
-//            rowLabel.setHorizontalAlignment(SwingConstants.CENTER);
-//            //add row labels to labels panel
-//            rowLabelPanel.add(rowLabel);
-//        }
-//
-//        //add row and column label panels and position west(left) and south(bottom)
-//        opponentPanel.add(rowLabelPanel);
-//        //add the user selection hit box and center it
-//        opponentPanel.add(opponentGrid, BorderLayout.CENTER);
-//        opponentPanel.add(columnLabelsPanel);
-//    }
-//
-
-    private void addPanelsToMainFrame() {
-        //update create user board and create opponent board to take in result of DIM formula
-        createBoard(4, userPanel, userButtons);
-        createBoard(4, opponentPanel,opponentButtons);
-        Container contentPane = getContentPane();
-        contentPane.setLayout(new BorderLayout());
-        contentPane.add(userPanel, BorderLayout.WEST);
-        contentPane.add(selectionPanel, BorderLayout.CENTER);
-        contentPane.add(opponentPanel, BorderLayout.EAST);
+        return buttonForGrid;
     }
 
     public void playBackgroundMusic(String musicFile) {
@@ -338,7 +279,6 @@ public class GameFrame extends JFrame implements ActionListener {
             clickClip.start();
             resizeBoard(selectedDimension, userPanel, opponentPanel);
             gameAction.historyLog(eventSource, controlPanelText);
-
         } else if (eventSource == reset) {
             clickClip.start();
             gameAction.historyLog(eventSource, controlPanelText);
@@ -346,24 +286,13 @@ public class GameFrame extends JFrame implements ActionListener {
             clickClip.start();
             gameAction.historyLog(eventSource, controlPanelText);
         } else {
-            for (JButton[] row : userButtons) {
-                for (JButton button : row) {
-                    if (eventSource == button) {
-                        gameAction.historyLog(eventSource, controlPanelText);
-                    }
-                }
-            }
-
-            for (JButton[] row : opponentButtons) {
-                for (JButton button : row) {
-                    if (eventSource == button) {
-                        gameAction.historyLog(eventSource, controlPanelText);
-                    }
-                }
-            }
+            clickClip.start();
+            boardButtonEvent(userButtons, eventSource, controlPanelText);
+            boardButtonEvent(opponentButtons, eventSource, controlPanelText);
         }
     }
-//later we can pass parameter to specifiy click sound or blast sound from a strike on selection hitbox,
+
+    //later we can pass parameter to specify click sound or blast sound from a strike on selection hit box,
     private Clip createAudioClip() {
         try {
             //create 2nd audio input stream so 2 sounds can occur at same time
@@ -380,14 +309,25 @@ public class GameFrame extends JFrame implements ActionListener {
         return null;
     }
 
-    private void resizeBoard(Integer selectedDimension, JPanel userBoardPanel, JPanel opponentBoardPanel){
+    private void resizeBoard(Integer selectedDimension, JPanel userBoardPanel, JPanel opponentBoardPanel) {
         userBoardPanel.removeAll();
         opponentBoardPanel.removeAll();
-        createBoard(selectedDimension, userPanel, userButtons);
-        createBoard(selectedDimension, opponentPanel, opponentButtons);
+        userButtons = createBoard(selectedDimension, userPanel, true);
+        opponentButtons = createBoard(selectedDimension, opponentPanel, false);
         opponentBoardPanel.revalidate();
         userBoardPanel.revalidate();
         opponentBoardPanel.repaint();
         userBoardPanel.repaint();
+    }
+
+    private void boardButtonEvent(JButton[][] buttons, Object eventSource, JLabel controlPanelText) {
+        GameAction gameAction = new GameAction();
+        for (JButton[] row : buttons) {
+            for (JButton button : row) {
+                if (eventSource == button) {
+                    gameAction.historyLog(eventSource, controlPanelText);
+                }
+            }
+        }
     }
 }
