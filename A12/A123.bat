@@ -54,9 +54,9 @@ ECHO "[LABS SCRIPT ---------------------]"
 
 ECHO "0. Preconfiguring ................."
 mkdir "%BINDIR%/%RESOURCES%"
-xcopy "%SRCDIR%/%RESOURCES%" "%BINDIR%/%RESOURCES%" /Y
+xcopy "%RESOURCES%" "%BINDIR%/%RESOURCES%" /Y
 mkdir "%BINDIR%/%IMAGES%"
-xcopy "%SRCDIR%/%IMAGES%" "%BINDIR%/%IMAGES%" /Y
+xcopy "%IMAGES%" "%BINDIR%/%IMAGES%" /Y
 
 ECHO "1. Compiling ......................"
 ::javac -Xlint -cp ".;src;/SOFT/copy/dev/java/javafx/lib/*;/SOFT/COPY/db/derby/lib/*" src/Lab.java -d bin 2> labs-javac.err

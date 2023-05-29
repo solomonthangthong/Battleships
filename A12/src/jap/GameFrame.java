@@ -105,8 +105,8 @@ public class GameFrame extends JFrame implements ActionListener {
         selectionPanel.setBorder(BorderFactory.createEmptyBorder(0, 69, 0, 69));
 
         // Load and display the logo
-        ImageIcon image = new ImageIcon("src/images/logo.png");
-        if (new File("src/images/logo.png").exists()) {
+        ImageIcon image = new ImageIcon("images/logo.png");
+        if (new File("images/logo.png").exists()) {
             JButton imageLogo = new JButton(image);
             selectionPanel.add(imageLogo);
         } else {
