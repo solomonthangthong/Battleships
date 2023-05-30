@@ -332,10 +332,6 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
         actorPanel.add(lifeStatus, BorderLayout.NORTH);
         actorPanel.add(actorGrid, BorderLayout.CENTER);
         actorPanel.add(columnLabelsPanel, BorderLayout.SOUTH);
-        //add the user selection hit box and center it
-
-
-        //userBoardPanel.add(lifeUser,BorderLayout.CENTER);
         return buttonForGrid;
     }
 
@@ -381,10 +377,10 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
         } else if (eventSource == randBoatPlacement) {
             clickClip.start();
             gameAction.historyLog(eventSource, controlPanelText);
-            userPanel.removeAll();
+/*            userPanel.removeAll();
             userPanel.revalidate();
-            userPanel.repaint();
-            userButtons= gameAction.randBoatPlacement(selectedDimension);
+            userPanel.repaint();*/
+            userButtons = gameAction.randBoatPlacement(selectedDimension, userButtons);
           //  userPanel.add(userButtons);
 
         } else if (eventSource == dimensionComboBox) {
