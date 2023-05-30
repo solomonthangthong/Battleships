@@ -2,6 +2,7 @@ package jap;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Random;
 
 public class GameAction {
     /**
@@ -51,7 +52,49 @@ public class GameAction {
     /**
      * Rnadomize ship placement for machine, and if user desires to randomize.
      */
-    protected void randBoatPlacement() {
+    protected JButton[][] randBoatPlacement(int dimension) {
+        //length of rows and columns on the board
+        int boardSize = 2 * dimension;
+        //Total amount of tiles on board
+        int totalTiles = boardSize * boardSize;
+        //formula to determine the amount of boats given the dimension of the board - N=(Dim/2) *(1+D)
+        int totalBoats = (dimension / 2) * (1 + dimension);
+        // Given formula to determine the amount of tiles the boats will occupy given dimension  S = (Dim * (Dim + 1) * (Dim + 2)) / 6
+        int totalBoatTiles = (dimension * (dimension + 1) * (dimension + 2)) / 6;
+        JButton[][] newBoard = new JButton[boardSize][boardSize];
+                Random random = new Random();
+                //loop the amount of total boats, each loop create a boat and uppdate if board is occupied or not
+        for(int i = 0 ; i<totalBoats; i++ ){
+            int boatSize = i+1;
+            //get random true of false to determine if this boat is verticle (true) or horizontal(false)
+            boolean boatIsVerticle = random.nextBoolean();
 
+            //init vars for row and col
+            int row;
+            int col;
+
+            do{
+                col= random.nextInt(boardSize);
+                row = random.nextInt(boardSize);
+
+                //keep trying to create new buttons until a spot is made that is not occupied
+        }while(isOccupiedOnBoard(newBoard,row,col));
+            for (int k = 0;  k< boatSize;k++ ){
+                if(boatIsVerticle){
+                    newBoard[row+k][col].setText("Boat");
+                    newBoard[row+k][col].setBackground(Color.red);
+                }else{
+                    newBoard[row][col+k].setText("Boat");
+                    newBoard[row][col+k].setBackground(Color.red);
+                }
+            }
+
+
+    }
+        return newBoard;
+}
+
+private boolean isOccupiedOnBoard(JButton[][] board, int row, int col){
+       return board[row][col].getText().equals("Boat");
     }
 }

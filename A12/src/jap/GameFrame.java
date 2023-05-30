@@ -86,7 +86,7 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
         opponentButtons = createBoard(4, opponentPanel, false);
         //play background music
         String musicFile = "resources/backgroundMusic.wav";
-        playBackgroundMusic(musicFile);
+      //  playBackgroundMusic(musicFile);
     }
 
     /**
@@ -299,7 +299,7 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
         }
         //add row and column label panels and position west(left) and south(bottom)
         actorPanel.add(rowLabelPanel);
-        //add the user selection hit box and center it
+        //add the user selection hit box and  center it
         actorPanel.add(actorGrid, BorderLayout.CENTER);
         actorPanel.add(columnLabelsPanel, BorderLayout.CENTER);
         //userBoardPanel.add(lifeUser,BorderLayout.CENTER);
@@ -335,6 +335,7 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
         GameAction gameAction = new GameAction();
         Object eventSource = e.getSource();
         Clip clickClip = createAudioClip();
+        int selectedDimension = (int) dimensionComboBox.getSelectedItem();
 
         if (eventSource == languageButton) {
             clickClip.start();
@@ -347,9 +348,14 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
         } else if (eventSource == randBoatPlacement) {
             clickClip.start();
             gameAction.historyLog(eventSource, controlPanelText);
-            gameAction.randBoatPlacement();
+            userPanel.removeAll();
+            userPanel.revalidate();
+            userPanel.repaint();
+            userButtons= gameAction.randBoatPlacement(selectedDimension);
+          //  userPanel.add(userButtons);
+
         } else if (eventSource == dimensionComboBox) {
-            int selectedDimension = (int) dimensionComboBox.getSelectedItem();
+           // int selectedDimension = (int) dimensionComboBox.getSelectedItem();
             clickClip.start();
             resizeBoard(selectedDimension, userPanel, opponentPanel);
             gameAction.historyLog(eventSource, controlPanelText);
