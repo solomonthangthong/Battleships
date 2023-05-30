@@ -99,7 +99,7 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
      */
     private void initializeFrame() {
         setTitle("Battleship by: Andrew Lorimer & Solomon Thangthong");
-        setSize(1280, 720);
+        setSize(1280, 675);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
@@ -205,11 +205,11 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
         selectionPanel.add(play);
 
         // Set the colors of remaining panels
-        opponentPanel = new JPanel();
+        opponentPanel = new JPanel(new BorderLayout());
         opponentPanel.setPreferredSize(new Dimension(520, 119));
         opponentPanel.setBackground(Color.decode("#FF990D"));
 
-        userPanel = new JPanel();
+        userPanel = new JPanel(new BorderLayout());
         userPanel.setPreferredSize(new Dimension(520, 119));
         userPanel.setBackground(Color.ORANGE);
 
@@ -300,6 +300,11 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
             columnLabels.setHorizontalAlignment(SwingConstants.CENTER);
             //add column labels to the panel
             columnLabelsPanel.add(columnLabels);
+            if (whichActor){
+                columnLabelsPanel.setBackground(Color.ORANGE);
+            }else {
+                columnLabelsPanel.setBackground(Color.decode("#FF990D"));
+            }
 
 
         }
@@ -315,14 +320,21 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
             rowLabel.setHorizontalAlignment(SwingConstants.CENTER);
             //add row labels to labels panel
             rowLabelPanel.add(rowLabel);
-        }
+            if (whichActor){
+                rowLabelPanel.setBackground(Color.ORANGE);
+            }else {
+                rowLabelPanel.setBackground(Color.decode("#FF990D"));
+            }
 
-        //add row and column label panels and position west(left) and south(bottom)
-        actorPanel.add(rowLabelPanel);
-        //add the user selection hit box and  center it
+        }
+       //add row and column label panels and position west(left) and south(bottom)
+        actorPanel.add(rowLabelPanel, BorderLayout.WEST);
+        actorPanel.add(lifeStatus, BorderLayout.NORTH);
         actorPanel.add(actorGrid, BorderLayout.CENTER);
-        actorPanel.add(columnLabelsPanel, BorderLayout.CENTER);
-        actorPanel.add(lifeStatus);
+        actorPanel.add(columnLabelsPanel, BorderLayout.SOUTH);
+        //add the user selection hit box and center it
+
+
         //userBoardPanel.add(lifeUser,BorderLayout.CENTER);
         return buttonForGrid;
     }
