@@ -377,9 +377,9 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
         } else if (eventSource == randBoatPlacement) {
             clickClip.start();
             gameAction.historyLog(eventSource, controlPanelText);
-/*            userPanel.removeAll();
-            userPanel.revalidate();
-            userPanel.repaint();*/
+            resizeBoard(selectedDimension, userPanel, opponentPanel);
+
+             opponentButtons =gameAction.randBoatPlacement(selectedDimension,opponentButtons);
             userButtons = gameAction.randBoatPlacement(selectedDimension, userButtons);
           //  userPanel.add(userButtons);
 
