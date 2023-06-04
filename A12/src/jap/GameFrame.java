@@ -8,18 +8,16 @@ import java.io.File;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.Serializable;
-//imports for sound effects
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
-import javax.swing.border.EmptyBorder;
 
 /**
  * The main frame of the Battleship application.
  */
 public class GameFrame extends JFrame implements ActionListener, Serializable {
     /**
-     *  ensure serialized data can be deserialized correctly, if there are changes in the class structure or fields
+     * ensure serialized data can be deserialized correctly, if there are changes in the class structure or fields
      */
     private static final long serialVersionUID = 1L;
     /**
@@ -87,8 +85,8 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
         createPanels();
         addPanelsToMainFrame();
         //update create user board and create opponent board to take in result of DIM formula
-        userButtons = createBoard(4, userPanel, lifeUser,true);
-        opponentButtons = createBoard(4, opponentPanel, lifeMachine,false);
+        userButtons = createBoard(4, userPanel, lifeUser, true);
+        opponentButtons = createBoard(4, opponentPanel, lifeMachine, false);
         //play background music
         String musicFile = "resources/backgroundMusic.wav";
       //  playBackgroundMusic(musicFile);
@@ -109,9 +107,9 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
      * Called internally for initialization.
      */
     private void createPanels() {
+        /* Centre Panel Controls */
         selectionPanel = new JPanel();
         selectionPanel.setBackground(Color.decode("#8119FF"));
-        /* Potentially do not need this border, if left and right sides use Preferred Size */
         selectionPanel.setBorder(BorderFactory.createEmptyBorder(0, 69, 0, 69));
 
         // Load and display the logo
@@ -157,11 +155,6 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
         dimensionsPanel.add(dimensionComboBox);
         selectionPanel.add(dimensionsPanel);
 
-        //need to add action listener to get value from this formula
-        //int dimensionSelected = (int) dimensionComboBox.getSelectedItem();
-        //formula from
-        //int result = (selectedDimension * (selectedDimension + 1) * (selectedDimension + 2)) / 6;
-
         //Control panel code
         JPanel controlPanel = new JPanel();
         controlPanel.setPreferredSize(new Dimension(200, 350));
@@ -184,6 +177,8 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
         scrollPane.setViewportView(controlPanelText);
         selectionPanel.add(controlPanel);
 
+        /* Create Time window */
+        //TODO: Add time duration when play button logic is created
         JLabel time = new JLabel("Time: ");
         JPanel timeDisplay = new JPanel();
         JPanel timeContainer = new JPanel();
@@ -194,21 +189,24 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
         timeContainer.setBackground(Color.decode("#8119FF"));
         selectionPanel.add(timeContainer);
 
+        /* Creates reset button */
         reset = new JButton("Reset");
         reset.setName("Reset");
         reset.addActionListener(this);
         selectionPanel.add(reset);
 
+        /* Creates play button */
         play = new JButton("Play");
         play.setName("Play");
         play.addActionListener(this);
         selectionPanel.add(play);
 
-        // Set the colors of remaining panels
+        // Creates right side panel container
         opponentPanel = new JPanel(new BorderLayout());
         opponentPanel.setPreferredSize(new Dimension(520, 119));
         opponentPanel.setBackground(Color.decode("#FF990D"));
 
+        // Creates left side panel container
         userPanel = new JPanel(new BorderLayout());
         userPanel.setPreferredSize(new Dimension(520, 119));
         userPanel.setBackground(Color.ORANGE);
@@ -247,7 +245,8 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
 
     /**
      * Creates clickable buttons based on dimension size. Player can click the button and attempt to locate enemy ship
-     * @param dimension - Board dimension size, default is 4
+     *
+     * @param dimension  - Board dimension size, default is 4
      * @param actorPanel - User or Opponent JPanel
      * @param whichActor - True = user actor, false = machine actor
      * @return - Button Array
@@ -256,27 +255,31 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
         int buttonSize = Math.min(50, 200 / dimension); // Adjust the button size based on dimension
         int labelSize = Math.min(50, 200 / dimension); // Adjust the button size based on dimension
 
-        //manually manipulate dimensions for now - update input param dimension with formula result
+        // Multiply dimensions by two. Intended result is if board is size 4 make it 8 by 8 grid
         dimension = dimension * 2;
         int numRows = dimension;
         int numCols = dimension;
         String actor1 = "Pos ";
         String actor2 = "Opp Pos ";
+
+        // Initialize JPanel to hold array of buttons
         JPanel actorGrid = new JPanel(new GridLayout(numRows, numCols));
+        // Initialize 2D array for buttons
         JButton[][] buttonForGrid = new JButton[numRows][numCols];
-        //create the buttons in a for loop
+        // Create nested loop, in order to create clickable buttons for each iteration of the outer loop
         for (int i = 0; i < numRows; i++) {
             for (int j = 0; j < numCols; j++) {
-                /* Find a better function to use aside from this name, because this names the buttons but the history track almost there */
+                /* Create a new button for the board */
                 JButton userButton = new JButton();
                 if (whichActor) {
                     userButton.setName(actor1 + (i + 1) + "," + (j + 1));
                 } else {
                     userButton.setName(actor2 + (i + 1) + "," + (j + 1));
                 }
-                //add action lister for every button
+                //add action lister for this instance of button
                 userButton.addActionListener(this);
                 userButton.setPreferredSize(new Dimension(buttonSize, buttonSize));
+
                 if (whichActor) {
                     userButton.setBackground(Color.decode("#19A7FF"));
                 } else {
@@ -288,7 +291,7 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
             }
         }
 
-        //make a new column panel to hold column label
+        // Create column panel to hold column label
         JPanel columnLabelsPanel = new JPanel(new GridLayout(1, numCols));
         columnLabelsPanel.setBorder(BorderFactory.createEmptyBorder(0, 1000, 0, 1000)); // Add left padding
         //add column and row numbers on user Grid
@@ -300,14 +303,14 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
             columnLabels.setHorizontalAlignment(SwingConstants.CENTER);
             //add column labels to the panel
             columnLabelsPanel.add(columnLabels);
-            if (whichActor){
+
+            if (whichActor) {
                 columnLabelsPanel.setBackground(Color.ORANGE);
-            }else {
+            } else {
                 columnLabelsPanel.setBackground(Color.decode("#FF990D"));
             }
-
-
         }
+
         //make a new row panel to hold the labels
         JPanel rowLabelPanel = new JPanel(new GridLayout(numRows, 1));
         columnLabelsPanel.setBorder(BorderFactory.createEmptyBorder(0, 50, 0, 0));
@@ -320,14 +323,14 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
             rowLabel.setHorizontalAlignment(SwingConstants.CENTER);
             //add row labels to labels panel
             rowLabelPanel.add(rowLabel);
-            if (whichActor){
+            if (whichActor) {
                 rowLabelPanel.setBackground(Color.ORANGE);
-            }else {
+            } else {
                 rowLabelPanel.setBackground(Color.decode("#FF990D"));
             }
 
         }
-       //add row and column label panels and position west(left) and south(bottom)
+        // Arrange layout positions for each component
         actorPanel.add(rowLabelPanel, BorderLayout.WEST);
         actorPanel.add(lifeStatus, BorderLayout.NORTH);
         actorPanel.add(actorGrid, BorderLayout.CENTER);
@@ -336,7 +339,9 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
     }
 
     /**
-     * @param musicFile
+     * This method enables the background music to be played when the jar file is opened.
+     *
+     * @param musicFile - wav file for the background music
      */
     public void playBackgroundMusic(String musicFile) {
         try {
@@ -346,7 +351,6 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
             Clip clip = AudioSystem.getClip();
             clip.open(audioInputStream);
             //open and loop the clip
-
             clip.loop(Clip.LOOP_CONTINUOUSLY);
             clip.start();
         } catch (Exception e) {
@@ -356,35 +360,33 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
 
     /**
      * Executed when action event occurs
+     *
      * @param e the event represented as user action
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-        /*Initialize GameAction (where the logic exists for test cases) */
+        /* Initialize GameAction (where the logic exists for test cases) */
         GameAction gameAction = new GameAction();
         Object eventSource = e.getSource();
         Clip clickClip = createAudioClip();
         int selectedDimension = (int) dimensionComboBox.getSelectedItem();
 
+        /* If else tree, checking eventSource and if matches execute correct action */
         if (eventSource == languageButton) {
             clickClip.start();
             gameAction.historyLog(eventSource, controlPanelText);
         } else if (eventSource == designBoatPlacement) {
             clickClip.start();
             gameAction.historyLog(eventSource, controlPanelText);
-            //pop up box
+            // Open design window
             gameAction.designBoatPlacement();
         } else if (eventSource == randBoatPlacement) {
             clickClip.start();
             gameAction.historyLog(eventSource, controlPanelText);
             resizeBoard(selectedDimension, userPanel, opponentPanel);
-
-             opponentButtons =gameAction.randBoatPlacement(selectedDimension,opponentButtons);
-            userButtons = gameAction.randBoatPlacement(selectedDimension, userButtons);
-          //  userPanel.add(userButtons);
-
+            opponentButtons = gameAction.generateBoatSize(selectedDimension, opponentButtons);
+            userButtons = gameAction.generateBoatSize(selectedDimension, userButtons);
         } else if (eventSource == dimensionComboBox) {
-           // int selectedDimension = (int) dimensionComboBox.getSelectedItem();
             clickClip.start();
             resizeBoard(selectedDimension, userPanel, opponentPanel);
             gameAction.historyLog(eventSource, controlPanelText);
@@ -402,37 +404,39 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
     }
 
     /**
-     * @return
+     * This method enables button click sound effects
+     *
+     * @return - If file is found, return click sound effect, else return null
      */
-    //later we can pass parameter to specify click sound or blast sound from a strike on selection hit box,
     private Clip createAudioClip() {
+        //TODO: If else tree for if boat as been hit or miss
         try {
-            //create 2nd audio input stream so 2 sounds can occur at same time
+            // Create 2nd audio input stream so 2 sounds can occur at same time
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("resources/click.wav").getAbsoluteFile());
-            //get clip from audio file and open it
+            // Get clip from audio file and open it
             Clip clip = AudioSystem.getClip();
             clip.open(audioInputStream);
-            //return the click sound
+            // Return audio file to be executed
             return clip;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        //return nothing if there is error
         return null;
     }
 
     /**
      * When dimension JComboBox is changed, this method clears both actor board panels, and creates new board
      * based on the size of the dimension selected.
-     * @param selectedDimension - user determined size of board.
-     * @param userBoardPanel - user actor panel.
+     *
+     * @param selectedDimension  - user determined size of board.
+     * @param userBoardPanel     - user actor panel.
      * @param opponentBoardPanel - machine actor panel.
      */
     private void resizeBoard(Integer selectedDimension, JPanel userBoardPanel, JPanel opponentBoardPanel) {
         userBoardPanel.removeAll();
         opponentBoardPanel.removeAll();
-        userButtons = createBoard(selectedDimension, userPanel, lifeUser,true);
-        opponentButtons = createBoard(selectedDimension, opponentPanel, lifeMachine,false);
+        userButtons = createBoard(selectedDimension, userPanel, lifeUser, true);
+        opponentButtons = createBoard(selectedDimension, opponentPanel, lifeMachine, false);
         opponentBoardPanel.revalidate();
         userBoardPanel.revalidate();
         opponentBoardPanel.repaint();
@@ -442,8 +446,9 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
     /**
      * Loop through array of buttons to find user action event
      * Created method to reduce for loop duplication
-     * @param buttons - either actor button array
-     * @param eventSource - Object event action
+     *
+     * @param buttons          - either actor button array
+     * @param eventSource      - Object event action
      * @param controlPanelText - JLabel passed, and then later uses .getName() to extract information
      */
     private void boardButtonEvent(JButton[][] buttons, Object eventSource, JLabel controlPanelText) {

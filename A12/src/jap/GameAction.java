@@ -53,17 +53,16 @@ public class GameAction {
     /**
      * Rnadomize ship placement for machine, and if user desires to randomize.
      */
-    protected JButton[][] randBoatPlacement(int dimension, JButton[][] newBoard) {
-        //length of rows and columns on the board
-        int boardSize = 2 * dimension;
-        //Total amount of tiles on board
-        int totalTiles = boardSize * boardSize;
-        //formula to determine the amount of boats given the dimension of the board - N=(Dim/2) *(1+D)
-        int totalBoats = dimension;
-
+    protected JButton[][] generateBoatSize(int dimension, JButton[][] newBoard) {
         Random random = new Random();
 
-        //loop the amount of total boats, each loop create a boat and update if board is occupied or not
+        for (int boatSize = 1; boatSize <= dimension; boatSize++) {
+            for (int boatCount = 1; boatCount <= dimension - boatSize + 1; boatCount++) {
+                createRandomBoat(newBoard, boatSize, dimension, random);
+            }
+        }
+
+/*        //loop the amount of total boats, each loop create a boat and update if board is occupied or not
         for (int i = 0; i < totalBoats; i++) {
             //iterator starts at zero
             int boatSize = i + 1;
@@ -101,38 +100,76 @@ public class GameAction {
                     }
                 }
             }
-        }
+        }*/
         return newBoard;
     }
 
+    private void createRandomBoat(JButton[][] board, int boatSize, int dimension, Random random) {
+        boolean boatPlaced = false;
+        int red = (int) (Math.random() * 256);
+        int green = (int) (Math.random() * 256);
+        int blue = (int) (Math.random() * 256);
+
+        while(!boatPlaced){
+
+            int randRow = random.nextInt(2 * dimension);
+            int randCol = random.nextInt(2 * dimension);
+            // Create a Color object with the random RGB values
+            Color backgroundColor = new Color(red, green, blue);
+            boolean vertical = random.nextBoolean();
+
+            if (vertical){
+                if (isOccupiedOnBoard(board, randCol, randRow, boatSize,dimension, true)){
+                    continue;
+                }
+                for (int position = 0; position < boatSize; position++){
+                    board[randRow + position][randCol].setName("Boat");
+                    board[randRow + position][randCol].setBackground(backgroundColor);
+                }
+            }
+            else {
+                if (isOccupiedOnBoard(board, randCol, randRow, boatSize,dimension, false)){
+                    continue;
+                }
+                for (int position = 0; position < boatSize; position++){
+                    board[randRow][randCol + position].setName("Boat");
+                    board[randRow][randCol + position].setBackground(backgroundColor);
+                }
+            }
+            boatPlaced = true;
+        }
+    }
+
+
     /**
      * @param board      the game board
-     * @param row        the row of the first point
-     * @param col        the random col of the first point
+     * @param col        the row of the first point
+     * @param row        the random col of the first point
      * @param boatSize   the size of the boat being made
-     * @param isVertical is the boat growing in x or y dimension
-     * @param dimension  determines the boundary of the board
+     * @param vertical is the boat growing in x or y dimension
      * @return boolean to determine if spot is occupied by another boat
      */
-    private boolean isOccupiedOnBoard(JButton[][] board, int row, int col, int boatSize, boolean isVertical, int dimension) {
-
-        //if vertical grow row-wise and check each location for name "Boat"
-        if (isVertical) {
-            for (int i = 0; i < boatSize; i++) {
-                if (row + i >= board.length || board[row + i][col].getName().equals("Boat")) {
-                    //if any condition is true break out and change boolean value
-                    return true;
-                }
-            }
-            //if horizontal grow column wise and check name of boat
-        } else {
-            for (int i = 0; i < boatSize; i++) {
-                if (col + i >= board[row].length || board[row][col + i].getName().equals("Boat")) {
-                    //if any condition is true break out and change boolean value
-                    return true;
-                }
+    private boolean isOccupiedOnBoard(JButton[][] board, int col, int row, int boatSize, int dimension, boolean vertical) {
+      if (vertical){
+          if (row + boatSize > 2 * dimension) {
+            return true;
+          }
+          for (int position = 0; position < boatSize; position++){
+              if (board[row + position][col].getName().equals("Boat")){
+                  return true;
+              }
+          }
+      }
+      else {
+        if (col + boatSize > 2 * dimension){
+            return true;
+        }
+        for (int position = 0; position < boatSize; position++){
+            if (board[row][col + position].getName().equals("Boat")){
+                return true;
             }
         }
-        return false;
+      }
+      return false;
     }
 }
