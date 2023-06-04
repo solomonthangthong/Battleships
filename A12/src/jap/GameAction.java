@@ -51,7 +51,7 @@ public class GameAction {
     }
 
     /**
-     * Rnadomize ship placement for machine, and if user desires to randomize.
+     * Randomize ship placement for machine, and if user desires to randomize.
      */
     protected JButton[][] generateBoatSize(int dimension, JButton[][] newBoard) {
         Random random = new Random();
@@ -106,6 +106,7 @@ public class GameAction {
 
     private void createRandomBoat(JButton[][] board, int boatSize, int dimension, Random random) {
         boolean boatPlaced = false;
+
         int red = (int) (Math.random() * 256);
         int green = (int) (Math.random() * 256);
         int blue = (int) (Math.random() * 256);
@@ -114,14 +115,18 @@ public class GameAction {
 
             int randRow = random.nextInt(2 * dimension);
             int randCol = random.nextInt(2 * dimension);
-            // Create a Color object with the random RGB values
+            // Create colour  with the random RGB values
             Color backgroundColor = new Color(red, green, blue);
+            // Determine if vertical or horizontal
             boolean vertical = random.nextBoolean();
 
+            // If vertical
             if (vertical){
                 if (isOccupiedOnBoard(board, randCol, randRow, boatSize,dimension, true)){
+                    // Skip iteration and move to next, restart loop to get new values
                     continue;
                 }
+                // Set name and background colour of JButton going down vertically for boat size
                 for (int position = 0; position < boatSize; position++){
                     board[randRow + position][randCol].setName("Boat");
                     board[randRow + position][randCol].setBackground(backgroundColor);
@@ -129,8 +134,10 @@ public class GameAction {
             }
             else {
                 if (isOccupiedOnBoard(board, randCol, randRow, boatSize,dimension, false)){
+                    // Skip iteration and move to next, restart loop to get new values
                     continue;
                 }
+                // Set name and background colour of JButton going horizontally for boat size
                 for (int position = 0; position < boatSize; position++){
                     board[randRow][randCol + position].setName("Boat");
                     board[randRow][randCol + position].setBackground(backgroundColor);
@@ -150,7 +157,9 @@ public class GameAction {
      * @return boolean to determine if spot is occupied by another boat
      */
     private boolean isOccupiedOnBoard(JButton[][] board, int col, int row, int boatSize, int dimension, boolean vertical) {
+
       if (vertical){
+          // Check if ship goes out of bounds vertically
           if (row + boatSize > 2 * dimension) {
             return true;
           }
@@ -161,6 +170,7 @@ public class GameAction {
           }
       }
       else {
+          // Check if ship goes out of bounds horizontally
         if (col + boatSize > 2 * dimension){
             return true;
         }
