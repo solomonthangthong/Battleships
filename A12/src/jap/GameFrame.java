@@ -1,3 +1,12 @@
+/**
+ * File name: GameFrame.java
+ * Identification: Andrew Lorimer 041056170, Solomon Thangthong 041023691
+ * Course: CST 8221 - JAP, Lab Section: 301
+ * Professor: Paulo Sousa
+ * Date: 06/04/2023
+ * Compiler: Intellij IDEA 2023.1.1 (Community Edition)
+ * Purpose: File that host creation of JPanels, JButtons, music and photo files.
+ */
 package jap;
 
 import javax.swing.*;
@@ -13,7 +22,16 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 
 /**
- * The main frame of the Battleship application.
+ * Class Name: GameFrame
+ * Method List: initializeFrame, createPanels, addPanelsToMainFrame, createBoard, playBackgroundMusic, actionPerformed, createAudioClip, resizeBoard, boardButtonEvent
+ * Constants List: serialVersionUID
+ * The main container panel holding all instances of JPanels and JButtons
+ * @author Andrew Lorimer, Solomon Thangthong
+ * @verison 1
+ * @see JFrame
+ * @see ActionListener
+ * @see Serializable
+ * @since 11.0.19
  */
 public class GameFrame extends JFrame implements ActionListener, Serializable {
     /**
@@ -89,11 +107,13 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
         opponentButtons = createBoard(4, opponentPanel, lifeMachine, false);
         //play background music
         String musicFile = "resources/backgroundMusic.wav";
-      //  playBackgroundMusic(musicFile);
+        playBackgroundMusic(musicFile);
     }
 
     /**
-     * Method to set up parameters for GUI window
+     * Method Name: InitializeFrame
+     * Purpose: Method to set up parameters for GUI window
+     * Algorithm: Set title, size, location, default close operation
      */
     private void initializeFrame() {
         setTitle("Battleship by: Andrew Lorimer & Solomon Thangthong");
@@ -103,8 +123,9 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
     }
 
     /**
-     * Creates and configure panels for user interface.
-     * Called internally for initialization.
+     * Method Name: createPanels
+     * Purpose: This method creates and configure panels for user interface and called internally for initialization.
+     * Algorithm: Create selectionPanel, all control panel buttons, create both actor panel, and health bars.
      */
     private void createPanels() {
         /* Centre Panel Controls */
@@ -233,7 +254,9 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
     }
 
     /**
-     * Add created panels into the main frame.
+     * Method Name: addPanelsToMainFrame
+     * Purpose: Add created panels into the main frame.
+     * Algorithm: Create new contentpane, set layout, add user actor, control panel, and machine actor
      */
     private void addPanelsToMainFrame() {
         Container contentPane = getContentPane();
@@ -244,14 +267,16 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
     }
 
     /**
-     * Creates clickable buttons based on dimension size. Player can click the button and attempt to locate enemy ship
+     * Method Name: createBoard
+     * Purpose: Creates clickable buttons based on dimension size. Player can click the button and attempt to locate enemy ship
+     * Algorithm: Create button sizes, define variables, nested loop to create 2D array of JButtons, then create col and row labels.
      *
      * @param dimension  - Board dimension size, default is 4
      * @param actorPanel - User or Opponent JPanel
      * @param whichActor - True = user actor, false = machine actor
      * @return - Button Array
      */
-    public JButton[][] createBoard(int dimension, JPanel actorPanel, JPanel lifeStatus, Boolean whichActor) {
+    private JButton[][] createBoard(int dimension, JPanel actorPanel, JPanel lifeStatus, Boolean whichActor) {
         int buttonSize = Math.min(50, 200 / dimension); // Adjust the button size based on dimension
         int labelSize = Math.min(50, 200 / dimension); // Adjust the button size based on dimension
 
@@ -339,11 +364,13 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
     }
 
     /**
-     * This method enables the background music to be played when the jar file is opened.
+     * Method Name: playBackgroundMusic
+     * Purpose: Enables the background music to be played when the jar file is opened.
+     * Algorithm: Try catch, locate new wav File, open audio stream, loop
      *
      * @param musicFile - wav file for the background music
      */
-    public void playBackgroundMusic(String musicFile) {
+    private void playBackgroundMusic(String musicFile) {
         try {
             //state the path where audio file is found
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(musicFile).getAbsoluteFile());
@@ -359,8 +386,9 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
     }
 
     /**
-     * Executed when action event occurs
-     *
+     * Method name: actionPerformed
+     * Purpose: Executed when action event occurs
+     * Algorithm: If else tree, determine which JButton has been clicked, call historyLog method and execute desired outcome
      * @param e the event represented as user action
      */
     @Override
@@ -404,7 +432,9 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
     }
 
     /**
-     * This method enables button click sound effects
+     * Method Name: createAudioClip
+     * Purpose: Enables button click sound effects
+     * Algorithm: try catch new wav file, create new audio stream, return sound
      *
      * @return - If file is found, return click sound effect, else return null
      */
@@ -425,8 +455,9 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
     }
 
     /**
-     * When dimension JComboBox is changed, this method clears both actor board panels, and creates new board
-     * based on the size of the dimension selected.
+     * Method Name: resizeBoard
+     * Purpose:When dimension JComboBox is changed, this method clears both actor board panels, and creates new board based on the size of the dimension selected.
+     * Algorithm: remove both actor panels, create new board, revalidate, repaint
      *
      * @param selectedDimension  - user determined size of board.
      * @param userBoardPanel     - user actor panel.
@@ -444,8 +475,9 @@ public class GameFrame extends JFrame implements ActionListener, Serializable {
     }
 
     /**
-     * Loop through array of buttons to find user action event
-     * Created method to reduce for loop duplication
+     * Method Name: boardButtonEvent
+     * Purpose: Loop through array of buttons to find user action event
+     * Algorithm: For each loop, if eventSource equals instance of JButton call historyLog
      *
      * @param buttons          - either actor button array
      * @param eventSource      - Object event action
