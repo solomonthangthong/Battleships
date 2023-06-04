@@ -27,7 +27,7 @@ import javax.sound.sampled.Clip;
  * Constants List: serialVersionUID
  * The main container panel holding all instances of JPanels and JButtons
  * @author Andrew Lorimer, Solomon Thangthong
- * @verison 1
+ * @version 1
  * @see JFrame
  * @see ActionListener
  * @see Serializable

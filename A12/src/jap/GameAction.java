@@ -21,7 +21,7 @@ import java.util.Random;
  * Purpose: Host logic for history tracking, and placement of boats.
  *
  * @author Andrew Lorimer, Solomon Thangthong
- * @verison 1
+ * @version 1
  * @since 11.0.19
  */
 public class GameAction {
