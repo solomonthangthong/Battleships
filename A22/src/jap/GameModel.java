@@ -98,9 +98,19 @@ public class GameModel {
             setCurrentAction(actionEvent);
         }
     }
+
+    /**
+     * Purpose: set currentAction String
+     * @param actionEvent
+     */
     private void setCurrentAction(String actionEvent){
         currentAction = actionEvent;
     }
+
+    /**
+     *  Purpose: get currentAction string for historyLog in GameController
+     * @return
+     */
     protected String getCurrentGameLog(){
         return currentAction;
     }
@@ -141,7 +151,26 @@ public class GameModel {
         return opponentBoardPanel;
     }
 
-    protected void updateButtonState(){
+    protected void updateButtonState(JButton button, Boat boat){
+        // Init ButtonState
+        ButtonState state;
+
+        // Check if Button passed
+        if (button != null){
+            state = new ButtonState(button);
+        } else {
+            state = new ButtonState(boat);
+        }
+
+        // If Button not EMPTY, and user clicked, state becomes missed
+        if (button != null){
+            if (state.getState() != State.DEFAULT){
+                state.setState(State.MISS);
+            }
+            // if Boat is passed, and state is NOT HIT, state becomes hit
+        } else if (boat.getState() != State.HIT){
+            state.setState(State.HIT);
+        }
 
     }
 
@@ -167,10 +196,14 @@ public class GameModel {
                 }
 
                 if (player.isActor()) {
-                    userButton.setBackground(Color.decode("#19A7FF"));
+                    userButton.setBackground(Color.lightGray);
                 } else {
-                    userButton.setBackground(Color.decode("#FFC800"));
+                    userButton.setBackground(Color.lightGray);
                 }
+                // Set Default to 0
+                ButtonState state = new ButtonState(userButton);
+                userButton.setForeground(Color.BLACK);
+                state.setState(State.DEFAULT);
                 //assign the button in the array
                 buttons[i][j] = userButton;
             }
@@ -257,10 +290,13 @@ public class GameModel {
                 }
                 // Set name and background colour of JButton going down vertically for boat size
                 for (int position = 0; position < boatSize; position++){
-                    Boat boat = new Boat(boatSize);
+                    Boat boat = new Boat(boatSize, true);
                     board[randRow + position][randCol] = boat;
                     boat.setBackground(backgroundColor);
-                    player.addButton(boat);
+                    //Can be removed later, only here to visually see if adhering to numerical representation
+                    boat.setText(boatSize);
+                    boat.setForeground(Color.WHITE);
+                    player.addBoat(boat);
                 }
             }
             else {
@@ -270,9 +306,13 @@ public class GameModel {
                 }
                 // Set name and background colour of JButton going horizontally for boat size
                 for (int position = 0; position < boatSize; position++){
-                    Boat boat = new Boat(boatSize);
+                    Boat boat = new Boat(boatSize, false);
                     board[randRow][randCol + position] = boat;
                     boat.setBackground(backgroundColor);
+                    //Can be removed later, only here to visually see if adhering to numerical representation
+                    boat.setText(boatSize);
+                    boat.setForeground(Color.WHITE);
+                    player.addBoat(boat);
                 }
             }
             boatPlaced = true;

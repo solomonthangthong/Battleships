@@ -96,9 +96,17 @@ public class GameController {
         for (JButton[] row : buttons) {
             for (JButton button : row) {
                 if (eventSource == button) {
-                    gameModel.historyLog(eventSource, controlPanelText);
-                    String updatedLog = gameModel.getCurrentGameLog();
-                    gameView.updateControlPanelText(updatedLog);
+                    if (button instanceof Boat){
+                        gameModel.historyLog(eventSource, controlPanelText);
+                        gameModel.updateButtonState(null, (Boat) button);
+                        String updatedLog = gameModel.getCurrentGameLog();
+                        gameView.updateControlPanelText(updatedLog);
+                    }else {
+                        gameModel.historyLog(eventSource, controlPanelText);
+                        gameModel.updateButtonState(button, null);
+                        String updatedLog = gameModel.getCurrentGameLog();
+                        gameView.updateControlPanelText(updatedLog);
+                    }
                 }
             }
         }

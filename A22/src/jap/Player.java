@@ -24,7 +24,12 @@ public class Player {
     protected boolean isActor(){
         return actor;
     }
-    protected void addButton(Boat boatInstance){
+
+    /**
+     * Purpose: Add instance of Boat object to Players boat List.
+     * @param boatInstance
+     */
+    protected void addBoat(Boat boatInstance){
         boats.add(boatInstance);
     }
 
