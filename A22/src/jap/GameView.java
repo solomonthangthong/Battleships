@@ -288,6 +288,7 @@ public class GameView extends JFrame implements ActionListener {
         else {
             buttonForGrid = opponentButtons;
         }
+        // Only loop through instance of Buttons from GameModel to assign action listner
         for (int i = 0; i < buttonForGrid.length; i++){
             for (int j = 0; j <buttonForGrid[i].length; j++){
                 JButton button = buttonForGrid[i][j];

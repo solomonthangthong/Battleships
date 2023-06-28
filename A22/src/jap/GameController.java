@@ -42,6 +42,11 @@ public class GameController {
         gameView.updateBoard(gameModel.getBoardSize(), gameModel.getUserBoardPanel(),gameModel.getOpponentBoardPanel());
     }
 
+    /**
+     * Get instance of 2D array buttons from Game Model and return to View
+     * @param actor
+     * @return
+     */
     protected JButton[][] getButtons(Boolean actor){
         if (actor){
             return gameModel.getUserPlayerButtons();
@@ -69,6 +74,12 @@ public class GameController {
         }
     }
 
+    /**
+     * Purpose: Calls Model and updates string, call view and refresh
+     * @param eventSource
+     * @param controlPanelText
+     * @param <T>
+     */
     protected <T> void historyLog(T eventSource, JLabel controlPanelText){
         gameModel.historyLog(eventSource, controlPanelText);
         String updatedLog = gameModel.getCurrentGameLog();
@@ -96,6 +107,8 @@ public class GameController {
         for (JButton[] row : buttons) {
             for (JButton button : row) {
                 if (eventSource == button) {
+                    //TODO incorporate hit miss logic
+                    //TODO incorporate hit miss logic
                     if (button instanceof Boat){
                         gameModel.historyLog(eventSource, controlPanelText);
                         gameModel.updateButtonState(null, (Boat) button);

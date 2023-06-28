@@ -174,6 +174,11 @@ public class GameModel {
 
     }
 
+    /**
+     * Purpose: Creates initial 2D array for Buttons (Used in Controller updateModelViewBoard)
+     * @param player - actor
+     * @return - 2D array of JButtons
+     */
     protected JButton[][] createButtonBoard(Player player){
         // Multiply dimensions by two. Intended result is if board is size 4 make it 8 by 8 grid
         int dimensions = boardSize * 2;

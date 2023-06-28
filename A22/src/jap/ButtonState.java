@@ -7,11 +7,19 @@ public class ButtonState {
     private Boat boat;
     private State state;
 
+    /**
+     * Constructor for JButton Object
+     * @param button
+     */
     public ButtonState(JButton button) {
         this.button = button;
         this.boat = null;
     }
 
+    /**
+     * Constructorf or Boat Object
+     * @param boat
+     */
     public ButtonState(Boat boat) {
         this.button = null;
         this.boat = boat;
@@ -26,7 +34,7 @@ public class ButtonState {
     protected State getState(){
         return state;
     }
-
+    //TODO figure out how to do this or remove implementation
     private void handleButtonState(){
         switch (state){
             // Set state to 0
@@ -37,7 +45,6 @@ public class ButtonState {
                 boat.setState(State.HIT);
                 break;
             case MISS:
-
                 break;
             default:
                 break;

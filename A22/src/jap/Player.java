@@ -1,6 +1,5 @@
 package jap;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +12,12 @@ public class Player {
 
     private List<Boat> boats;
 
+    //TODO get player name as string and set it
+    /**
+     * Constructor for Player
+     * @param name
+     * @param actor
+     */
     public Player(String name, Boolean actor){
         this.playerName = name;
         this.actor = actor;
@@ -33,4 +38,5 @@ public class Player {
         boats.add(boatInstance);
     }
 
+    //TODO Add match list to hold # of matches if same player plays more than once
 }

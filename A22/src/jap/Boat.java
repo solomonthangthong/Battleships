@@ -15,11 +15,16 @@ public class Boat extends JButton {
 
     private Color color;
 
+    /**
+     * Constructor for Boat Object
+     * @param boatSize
+     * @param orientation
+     */
     public Boat(int boatSize, boolean orientation){
         boatLength = boatSize;
         boatOrientation = orientation;
     }
-    @Override
+
     public void setBackground(Color color){
         super.setBackground(color);
     }
@@ -39,5 +44,9 @@ public class Boat extends JButton {
     protected void setState(State state){
         this.state = state;
     }
+
+    //TODO make boat visible or not (opponent side should not show)
+
+    //TODO add position JButton[][]
 
 }
