@@ -57,7 +57,12 @@ public class GameController {
     }
 
     protected void designBoatPlacement(){
+        gameView.designBoatWindow();
+        gameModel.setUserPlayerButtons(gameModel.createButtonBoard(gameModel.getPlayer(true)));
         gameModel.designBoatPlacement();
+        gameView.designBoatPlacement(gameModel.getBoardSize());
+
+
     }
 
     /**

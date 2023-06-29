@@ -15,6 +15,7 @@ import java.io.Serializable;
  * Method List:
  * Constants List:
  * View model, following MVC design pattern. Updates the view to user
+ *
  * @author Andrew Lorimer, Solomon Thangthong
  * @version 1.1
  * @see JFrame
@@ -24,6 +25,7 @@ import java.io.Serializable;
  */
 public class GameView extends JFrame implements ActionListener {
     private GameController gameController;
+    private JFrame designWindow;
     private JButton battleshipAbout;
     /**
      * Combobox to change GUI language.
@@ -81,7 +83,14 @@ public class GameView extends JFrame implements ActionListener {
      */
     private JPanel opponentPanel;
 
-    public GameView(GameController gameController, GameModel gameModel){
+    private JPanel designPanel;
+    private JComboBox boatJComboBox;
+    private JRadioButton boatVertical;
+    private JRadioButton boatHorizontal;
+    private JButton resetLayout;
+    private JButton saveLayout;
+
+    public GameView(GameController gameController, GameModel gameModel) {
         // Create instance Controller
         this.gameController = gameController;
         gameController.setGameView(this);
@@ -96,6 +105,8 @@ public class GameView extends JFrame implements ActionListener {
 
         createPanelView(gameModel.getBoardSize(), userPanel, true, player1Progress);
         createPanelView(gameModel.getBoardSize(), opponentPanel, false, player2Progress);
+
+        designWindow = new JFrame();
 
         //play background music
         //String musicFile = "resources/backgroundMusic.wav";
@@ -282,15 +293,14 @@ public class GameView extends JFrame implements ActionListener {
         // Initialize 2D array for buttons
         JButton[][] buttonForGrid;
 
-        if (whichActor){
+        if (whichActor) {
             buttonForGrid = userButtons;
-        }
-        else {
+        } else {
             buttonForGrid = opponentButtons;
         }
         // Only loop through instance of Buttons from GameModel to assign action listner
-        for (int i = 0; i < buttonForGrid.length; i++){
-            for (int j = 0; j <buttonForGrid[i].length; j++){
+        for (int i = 0; i < buttonForGrid.length; i++) {
+            for (int j = 0; j < buttonForGrid[i].length; j++) {
                 JButton button = buttonForGrid[i][j];
                 button.addActionListener(this);
                 button.setPreferredSize(new Dimension(buttonSize, buttonSize));
@@ -373,6 +383,56 @@ public class GameView extends JFrame implements ActionListener {
         opponentBoardPanel.repaint();
         userBoardPanel.repaint();
     }
+    protected void designBoatWindow() {
+        /* New JFrame for pop-up window to design board */
+        designWindow.setSize(550, 550);
+        designWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        designWindow.setLocationRelativeTo(null);
+        designWindow.setVisible(true);
+    }
+
+    protected void designBoatPlacement(Integer size){
+        designPanel = new JPanel(new BorderLayout());
+        JPanel bottomPanel = new JPanel();
+        userButtons = gameController.getButtons(true);
+        JLabel boatLabel = new JLabel("Boat:");
+        JLabel directionLabel = new JLabel("Direction:");
+        JLabel horizontalLabel = new JLabel("H");
+        JLabel verticalLabel = new JLabel("V");
+
+        resetLayout = new JButton("Reset Layout");
+        saveLayout = new JButton("Save");
+
+        int buttonSize = Math.min(50, 200 / size); // Adjust the button size based on dimension
+        JPanel actorGrid = new JPanel(new GridLayout(size * 2, size * 2));
+
+        // Only loop through instance of Buttons from GameModel to assign action listner
+        for (int i = 0; i < userButtons.length; i++) {
+            for (int j = 0; j < userButtons[i].length; j++) {
+                JButton button = userButtons[i][j];
+                button.addActionListener(this);
+                button.setPreferredSize(new Dimension(buttonSize, buttonSize));
+                actorGrid.add(button);
+            }
+        }
+        boatJComboBox = new JComboBox();
+        boatJComboBox.setSize(200,100);
+        boatVertical = new JRadioButton();
+        boatHorizontal = new JRadioButton();
+        designPanel.add(actorGrid);
+        bottomPanel.add(boatLabel);
+        bottomPanel.add(boatJComboBox);
+        bottomPanel.add(directionLabel);
+        bottomPanel.add(boatHorizontal);
+        bottomPanel.add(horizontalLabel);
+        bottomPanel.add(boatVertical);
+        bottomPanel.add(verticalLabel);
+        bottomPanel.add(resetLayout);
+        bottomPanel.add(saveLayout);
+
+        designWindow.add(designPanel, BorderLayout.CENTER);
+        designWindow.add(bottomPanel, BorderLayout.SOUTH);
+    }
 
     protected void updateControlPanelText(String text) {
         controlPanelText.setText(text);
@@ -427,6 +487,7 @@ public class GameView extends JFrame implements ActionListener {
      * Method name: actionPerformed
      * Purpose: Executed when action event occurs
      * Algorithm: If else tree, determine which JButton has been clicked, call historyLog method and execute desired outcome
+     *
      * @param e the event represented as user action
      */
     @Override
