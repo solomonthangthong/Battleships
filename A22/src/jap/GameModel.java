@@ -2,6 +2,8 @@ package jap;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class GameModel {
@@ -36,6 +38,9 @@ public class GameModel {
     private int player2Points;
 
     private ButtonState state;
+    // Nested list, inner list represent size of boat
+    private List<List<Boat>> designBoatList;
+    private DefaultComboBoxModel<Boat> comboBoxModel;
 
     public GameModel() {
         boardSize = 4;
@@ -259,8 +264,37 @@ public class GameModel {
      * Algorithm: new intance of JFrame, set location, default close operation
      */
     protected void designBoatPlacement() {
-    }
+        designBoatList = new ArrayList<>();
+        Random random = new Random();
+        int randRow = boardSize * 2;
+        int randCol = boardSize * 2;
 
+        int red = random.nextInt(255);
+        int green = random.nextInt(50);
+        int blue = random.nextInt(256);
+
+        //TODO Create instances of boat but need to set orientation through radio button..?
+        // Nested loop, outerloop is creating each boat, inner loop is number of boats per size
+        for (int boatSize = boardSize; boatSize >= 1; boatSize--) {
+            // List for current boat size
+            List<Boat> boatSizeList = new ArrayList<>();
+            // Random colour
+            Color backgroundColor = new Color(red, green, blue);
+            for (int boatCount = boardSize - boatSize + 1; boatCount >= 1; boatCount--) {
+                Boat boat = new Boat(boatSize, true);
+                boat.setText(boatSize);
+                boat.setForeground(Color.WHITE);
+                boatSizeList.add(boat);
+            }
+            designBoatList.add(boatSizeList);
+        }
+
+        //TODO LOGIC TO NOT OVERLAP THE boats (grab from previous methods)
+
+    }
+    protected List<List<Boat>> getDesignBoatList(){
+        return designBoatList;
+    }
     /**
      * Method Name: createRandomBoat
      * Purpose: Loop until valid spot on 2D array is found, change colour of button to the new boat

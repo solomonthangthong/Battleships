@@ -9,6 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class Name: GameView
@@ -84,7 +86,12 @@ public class GameView extends JFrame implements ActionListener {
     private JPanel opponentPanel;
 
     private JPanel designPanel;
-    private JComboBox boatJComboBox;
+    // Stores the items
+    private DefaultComboBoxModel comboBoxModel;
+    private JComboBox boatSizeSelector;
+    // List to hold boats, inner list # of JButtons per size
+    private List<List<Boat>> designBoatList;
+
     private JRadioButton boatVertical;
     private JRadioButton boatHorizontal;
     private JButton resetLayout;
@@ -108,6 +115,7 @@ public class GameView extends JFrame implements ActionListener {
         createPanelView(gameModel.getBoardSize(), opponentPanel, false, player2Progress);
 
         designWindow = new JFrame();
+        designBoatList = new ArrayList<>();
 
         //play background music
         //String musicFile = "resources/backgroundMusic.wav";
@@ -429,13 +437,12 @@ public class GameView extends JFrame implements ActionListener {
                 actorGrid.add(button);
             }
         }
-        boatJComboBox = new JComboBox();
-        boatJComboBox.setSize(200,100);
+        boatSizeSelector = new JComboBox<>(comboBoxModel);
         boatVertical = new JRadioButton();
         boatHorizontal = new JRadioButton();
         designPanel.add(actorGrid);
         bottomPanel.add(boatLabel);
-        bottomPanel.add(boatJComboBox);
+        bottomPanel.add(boatSizeSelector);
         bottomPanel.add(directionLabel);
         bottomPanel.add(boatHorizontal);
         bottomPanel.add(horizontalLabel);
@@ -446,6 +453,19 @@ public class GameView extends JFrame implements ActionListener {
 
         designWindow.add(designPanel, BorderLayout.CENTER);
         designWindow.add(bottomPanel, BorderLayout.SOUTH);
+    }
+
+    protected void setDesignBoatList(List designBoatList){
+        this.designBoatList = designBoatList;
+    }
+
+    protected void extractDesignBoatList(){
+        comboBoxModel = new DefaultComboBoxModel<>();
+        for (List<Boat> boatList : designBoatList){
+            for (Boat boat: boatList){
+                comboBoxModel.addElement(boat);
+            }
+        }
     }
 
     protected void updateControlPanelText(String text) {

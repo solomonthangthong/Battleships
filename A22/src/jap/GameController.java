@@ -58,11 +58,14 @@ public class GameController {
 
     protected void designBoatPlacement(){
         gameView.designBoatWindow();
+        //TODO add logic to check if randomize has been used
         gameModel.setUserPlayerButtons(gameModel.createButtonBoard(gameModel.getPlayer(true)));
+        // Logic for loop to get # of boats, orientation, etc
         gameModel.designBoatPlacement();
+        gameView.setDesignBoatList(gameModel.getDesignBoatList());
+        gameView.extractDesignBoatList();
+        //TODO clear layout, or save, and then refresh view
         gameView.designBoatPlacement(gameModel.getBoardSize());
-
-
     }
 
     /**
