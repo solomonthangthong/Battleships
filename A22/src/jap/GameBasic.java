@@ -31,5 +31,6 @@ public class GameBasic {
         GameView gameView = new GameView(gameController, gameModel);
         gameView.setResizable(false);
         gameView.setVisible(true);
+
     }
 }

@@ -92,9 +92,10 @@ public class GameView extends JFrame implements ActionListener {
 
     public GameView(GameController gameController, GameModel gameModel) {
         // Create instance Controller
+        Splash s = new Splash();
+        s.show();
         this.gameController = gameController;
         gameController.setGameView(this);
-
         initializeFrame();
         createPanels();
         addPanelsToMainFrame();
@@ -124,7 +125,20 @@ public class GameView extends JFrame implements ActionListener {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
-
+    protected class Splash {
+        public void show() {
+            JWindow window = new JWindow();
+            window.getContentPane().add(new JLabel("", new ImageIcon("images/game_about.jpg"), SwingConstants.CENTER));
+            window.setBounds(500, 150, 300, 200);
+            window.setVisible(true);
+            try {
+                Thread.sleep(5000);
+            } catch (Exception e) {
+                ;
+            }
+            window.setVisible(false);
+            window.dispose();
+        }}
     /**
      * Method Name: createPanels
      * Purpose: This method creates and configure panels for user interface and called internally for initialization.
@@ -468,7 +482,7 @@ public class GameView extends JFrame implements ActionListener {
      *
      * @param musicFile - wav file for the background music
      */
-    private void playBackgroundMusic(String musicFile) {
+    protected void playBackgroundMusic(String musicFile) {
         try {
             //state the path where audio file is found
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(musicFile).getAbsoluteFile());
@@ -482,6 +496,39 @@ public class GameView extends JFrame implements ActionListener {
             e.printStackTrace();
         }
     }
+    protected class SplashScreen extends JWindow {
+
+        protected SplashScreen(String imagePath, int duration) {
+            setLayout(new BorderLayout());
+            JLabel splashImage = new JLabel(new ImageIcon(imagePath));
+            add(splashImage, BorderLayout.CENTER);
+            pack();
+
+            // Center the splash screen on the screen
+            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
+            // Close the splash screen after the specified duration
+            new Thread(() -> {
+                try {
+                    Thread.sleep(duration);
+                    dispose();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }).start();
+        }
+    }
+    /**
+     * Method name: showSplashScreen
+     * Purpose: Display image before application is used
+     * Algorithm:
+     */
+    protected void showSplashScreen(String imagePath, int duration) {
+        SplashScreen splashScreen = new SplashScreen(imagePath, duration);
+        splashScreen.setVisible(true);
+    }
+
+
 
     /**
      * Method name: actionPerformed
