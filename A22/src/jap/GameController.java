@@ -15,6 +15,18 @@ public class GameController {
         this.gameView = gameView;
     }
 
+    /**
+     * Purpose: Calls Model and updates string, call view and refresh
+     * @param eventSource
+     * @param controlPanelText
+     * @param <T>
+     */
+    protected <T> void historyLog(T eventSource, JLabel controlPanelText){
+        gameModel.historyLog(eventSource, controlPanelText);
+        String updatedLog = gameModel.getCurrentGameLog();
+        gameView.updateControlPanelText(updatedLog);
+    }
+
     protected void aboutMenu(){
 
     }
@@ -56,16 +68,21 @@ public class GameController {
         }
     }
 
-    protected void designBoatPlacement(){
+    protected void openDesignBoat(){
         gameView.designBoatWindow();
         //TODO add logic to check if randomize has been used
         gameModel.setUserPlayerButtons(gameModel.createButtonBoard(gameModel.getPlayer(true)));
         // Logic for loop to get # of boats, orientation, etc
-        gameModel.designBoatPlacement();
+        gameModel.populateDesignBoat();
         gameView.setDesignBoatList(gameModel.getDesignBoatList());
         gameView.extractDesignBoatList();
         //TODO clear layout, or save, and then refresh view
         gameView.designBoatPlacement(gameModel.getBoardSize());
+    }
+
+    protected void placeBoatLocation(Object eventSource){
+        boolean isBoatPlaced = gameModel.getSearchValue(eventSource);
+
     }
 
     /**
@@ -82,17 +99,6 @@ public class GameController {
         }
     }
 
-    /**
-     * Purpose: Calls Model and updates string, call view and refresh
-     * @param eventSource
-     * @param controlPanelText
-     * @param <T>
-     */
-    protected <T> void historyLog(T eventSource, JLabel controlPanelText){
-        gameModel.historyLog(eventSource, controlPanelText);
-        String updatedLog = gameModel.getCurrentGameLog();
-        gameView.updateControlPanelText(updatedLog);
-    }
     protected void startGame(){
 
     }

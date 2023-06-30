@@ -438,6 +438,7 @@ public class GameView extends JFrame implements ActionListener {
             }
         }
         boatSizeSelector = new JComboBox<>(comboBoxModel);
+        boatSizeSelector.addActionListener(this);
         boatVertical = new JRadioButton();
         boatHorizontal = new JRadioButton();
         designPanel.add(actorGrid);
@@ -463,10 +464,12 @@ public class GameView extends JFrame implements ActionListener {
         comboBoxModel = new DefaultComboBoxModel<>();
         for (List<Boat> boatList : designBoatList){
             for (Boat boat: boatList){
-                comboBoxModel.addElement(boat);
+                comboBoxModel.addElement(boat.getBoatLength());
             }
         }
     }
+
+
 
     protected void updateControlPanelText(String text) {
         controlPanelText.setText(text);
@@ -572,7 +575,13 @@ public class GameView extends JFrame implements ActionListener {
             clickClip.start();
             gameController.historyLog(eventSource, controlPanelText);
             // Open design window
-            gameController.designBoatPlacement();
+            gameController.openDesignBoat();
+        } else if (eventSource == boatSizeSelector) {
+            clickClip.start();
+            // Stringvalueof Int and then maybe binary search list to find instance of the boat?
+            // Then use conditions to check if that boat size has been placed...?
+            gameController.historyLog(eventSource, controlPanelText);
+            gameController.placeBoatLocation(eventSource);
         } else if (eventSource == randBoatPlacement) {
             //clickClip.start();
             gameController.historyLog(eventSource, controlPanelText);

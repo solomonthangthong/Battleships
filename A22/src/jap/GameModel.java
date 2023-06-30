@@ -263,7 +263,7 @@ public class GameModel {
      * Purpose: Pop-up window to design ship placement for user actor.
      * Algorithm: new intance of JFrame, set location, default close operation
      */
-    protected void designBoatPlacement() {
+    protected void populateDesignBoat() {
         designBoatList = new ArrayList<>();
         Random random = new Random();
         int randRow = boardSize * 2;
@@ -295,6 +295,35 @@ public class GameModel {
     protected List<List<Boat>> getDesignBoatList(){
         return designBoatList;
     }
+
+    protected Boolean getSearchValue(Object eventSource) {
+        int boatSizeSearch = 0;
+
+        // Check for object JComboBox
+        if (eventSource instanceof JComboBox) {
+            JComboBox<?> comboBox = (JComboBox<?>) eventSource;
+            Object selectedItem = comboBox.getSelectedItem();
+            // Check whether we pass String or Int JComboBox
+            if (selectedItem instanceof Integer) {
+                boatSizeSearch = (Integer) comboBox.getSelectedItem();
+            }
+        }
+
+        Boat foundBoat = null;
+        // Iterate nested List
+        for(List<Boat> innerList : designBoatList){
+            // Iterate boat object in innerList
+            for (Boat boat : innerList){
+                // Getter and check if same value from JComboBox
+                if (boat.getBoatLength() == boatSizeSearch){
+                   //TODO cross check 2D array board if there any boats place, if not place this boat?
+                }
+            }
+        }
+
+        return false;
+    }
+
     /**
      * Method Name: createRandomBoat
      * Purpose: Loop until valid spot on 2D array is found, change colour of button to the new boat
