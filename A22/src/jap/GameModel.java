@@ -40,6 +40,7 @@ public class GameModel {
     private ButtonState state;
     // Nested list, inner list represent size of boat
     private List<List<Boat>> designBoatList;
+    private Integer boatSizeSearch;
     private DefaultComboBoxModel<Boat> comboBoxModel;
 
     public GameModel() {
@@ -100,6 +101,16 @@ public class GameModel {
         } else if (eventSource instanceof JButton) {
             JButton button = (JButton) eventSource;
             actionEvent = actionEvent + button.getName() + " clicked " + "<br>";
+            setCurrentAction(actionEvent);
+        } else if (eventSource instanceof JRadioButton){
+            JRadioButton selectedRadioButton = (JRadioButton) eventSource;
+            String actionCommand = selectedRadioButton.getActionCommand();
+            boolean selectedValue = Boolean.parseBoolean(actionCommand);
+            if (selectedValue){
+                actionEvent = actionEvent + "Orientation set to " + "vertical" + "<br>";
+            } else {
+                actionEvent = actionEvent + "Orientation set to " + "horizontal" + "<br>";
+            }
             setCurrentAction(actionEvent);
         }
     }
@@ -296,8 +307,8 @@ public class GameModel {
         return designBoatList;
     }
 
-    protected Boolean getSearchValue(Object eventSource) {
-        int boatSizeSearch = 0;
+    protected Boolean checkIfPlaced(Object eventSource) {
+        boatSizeSearch = 0;
 
         // Check for object JComboBox
         if (eventSource instanceof JComboBox) {
@@ -315,13 +326,58 @@ public class GameModel {
             // Iterate boat object in innerList
             for (Boat boat : innerList){
                 // Getter and check if same value from JComboBox
-                if (boat.getBoatLength() == boatSizeSearch){
+                if (boat.getBoatLength() == boatSizeSearch && !boat.getCheckedForDesign()){
                    //TODO cross check 2D array board if there any boats place, if not place this boat?
+                    boat.setCheckedForDesign(true);
+                    return true;
                 }
             }
         }
-
         return false;
+    }
+
+    protected void setBoatOrientation(Object eventSource){
+
+        JRadioButton selectedRadioButton = (JRadioButton) eventSource;
+        String actionCommand = selectedRadioButton.getActionCommand();
+        boolean selectedValue = Boolean.parseBoolean(actionCommand);
+
+        for(List<Boat> innerList : designBoatList){
+            // Iterate boat object in innerList
+            for (Boat boat : innerList){
+                // Getter and check if same value from JComboBox
+                if (boat.getBoatLength() == boatSizeSearch && boat.getBoatOrientation() == null){
+                    boat.setBoatOrientation(selectedValue);
+                }
+            }
+        }
+    }
+
+    protected void placeSelectedBoat(Object eventSource){
+        int boatSizeSearch = 0;
+
+        // Check for object JComboBox
+        if (eventSource instanceof JComboBox) {
+            JComboBox<?> comboBox = (JComboBox<?>) eventSource;
+            Object selectedItem = comboBox.getSelectedItem();
+            // Check whether we pass String or Int JComboBox
+            if (selectedItem instanceof Integer) {
+                boatSizeSearch = (Integer) comboBox.getSelectedItem();
+            }
+        }
+
+        Boat foundBoat = null;
+        // Iterate nested List
+        for(List<Boat> innerList : designBoatList){
+            // Iterate boat object in innerList
+            for (Boat boat : innerList){
+                if(boat.getBoatOrientation()){
+
+                } else {
+
+                }
+            }
+        }
     }
 
     /**
@@ -362,6 +418,7 @@ public class GameModel {
                     Boat boat = new Boat(boatSize, true);
                     board[randRow + position][randCol] = boat;
                     boat.setBackground(backgroundColor);
+                    boat.setPlaced(true);
                     //Can be removed later, only here to visually see if adhering to numerical representation
                     boat.setText(boatSize);
                     boat.setForeground(Color.WHITE);
@@ -377,6 +434,7 @@ public class GameModel {
                     Boat boat = new Boat(boatSize, false);
                     board[randRow][randCol + position] = boat;
                     boat.setBackground(backgroundColor);
+                    boat.setPlaced(true);
                     //Can be removed later, only here to visually see if adhering to numerical representation
                     boat.setText(boatSize);
                     boat.setForeground(Color.WHITE);

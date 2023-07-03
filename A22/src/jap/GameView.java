@@ -97,6 +97,7 @@ public class GameView extends JFrame implements ActionListener {
     private JButton resetLayout;
     private JButton saveLayout;
 
+
     public GameView(GameController gameController, GameModel gameModel) {
         // Create instance Controller
         Splash s = new Splash();
@@ -114,8 +115,10 @@ public class GameView extends JFrame implements ActionListener {
         createPanelView(gameModel.getBoardSize(), userPanel, true, player1Progress);
         createPanelView(gameModel.getBoardSize(), opponentPanel, false, player2Progress);
 
-        designWindow = new JFrame();
-        designBoatList = new ArrayList<>();
+        boatVertical = new JRadioButton();
+        boatVertical.setSelected(true);
+        boatVertical.addActionListener(this);
+        boatVertical.setActionCommand("true");
 
         //play background music
         //String musicFile = "resources/backgroundMusic.wav";
@@ -428,7 +431,7 @@ public class GameView extends JFrame implements ActionListener {
         int buttonSize = Math.min(50, 200 / size); // Adjust the button size based on dimension
         JPanel actorGrid = new JPanel(new GridLayout(size * 2, size * 2));
 
-        // Only loop through instance of Buttons from GameModel to assign action listner
+        // Only loop through instance of Buttons from GameModel to assign action listener
         for (int i = 0; i < userButtons.length; i++) {
             for (int j = 0; j < userButtons[i].length; j++) {
                 JButton button = userButtons[i][j];
@@ -439,8 +442,17 @@ public class GameView extends JFrame implements ActionListener {
         }
         boatSizeSelector = new JComboBox<>(comboBoxModel);
         boatSizeSelector.addActionListener(this);
-        boatVertical = new JRadioButton();
+        boatSizeSelector.setSelectedIndex(0);
+        // checking if works in default in constructor
+        /*boatVertical = new JRadioButton();
+        boatVertical.setSelected(true);*/
         boatHorizontal = new JRadioButton();
+        boatHorizontal.addActionListener(this);
+        boatHorizontal.setActionCommand("false");
+        // ButtonGroup where only one can be selected at a time (horizontal vertical)
+        ButtonGroup orientationGroup = new ButtonGroup();
+        orientationGroup.add(boatVertical);
+        orientationGroup.add(boatHorizontal);
         designPanel.add(actorGrid);
         bottomPanel.add(boatLabel);
         bottomPanel.add(boatSizeSelector);
@@ -571,10 +583,16 @@ public class GameView extends JFrame implements ActionListener {
         if (eventSource == languageButton) {
             clickClip.start();
             gameController.historyLog(eventSource, controlPanelText);
-        } else if (eventSource == designBoatPlacement) {
+        } else if (eventSource == boatVertical || eventSource == boatHorizontal){
+            clickClip.start();
+            gameController.historyLog(eventSource, controlPanelText);
+            gameController.checkOrientation(eventSource);
+        }else if (eventSource == designBoatPlacement) {
             clickClip.start();
             gameController.historyLog(eventSource, controlPanelText);
             // Open design window
+            designWindow = new JFrame();
+            designBoatWindow();
             gameController.openDesignBoat();
         } else if (eventSource == boatSizeSelector) {
             clickClip.start();
@@ -585,9 +603,7 @@ public class GameView extends JFrame implements ActionListener {
         } else if (eventSource == randBoatPlacement) {
             //clickClip.start();
             gameController.historyLog(eventSource, controlPanelText);
-
             gameController.updateModelViewBoard(selectedDimension, userPanel, opponentPanel, userButtons, opponentButtons);
-
             // Need to see if GameModel Buttons are updated with Boat
             gameController.randomBoatPlacement(opponentPanel, false);
             gameController.randomBoatPlacement(userPanel, true);
@@ -609,8 +625,8 @@ public class GameView extends JFrame implements ActionListener {
             gameController.historyLog(eventSource, controlPanelText);
         } else {
             clickClip.start();
-            gameController.boardButtonEvent(userButtons, eventSource, controlPanelText);
-            gameController.boardButtonEvent(opponentButtons, eventSource, controlPanelText);
+            gameController.boardButtonEvent(userButtons, eventSource, controlPanelText, designWindow);
+            gameController.boardButtonEvent(opponentButtons, eventSource, controlPanelText, designWindow);
         }
     }
 }

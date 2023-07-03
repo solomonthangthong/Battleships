@@ -69,7 +69,7 @@ public class GameController {
     }
 
     protected void openDesignBoat(){
-        gameView.designBoatWindow();
+        //gameView.designBoatWindow();
         //TODO add logic to check if randomize has been used
         gameModel.setUserPlayerButtons(gameModel.createButtonBoard(gameModel.getPlayer(true)));
         // Logic for loop to get # of boats, orientation, etc
@@ -81,8 +81,16 @@ public class GameController {
     }
 
     protected void placeBoatLocation(Object eventSource){
-        boolean isBoatPlaced = gameModel.getSearchValue(eventSource);
+        boolean isBoatPlaced = gameModel.checkIfPlaced(eventSource);
+        if (!isBoatPlaced){
+            //TODO DEFAULT ORIENTATION TO VERTICAL BY RADIO BUTTON AND BE ABLE TO CHANGE IT?
+            gameModel.placeSelectedBoat(eventSource);
 
+        }
+    }
+
+    protected void checkOrientation(Object eventSource){
+        gameModel.setBoatOrientation(eventSource);
     }
 
     /**
@@ -117,9 +125,16 @@ public class GameController {
      * @param eventSource      - Object event action
      * @param controlPanelText - JLabel passed, and then later uses .getName() to extract information
      */
-    protected void boardButtonEvent(JButton[][] buttons, Object eventSource, JLabel controlPanelText) {
+    protected void boardButtonEvent(JButton[][] buttons, Object eventSource, JLabel controlPanelText, JFrame designWindow) {
+        int rowIndex = 0;
         for (JButton[] row : buttons) {
+            int columnIndex = 0;
             for (JButton button : row) {
+                // Checks the button clicked in grid and pop up window is opened for placing
+                if (eventSource == button && designWindow != null){
+                    System.out.print("rowIndex = " + rowIndex + "\ncolumnIndex = " + columnIndex + "\n");
+                    gameModel.placeSelectedBoat(eventSource);
+                }
                 if (eventSource == button) {
                     //TODO incorporate hit miss logic
                     //TODO incorporate hit miss logic
@@ -135,7 +150,9 @@ public class GameController {
                         gameView.updateControlPanelText(updatedLog);
                     }
                 }
+                columnIndex++;
             }
+            rowIndex++;
         }
     }
 }

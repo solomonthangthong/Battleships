@@ -7,7 +7,10 @@ public class Boat extends JButton {
     // Array to hold # of tiles in the boat
     private int boatLength;
     // true vertical, false horizontal
-    private boolean boatOrientation;
+    private Boolean boatOrientation;
+    private boolean checkedForDesignPlacement;
+
+    private boolean isPlaced;
     private JButton[][] position;
     private State state;
     // True for show, false for hidden
@@ -23,6 +26,9 @@ public class Boat extends JButton {
     public Boat(int boatSize, boolean orientation){
         boatLength = boatSize;
         boatOrientation = orientation;
+        isPlaced = false;
+        checkedForDesignPlacement = false;
+        boatOrientation = null;
     }
 
     public void setBackground(Color color){
@@ -43,6 +49,28 @@ public class Boat extends JButton {
 
     protected void setState(State state){
         this.state = state;
+    }
+
+    protected Boolean getCheckedForDesign(){
+        return checkedForDesignPlacement;
+    }
+    protected void setCheckedForDesign(Boolean checked){
+        this.checkedForDesignPlacement = checked;
+    }
+    protected Boolean getPlaced(){
+        return isPlaced;
+    }
+
+    protected void setPlaced(Boolean placed){
+        this.isPlaced = placed;
+    }
+
+    protected Boolean getBoatOrientation(){
+        return boatOrientation;
+    }
+
+    protected void setBoatOrientation(Boolean orientation){
+        this.boatOrientation = orientation;
     }
 
     //TODO make boat visible or not (opponent side should not show)
