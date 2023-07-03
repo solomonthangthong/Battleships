@@ -130,6 +130,7 @@ public class GameController {
         for (JButton[] row : buttons) {
             int columnIndex = 0;
             for (JButton button : row) {
+                //TODO Reset rowIndex and columnIndex to 0 after loops are done, or redo enhanced Loop and use normal for loop
                 // Checks the button clicked in grid and pop up window is opened for placing
                 if (eventSource == button && designWindow != null){
                     System.out.print("rowIndex = " + rowIndex + "\ncolumnIndex = " + columnIndex + "\n");

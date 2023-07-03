@@ -73,6 +73,13 @@ public class Boat extends JButton {
         this.boatOrientation = orientation;
     }
 
+    protected JButton[][] getBoatPosition(){
+        return position;
+    }
+    protected void setBoatPosition(JButton[][] position){
+        this.position = position;
+    }
+
     //TODO make boat visible or not (opponent side should not show)
 
     //TODO add position JButton[][]

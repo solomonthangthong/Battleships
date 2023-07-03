@@ -99,9 +99,9 @@ public class GameView extends JFrame implements ActionListener {
 
 
     public GameView(GameController gameController, GameModel gameModel) {
-        // Create instance Controller
         Splash s = new Splash();
         s.show();
+        // Create instance Controller
         this.gameController = gameController;
         gameController.setGameView(this);
         initializeFrame();
@@ -141,6 +141,7 @@ public class GameView extends JFrame implements ActionListener {
             JWindow window = new JWindow();
             window.getContentPane().add(new JLabel("", new ImageIcon("images/game_about.jpg"), SwingConstants.CENTER));
             window.setBounds(500, 150, 300, 200);
+            window.setLocationRelativeTo(null);
             window.setVisible(true);
             try {
                 Thread.sleep(5000);
@@ -408,14 +409,23 @@ public class GameView extends JFrame implements ActionListener {
         opponentBoardPanel.repaint();
         userBoardPanel.repaint();
     }
+
+    /**
+     * Purpose popup window method for design boat
+     */
     protected void designBoatWindow() {
         /* New JFrame for pop-up window to design board */
         designWindow.setSize(550, 550);
+        //TODO find a way to set designWindow to null on close for gameController if (eventSource == button && designWindow != null)
         designWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         designWindow.setLocationRelativeTo(null);
         designWindow.setVisible(true);
     }
 
+    /**
+     * Create JFrame and panels hosting items
+     * @param size
+     */
     protected void designBoatPlacement(Integer size){
         designPanel = new JPanel(new BorderLayout());
         JPanel bottomPanel = new JPanel();
@@ -468,10 +478,17 @@ public class GameView extends JFrame implements ActionListener {
         designWindow.add(bottomPanel, BorderLayout.SOUTH);
     }
 
+    /**
+     * Set list of Boat Objects from GameModel
+     * @param designBoatList
+     */
     protected void setDesignBoatList(List designBoatList){
         this.designBoatList = designBoatList;
     }
 
+    /**
+     * Extract the boat size and put it into the ComboBoxModel
+     */
     protected void extractDesignBoatList(){
         comboBoxModel = new DefaultComboBoxModel<>();
         for (List<Boat> boatList : designBoatList){
@@ -481,8 +498,10 @@ public class GameView extends JFrame implements ActionListener {
         }
     }
 
-
-
+    /**
+     * Set the updated String for control panel log
+     * @param text
+     */
     protected void updateControlPanelText(String text) {
         controlPanelText.setText(text);
     }
@@ -495,7 +514,6 @@ public class GameView extends JFrame implements ActionListener {
      * @return - If file is found, return click sound effect, else return null
      */
     private Clip createAudioClip() {
-        //TODO: If else tree for if boat as been hit or miss
         try {
             // Create 2nd audio input stream so 2 sounds can occur at same time
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("resources/click.wav").getAbsoluteFile());
@@ -563,8 +581,6 @@ public class GameView extends JFrame implements ActionListener {
         splashScreen.setVisible(true);
     }
 
-
-
     /**
      * Method name: actionPerformed
      * Purpose: Executed when action event occurs
@@ -596,8 +612,6 @@ public class GameView extends JFrame implements ActionListener {
             gameController.openDesignBoat();
         } else if (eventSource == boatSizeSelector) {
             clickClip.start();
-            // Stringvalueof Int and then maybe binary search list to find instance of the boat?
-            // Then use conditions to check if that boat size has been placed...?
             gameController.historyLog(eventSource, controlPanelText);
             gameController.placeBoatLocation(eventSource);
         } else if (eventSource == randBoatPlacement) {

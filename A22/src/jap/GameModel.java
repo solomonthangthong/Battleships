@@ -46,6 +46,9 @@ public class GameModel {
     public GameModel() {
         boardSize = 4;
         players = new Player[2];
+        /**
+         * First player is index 0, machine is index 1
+         */
 
         players[0] = new Player("Player 1", true);
         players[1] = new Player("Player 2", false);
@@ -173,10 +176,15 @@ public class GameModel {
         return opponentBoardPanel;
     }
 
+    /**
+     *
+     * @param button
+     * @param boat
+     */
     protected void updateButtonState(JButton button, Boat boat) {
         // Init ButtonState
         ButtonState state;
-
+        //TODO complete integration of evaluating boats for HIT/MISS
         // Check if Button passed
         if (button != null) {
             state = new ButtonState(button);
@@ -336,6 +344,10 @@ public class GameModel {
         return false;
     }
 
+    /**
+     * set Boat Object Orientation
+     * @param eventSource
+     */
     protected void setBoatOrientation(Object eventSource){
 
         JRadioButton selectedRadioButton = (JRadioButton) eventSource;
@@ -353,7 +365,13 @@ public class GameModel {
         }
     }
 
+    /**
+     * Place boat on 2D array
+     * @param eventSource
+     */
     protected void placeSelectedBoat(Object eventSource){
+
+        // LINE 375 - 387 needs to bedone because eventSource here is JButton so the size is not being passed
         int boatSizeSearch = 0;
 
         // Check for object JComboBox
@@ -371,8 +389,11 @@ public class GameModel {
         for(List<Boat> innerList : designBoatList){
             // Iterate boat object in innerList
             for (Boat boat : innerList){
-                if(boat.getBoatOrientation()){
-
+                //TODO complete integration, use maybe buttonState to update position clicked to boat
+                //TODO need to set position of Boat object variable JButton[][] position; use get/setBoatPosition
+                //ensure JRadiobutton is passing boolean on initialization
+                if(boat.getBoatOrientation() != null && boat.getBoatLength() == boatSizeSearch){
+                    System.out.print("test");
                 } else {
 
                 }
