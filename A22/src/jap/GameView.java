@@ -4,12 +4,13 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.swing.*;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,6 +28,7 @@ import java.util.List;
  */
 public class GameView extends JFrame implements ActionListener {
     private GameController gameController;
+    private Menu menuBar;
     private JFrame designWindow;
     private JButton battleshipAbout;
     /**
@@ -98,10 +100,11 @@ protected static boolean boatrOrientation;
     private JButton resetLayout;
     private JButton saveLayout;
 
-
     public GameView(GameController gameController, GameModel gameModel) {
         Splash s = new Splash();
         s.show();
+        menuBar = new Menu();
+
         // Create instance Controller
         this.gameController = gameController;
         gameController.setGameView(this);
@@ -130,10 +133,13 @@ protected static boolean boatrOrientation;
      */
     public void initializeFrame() {
         setTitle("Battleship by: Andrew Lorimer & Solomon Thangthong");
-        setSize(1280, 675);
+        setJMenuBar(menuBar.getTheMenuBar());
+        setSize(1280, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
     }
+
     protected class Splash {
         public void show() {
             JWindow window = new JWindow();
@@ -148,7 +154,107 @@ protected static boolean boatrOrientation;
             }
             window.setVisible(false);
             window.dispose();
-        }}
+        }
+    }
+
+    protected class Menu extends JFrame implements ActionListener, MenuListener{
+        private JMenuBar menu;
+
+        public Menu(){
+            menu = new JMenuBar();
+
+            // Example found in Week 5 JavaSwing labs from Professor
+            menu.add(buildMenu("Game",
+                    new Object[] { new JMenuItem("New", new ImageIcon("images/iconload.gif")),
+                            new JMenuItem("Solution", new ImageIcon("images/iconsol.gif")),
+                            new JMenuItem("Exit", new ImageIcon("images/iconext.gif"))
+                    }, this));
+
+            menu.add(buildMenu("Help",
+                    new Object[] { new JMenuItem("Colours", new ImageIcon("images/iconcol.gif")),
+                            new JMenuItem("About", new ImageIcon("images/iconabt.gif")),
+                    }, this));
+        }
+
+        /**
+         * Creates a menu with menu items.
+         *
+         * @param parent       if the parent is a instance of JMenu it adds items to the
+         *                     menu. if the parent is a string it creates the menu and
+         *                     then adds items to the menu.
+         * @param items        list of references to menu items names (strings). If the
+         *                     references null, a separator is added.
+         * @param eventHandler event handler for the menu items.
+         * @returns a reference to JMenu with optional menu items. null if parent is not
+         *          an instance of String or JMenu, or items is null
+         *
+         */
+        private JMenu buildMenu(Object parent, Object[] items, Object eventHandler) {
+            JMenu m = null;
+            if (parent instanceof JMenu)
+                m = (JMenu) parent;
+            else if (parent instanceof String)
+                m = new JMenu((String) parent);
+            else
+                return null;
+            if (items == null)
+                return null;
+            for (int i = 0; i < items.length; i++) {
+                if (items[i] == null)
+                    m.addSeparator();
+                else
+                    m.add(buildMenuItem(items[i], eventHandler));
+            }
+            return m;
+        }
+
+        private JMenuItem buildMenuItem(Object item, Object eventHandler) {
+            JMenuItem r = null;
+            if (item instanceof String)
+                r = new JMenuItem((String) item);
+            else if (item instanceof JMenuItem)
+                r = (JMenuItem) item;
+            else
+                return null;
+
+            if (eventHandler instanceof ActionListener)
+                r.addActionListener((ActionListener) eventHandler);
+            else
+                return null;
+            return r;
+        }
+
+        public JMenuBar getTheMenuBar(){
+            return menu;
+        }
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String arg = e.getActionCommand();
+            if (arg.equals("New")) {
+
+            } else if (arg.equals("Solution")){
+
+            } else if(arg.equals("Exit")){
+
+            }
+        }
+
+        @Override
+        public void menuSelected(MenuEvent e) {
+            // Empty implementation
+        }
+
+        @Override
+        public void menuDeselected(MenuEvent e) {
+            // Empty implementation
+        }
+
+        @Override
+        public void menuCanceled(MenuEvent e) {
+            // Empty implementation
+        }
+    }
+
     /**
      * Method Name: createPanels
      * Purpose: This method creates and configure panels for user interface and called internally for initialization.
@@ -422,9 +528,10 @@ protected static boolean boatrOrientation;
 
     /**
      * Create JFrame and panels hosting items
+     *
      * @param size
      */
-    protected void designBoatPlacement(Integer size){
+    protected void designBoatPlacement(Integer size) {
         designPanel = new JPanel(new BorderLayout());
         JPanel bottomPanel = new JPanel();
         userButtons = gameController.getButtons(true);
@@ -484,19 +591,20 @@ protected static boolean boatrOrientation;
 
     /**
      * Set list of Boat Objects from GameModel
+     *
      * @param designBoatList
      */
-    protected void setDesignBoatList(List designBoatList){
+    protected void setDesignBoatList(List designBoatList) {
         this.designBoatList = designBoatList;
     }
 
     /**
      * Extract the boat size and put it into the ComboBoxModel
      */
-    protected void extractDesignBoatList(){
+    protected void extractDesignBoatList() {
         comboBoxModel = new DefaultComboBoxModel<>();
-        for (List<Boat> boatList : designBoatList){
-            for (Boat boat: boatList){
+        for (List<Boat> boatList : designBoatList) {
+            for (Boat boat : boatList) {
                 comboBoxModel.addElement(boat.getBoatLength());
             }
         }
@@ -504,6 +612,7 @@ protected static boolean boatrOrientation;
 
     /**
      * Set the updated String for control panel log
+     *
      * @param text
      */
     protected void updateControlPanelText(String text) {
@@ -553,6 +662,7 @@ protected static boolean boatrOrientation;
             e.printStackTrace();
         }
     }
+
     protected class SplashScreen extends JWindow {
 
         protected SplashScreen(String imagePath, int duration) {
@@ -575,15 +685,6 @@ protected static boolean boatrOrientation;
             }).start();
         }
     }
-    /**
-     * Method name: showSplashScreen
-     * Purpose: Display image before application is used
-     * Algorithm:
-     */
-    protected void showSplashScreen(String imagePath, int duration) {
-        SplashScreen splashScreen = new SplashScreen(imagePath, duration);
-        splashScreen.setVisible(true);
-    }
 
     /**
      * Method name: actionPerformed
@@ -603,11 +704,11 @@ protected static boolean boatrOrientation;
         if (eventSource == languageButton) {
             clickClip.start();
             gameController.historyLog(eventSource, controlPanelText);
-        } else if (eventSource == boatVertical || eventSource == boatHorizontal){
+        } else if (eventSource == boatVertical || eventSource == boatHorizontal) {
             clickClip.start();
             gameController.historyLog(eventSource, controlPanelText);
             gameController.checkOrientation(eventSource);
-        }else if (eventSource == designBoatPlacement) {
+        } else if (eventSource == designBoatPlacement) {
             clickClip.start();
             gameController.historyLog(eventSource, controlPanelText);
             // Open design window
