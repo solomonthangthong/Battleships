@@ -43,6 +43,10 @@ public class GameModel {
     private Integer boatSizeSearch;
     private DefaultComboBoxModel<Boat> comboBoxModel;
 
+    private Object innerList = null;
+
+    private Boat boat;
+
     public GameModel() {
         boardSize = 4;
         players = new Player[2];
@@ -350,6 +354,7 @@ public class GameModel {
      */
     protected void setBoatOrientation(Object eventSource){
 
+
         JRadioButton selectedRadioButton = (JRadioButton) eventSource;
         String actionCommand = selectedRadioButton.getActionCommand();
         boolean selectedValue = Boolean.parseBoolean(actionCommand);
@@ -358,44 +363,101 @@ public class GameModel {
             // Iterate boat object in innerList
             for (Boat boat : innerList){
                 // Getter and check if same value from JComboBox
-                if (boat.getBoatLength() == boatSizeSearch && boat.getBoatOrientation() == null){
+
                     boat.setBoatOrientation(selectedValue);
+
                 }
             }
         }
-    }
+
 
     /**
      * Place boat on 2D array
      * @param eventSource
      */
-    protected void placeSelectedBoat(Object eventSource){
+    protected void placeSelectedBoat(Object eventSource) {
+        int boatSizeSearch = GameController.getBoatSize();
 
-        // LINE 375 - 387 needs to bedone because eventSource here is JButton so the size is not being passed
-        int boatSizeSearch = 0;
-
-        // Check for object JComboBox
-        if (eventSource instanceof JComboBox) {
-            JComboBox<?> comboBox = (JComboBox<?>) eventSource;
-            Object selectedItem = comboBox.getSelectedItem();
-            // Check whether we pass String or Int JComboBox
-            if (selectedItem instanceof Integer) {
-                boatSizeSearch = (Integer) comboBox.getSelectedItem();
-            }
-        }
-
-        Boat foundBoat = null;
         // Iterate nested List
-        for(List<Boat> innerList : designBoatList){
+        for (List<Boat> innerList : designBoatList) {
             // Iterate boat object in innerList
-            for (Boat boat : innerList){
-                //TODO complete integration, use maybe buttonState to update position clicked to boat
-                //TODO need to set position of Boat object variable JButton[][] position; use get/setBoatPosition
-                //ensure JRadiobutton is passing boolean on initialization
-                if(boat.getBoatOrientation() != null && boat.getBoatLength() == boatSizeSearch){
-                    System.out.print("test");
-                } else {
+            for (Boat boat : innerList) {
+                if (boat.getBoatOrientation() != null && boat.getBoatLength() == boatSizeSearch && !boat.getPlaced()) {
+                    // Get the selected button
+                    JButton clickedButton = (JButton) eventSource;
 
+                    // Get the position of the clicked button
+                    int clickedRow = -1;
+                    int clickedCol = -1;
+                    for (int row = 0; row < userButtons.length; row++) {
+                        for (int col = 0; col < userButtons[row].length; col++) {
+                            if (userButtons[row][col] == clickedButton) {
+                                clickedRow = row;
+                                clickedCol = col;
+                                break;
+                            }
+                        }
+                        if (clickedRow != -1 && clickedCol != -1) {
+                            break;
+                        }
+                    }
+
+                    // Check if boat position is within bounds
+                    if (boat.getBoatOrientation()) {
+                        if (clickedRow + boatSizeSearch <= userButtons.length) {
+                            // Check for overlap
+                            boolean overlap = false;
+                            for (int i = 0; i < boatSizeSearch; i++) {
+                                if (userButtons[clickedRow + i][clickedCol].getBackground() == Color.red || userButtons[clickedRow + i][clickedCol].getBackground() == Color.blue) {
+                                    overlap = true;
+                                    break;
+                                }
+                            }
+
+                            if (!overlap) {
+                                JButton[][] boatPosition = new JButton[boatSizeSearch][1];
+                                for (int i = 0; i < boatSizeSearch; i++) {
+                                    boatPosition[i][0] = userButtons[clickedRow + i][clickedCol];
+                                    boatPosition[i][0].setBackground(Color.BLUE);
+                                    boatPosition[i][0].setText(String.valueOf(boatSizeSearch));
+                                }
+                                boat.setPlaced(true);
+                                boat.setBoatPosition(boatPosition);
+                                System.out.println("Boat placed successfully!");
+                            } else {
+                                System.out.println("Boat overlaps with another boat!");
+                            }
+                        } else {
+                            System.out.println("Boat does not fit within the board dimensions!");
+                        }
+                    } else {
+                        if (clickedCol + boatSizeSearch <= userButtons[clickedRow].length) {
+                            // Check for overlap
+                            boolean overlap = false;
+                            for (int i = 0; i < boatSizeSearch; i++) {
+                                if (userButtons[clickedRow][clickedCol + i].getBackground() == Color.red || userButtons[clickedRow][clickedCol + i].getBackground() == Color.blue) {
+                                    overlap = true;
+                                    break;
+                                }
+                            }
+
+                            if (!overlap) {
+                                JButton[][] boatPosition = new JButton[1][boatSizeSearch];
+                                for (int i = 0; i < boatSizeSearch; i++) {
+                                    boatPosition[0][i] = userButtons[clickedRow][clickedCol + i];
+                                    boatPosition[0][i].setBackground(Color.RED);
+                                    boatPosition[0][i].setText(String.valueOf(boatSizeSearch));
+                                }
+                                boat.setPlaced(true);
+                                boat.setBoatPosition(boatPosition);
+                                System.out.println("Boat placed successfully!");
+                            } else {
+                                System.out.println("Boat overlaps with another boat!");
+                            }
+                        } else {
+                            System.out.println("Boat does not fit within the board dimensions!");
+                        }
+                    }
                 }
             }
         }

@@ -71,7 +71,8 @@ public class GameView extends JFrame implements ActionListener {
     private JPanel progressPlayer1Panel;
     private JProgressBar player1Progress;
     private JProgressBar player2Progress;
-
+    protected static int boatSizeSelectorValue;
+protected static boolean boatrOrientation;
     /**
      * Panel for displaying user actor playing board.
      */
@@ -115,10 +116,7 @@ public class GameView extends JFrame implements ActionListener {
         createPanelView(gameModel.getBoardSize(), userPanel, true, player1Progress);
         createPanelView(gameModel.getBoardSize(), opponentPanel, false, player2Progress);
 
-        boatVertical = new JRadioButton();
-        boatVertical.setSelected(true);
-        boatVertical.addActionListener(this);
-        boatVertical.setActionCommand("true");
+
 
         //play background music
         //String musicFile = "resources/backgroundMusic.wav";
@@ -459,6 +457,12 @@ public class GameView extends JFrame implements ActionListener {
         boatHorizontal = new JRadioButton();
         boatHorizontal.addActionListener(this);
         boatHorizontal.setActionCommand("false");
+
+        boatVertical = new JRadioButton();
+        boatVertical.setSelected(true);
+        boatVertical.addActionListener(this);
+        boatVertical.setActionCommand("true");
+
         // ButtonGroup where only one can be selected at a time (horizontal vertical)
         ButtonGroup orientationGroup = new ButtonGroup();
         orientationGroup.add(boatVertical);
@@ -612,6 +616,8 @@ public class GameView extends JFrame implements ActionListener {
             gameController.openDesignBoat();
         } else if (eventSource == boatSizeSelector) {
             clickClip.start();
+            //modify this to make it dynamic - use get and set to access size of boat
+            boatSizeSelectorValue = (int) boatSizeSelector.getSelectedItem(); // Set the default boat size to the first value
             gameController.historyLog(eventSource, controlPanelText);
             gameController.placeBoatLocation(eventSource);
         } else if (eventSource == randBoatPlacement) {
@@ -641,6 +647,9 @@ public class GameView extends JFrame implements ActionListener {
             clickClip.start();
             gameController.boardButtonEvent(userButtons, eventSource, controlPanelText, designWindow);
             gameController.boardButtonEvent(opponentButtons, eventSource, controlPanelText, designWindow);
+
+            designWindow.repaint();
+            designWindow.revalidate();
         }
     }
 }

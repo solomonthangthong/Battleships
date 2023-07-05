@@ -28,7 +28,7 @@ public class Boat extends JButton {
         boatOrientation = orientation;
         isPlaced = false;
         checkedForDesignPlacement = false;
-        boatOrientation = null;
+
     }
 
     public void setBackground(Color color){
@@ -70,9 +70,9 @@ public class Boat extends JButton {
     }
 
     protected void setBoatOrientation(Boolean orientation){
-        this.boatOrientation = orientation;
-    }
 
+            this.boatOrientation = orientation;
+        }
     protected JButton[][] getBoatPosition(){
         return position;
     }

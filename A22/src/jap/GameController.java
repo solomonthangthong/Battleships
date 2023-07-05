@@ -1,5 +1,7 @@
 package jap;
 
+import jdk.jfr.Event;
+
 import javax.swing.*;
 
 public class GameController {
@@ -68,6 +70,10 @@ public class GameController {
         }
     }
 
+
+    protected static int getBoatSize() {
+        return GameView.boatSizeSelectorValue;
+    }
     protected void openDesignBoat(){
         //gameView.designBoatWindow();
         //TODO add logic to check if randomize has been used
@@ -90,6 +96,7 @@ public class GameController {
     }
 
     protected void checkOrientation(Object eventSource){
+
         gameModel.setBoatOrientation(eventSource);
     }
 
