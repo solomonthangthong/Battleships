@@ -42,6 +42,9 @@ public class Boat extends JButton {
     protected Integer getBoatLength(){
         return boatLength;
     }
+    protected void setBoatLength(Integer size){
+        this.boatLength = size;
+    }
 
     protected State getState(){
         return state;

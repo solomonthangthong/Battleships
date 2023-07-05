@@ -71,6 +71,7 @@ public class GameView extends JFrame implements ActionListener {
     private JButton[][] opponentButtons;
 
     private JPanel progressPlayer1Panel;
+    private JPanel progressPlayer2Panel;
     private JProgressBar player1Progress;
     private JProgressBar player2Progress;
     protected static int boatSizeSelectorValue;
@@ -116,8 +117,8 @@ protected static boolean boatrOrientation;
         userButtons = gameController.getButtons(true);
         opponentButtons = gameController.getButtons(false);
 
-        createPanelView(gameModel.getBoardSize(), userPanel, true, player1Progress);
-        createPanelView(gameModel.getBoardSize(), opponentPanel, false, player2Progress);
+        createPanelView(gameModel.getBoardSize(), userPanel, true, progressPlayer1Panel);
+        createPanelView(gameModel.getBoardSize(), opponentPanel, false, progressPlayer2Panel);
 
 
 
@@ -140,6 +141,9 @@ protected static boolean boatrOrientation;
 
     }
 
+    /**
+     *
+     */
     protected class Splash {
         public void show() {
             JWindow window = new JWindow();
@@ -157,9 +161,15 @@ protected static boolean boatrOrientation;
         }
     }
 
+    /**
+     *
+     */
     protected class Menu extends JFrame implements ActionListener, MenuListener{
         private JMenuBar menu;
 
+        /**
+         *
+         */
         public Menu(){
             menu = new JMenuBar();
 
@@ -208,6 +218,18 @@ protected static boolean boatrOrientation;
             return m;
         }
 
+        /**
+         * Creates a menu item.
+         *
+         *                     handler. if the parent is a string it creates the menu
+         *                     and then adds an event handler.
+         * @param eventHandler event handler for the menu items. Must be of type
+         *                     ActionListener
+         * @returns a reference to JMenuItem. null if parent is not an instance of
+         *          String or JMenuItem, or the event handler is an instance of
+         *          ActionListener
+         *
+         */
         private JMenuItem buildMenuItem(Object item, Object eventHandler) {
             JMenuItem r = null;
             if (item instanceof String)
@@ -230,12 +252,17 @@ protected static boolean boatrOrientation;
         @Override
         public void actionPerformed(ActionEvent e) {
             String arg = e.getActionCommand();
+            Object eventSource = e.getSource();
             if (arg.equals("New")) {
-
+                gameController.historyLog(eventSource, controlPanelText);
+                // reset user actor
+                gameController.resetGame(true);
+                // reset user opponent
+                gameController.resetGame(false);
             } else if (arg.equals("Solution")){
-
+                gameController.historyLog(eventSource, controlPanelText);
             } else if(arg.equals("Exit")){
-
+                gameController.historyLog(eventSource, controlPanelText);
             }
         }
 
@@ -374,14 +401,14 @@ protected static boolean boatrOrientation;
         progressPlayer1Panel.add(player1Progress);
 
         //set opponent actor life bar
+        progressPlayer2Panel = new JPanel();
         player2Progress = new JProgressBar();
-        player2Progress.setBackground(Color.decode("#FF990D"));
-        JButton lifeMachineHealthBar = new JButton();
-        lifeMachineHealthBar.setName("Life 2");
-        lifeMachineHealthBar.setPreferredSize(new Dimension(250, 25));
-        lifeMachineHealthBar.addActionListener(this);
-        player2Progress.add(new JLabel("Life 2"));
-        player2Progress.add(lifeMachineHealthBar);
+
+        progressPlayer2Panel.setBackground(Color.decode("#FF990D"));
+        progressPlayer2Panel.setPreferredSize(new Dimension(250, 25));
+        progressPlayer2Panel.add(new JLabel("Life 2"));
+        progressPlayer2Panel.add(player2Progress);
+
     }
 
     /**
@@ -407,7 +434,7 @@ protected static boolean boatrOrientation;
      * @param whichActor - True = user actor, false = machine actor
      * @return - Button Array
      */
-    private void createPanelView(int dimension, JPanel actorPanel, Boolean whichActor, JProgressBar lifeStatus) {
+    private void createPanelView(int dimension, JPanel actorPanel, Boolean whichActor, JPanel lifeStatus) {
         int buttonSize = Math.min(50, 200 / dimension); // Adjust the button size based on dimension
         int labelSize = Math.min(50, 200 / dimension); // Adjust the button size based on dimension
 
@@ -504,8 +531,8 @@ protected static boolean boatrOrientation;
         opponentButtons = gameController.getButtons(false);
 
         // Create Panels
-        createPanelView(selectedDimension, userPanel, true, player1Progress);
-        createPanelView(selectedDimension, opponentPanel, false, player2Progress);
+        createPanelView(selectedDimension, userPanel, true, progressPlayer1Panel);
+        createPanelView(selectedDimension, opponentPanel, false, progressPlayer2Panel);
 
         // Revalidate and Repaint
         opponentBoardPanel.revalidate();
@@ -723,14 +750,15 @@ protected static boolean boatrOrientation;
             gameController.placeBoatLocation(eventSource);
         } else if (eventSource == randBoatPlacement) {
             //clickClip.start();
+
             gameController.historyLog(eventSource, controlPanelText);
             gameController.updateModelViewBoard(selectedDimension, userPanel, opponentPanel, userButtons, opponentButtons);
             // Need to see if GameModel Buttons are updated with Boat
             gameController.randomBoatPlacement(opponentPanel, false);
             gameController.randomBoatPlacement(userPanel, true);
 
-            createPanelView(selectedDimension, userPanel, true, player1Progress);
-            createPanelView(selectedDimension, opponentPanel, false, player2Progress);
+            createPanelView(selectedDimension, userPanel, true, progressPlayer1Panel);
+            createPanelView(selectedDimension, opponentPanel, false, progressPlayer2Panel);
 
         } else if (eventSource == dimensionComboBox) {
             clickClip.start();

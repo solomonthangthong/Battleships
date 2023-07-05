@@ -109,14 +109,25 @@ public class GameModel {
             JButton button = (JButton) eventSource;
             actionEvent = actionEvent + button.getName() + " clicked " + "<br>";
             setCurrentAction(actionEvent);
-        } else if (eventSource instanceof JRadioButton){
+        } else if (eventSource instanceof JRadioButton) {
             JRadioButton selectedRadioButton = (JRadioButton) eventSource;
             String actionCommand = selectedRadioButton.getActionCommand();
             boolean selectedValue = Boolean.parseBoolean(actionCommand);
-            if (selectedValue){
+            if (selectedValue) {
                 actionEvent = actionEvent + "Orientation set to " + "vertical" + "<br>";
             } else {
                 actionEvent = actionEvent + "Orientation set to " + "horizontal" + "<br>";
+            }
+            setCurrentAction(actionEvent);
+        } else if (eventSource instanceof JMenuItem) {
+            JMenuItem menuItem = (JMenuItem) eventSource;
+            String actionCommand = menuItem.getActionCommand();
+            if (actionCommand.equals("New")) {
+                actionEvent = actionEvent + "New game state implemented" + "<br>";
+            } else if (actionCommand.equals("Solution")) {
+                actionEvent = actionEvent + "Opponent ship has been shown" + "<br>";
+            } else if (actionCommand.equals("Exit")) {
+                actionEvent = actionEvent + "Player has chosen to exit" + "<br>";
             }
             setCurrentAction(actionEvent);
         }
@@ -181,11 +192,10 @@ public class GameModel {
     }
 
     /**
-     *
      * @param button
      * @param boat
      */
-    protected void updateButtonState(JButton button, Boat boat) {
+    protected void updateButtonState(JButton button, Boat boat, Boolean reset) {
         // Init ButtonState
         ButtonState state;
         //TODO complete integration of evaluating boats for HIT/MISS
@@ -197,7 +207,11 @@ public class GameModel {
         }
 
         // If Button not EMPTY, and user clicked, state becomes missed
-        if (button != null) {
+        if (button != null && reset) {
+            state.setState(State.DEFAULT);
+            button.setBackground(Color.lightGray);
+            button.setForeground(Color.black);
+        } else if (button != null) {
             if (state.getState() != State.DEFAULT) {
                 state.setState(State.MISS);
             }
@@ -315,7 +329,8 @@ public class GameModel {
         //TODO LOGIC TO NOT OVERLAP THE boats (grab from previous methods)
 
     }
-    protected List<List<Boat>> getDesignBoatList(){
+
+    protected List<List<Boat>> getDesignBoatList() {
         return designBoatList;
     }
 
@@ -334,12 +349,12 @@ public class GameModel {
 
         Boat foundBoat = null;
         // Iterate nested List
-        for(List<Boat> innerList : designBoatList){
+        for (List<Boat> innerList : designBoatList) {
             // Iterate boat object in innerList
-            for (Boat boat : innerList){
+            for (Boat boat : innerList) {
                 // Getter and check if same value from JComboBox
-                if (boat.getBoatLength() == boatSizeSearch && !boat.getCheckedForDesign()){
-                   //TODO cross check 2D array board if there any boats place, if not place this boat?
+                if (boat.getBoatLength() == boatSizeSearch && !boat.getCheckedForDesign()) {
+                    //TODO cross check 2D array board if there any boats place, if not place this boat?
                     boat.setCheckedForDesign(true);
                     return true;
                 }
@@ -350,18 +365,19 @@ public class GameModel {
 
     /**
      * set Boat Object Orientation
+     *
      * @param eventSource
      */
-    protected void setBoatOrientation(Object eventSource){
+    protected void setBoatOrientation(Object eventSource) {
 
 
         JRadioButton selectedRadioButton = (JRadioButton) eventSource;
         String actionCommand = selectedRadioButton.getActionCommand();
         boolean selectedValue = Boolean.parseBoolean(actionCommand);
 
-        for(List<Boat> innerList : designBoatList){
+        for (List<Boat> innerList : designBoatList) {
             // Iterate boat object in innerList
-            for (Boat boat : innerList){
+            for (Boat boat : innerList) {
                 // Getter and check if same value from JComboBox
 
                     boat.setBoatOrientation(selectedValue);
@@ -373,6 +389,7 @@ public class GameModel {
 
     /**
      * Place boat on 2D array
+     *
      * @param eventSource
      */
     protected void placeSelectedBoat(Object eventSource) {
