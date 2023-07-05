@@ -34,6 +34,7 @@ import java.util.List;
 public class GameView extends JFrame implements ActionListener {
     private GameController gameController;
     private final Menu menuBar;
+    private JFrame colourSelectWindow;
     private JButton battleshipAbout;
     /**
      * Combobox to change GUI language.
