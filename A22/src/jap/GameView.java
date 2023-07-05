@@ -4,6 +4,9 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.swing.*;
+import javax.swing.border.LineBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import java.awt.*;
@@ -29,7 +32,7 @@ import java.util.List;
 public class GameView extends JFrame implements ActionListener {
     private GameController gameController;
     private Menu menuBar;
-    private JFrame designWindow;
+    private JFrame colourSelectWindow;
     private JButton battleshipAbout;
     /**
      * Combobox to change GUI language.
@@ -43,6 +46,8 @@ public class GameView extends JFrame implements ActionListener {
      * Button to open new window to design boat placement.
      */
     private JButton designBoatPlacement;
+    private JFrame designWindow;
+
     /**
      * Button to randomize both actor ship placement.
      */
@@ -260,9 +265,17 @@ protected static boolean boatrOrientation;
                 // reset user opponent
                 gameController.resetGame(false);
             } else if (arg.equals("Solution")){
-                gameController.historyLog(eventSource, controlPanelText);
+
             } else if(arg.equals("Exit")){
                 gameController.historyLog(eventSource, controlPanelText);
+            } else if(arg.equals("Colours")){
+                gameController.historyLog(eventSource, controlPanelText);
+                ColorChooser colorPanel = new ColorChooser();
+                colorPanel.colorGUI();
+
+            }
+            else if (arg.equals("About")){
+
             }
         }
 
@@ -279,6 +292,136 @@ protected static boolean boatrOrientation;
         @Override
         public void menuCanceled(MenuEvent e) {
             // Empty implementation
+        }
+    }
+
+    protected class ColorChooser extends JPanel implements ActionListener, ChangeListener {
+        private JColorChooser tcc;
+        protected JLabel banner;
+        protected JButton unselectedColourButton;
+        protected JButton waterColourButton;
+        protected JButton boatColourButton;
+
+        protected JPanel unselectedColour;
+        protected JPanel waterColour;
+        protected JPanel boatColour;
+        private JButton lastClickedButton;
+        private JButton saveColour;
+        private JButton cancelColour;
+        private JButton resetColour;
+
+        protected ColorChooser(){
+            super(new BorderLayout());
+            LineBorder lineBorder = new LineBorder(Color.BLACK, 2);
+
+            unselectedColourButton = new JButton("Unselected");
+            waterColourButton = new JButton("Water");
+            boatColourButton = new JButton("Ship");
+            saveColour = new JButton("Save");
+            cancelColour = new JButton("Cancel");
+            resetColour = new JButton("Reset");
+
+            unselectedColour = new JPanel();
+            waterColour = new JPanel();
+            boatColour = new JPanel();
+
+            unselectedColour.setBackground(Color.lightGray);
+            waterColour.setBackground(Color.CYAN);
+            boatColour.setBackground(Color.pink);
+
+            unselectedColour.setBorder(lineBorder);
+            waterColour.setBorder(lineBorder);
+            boatColour.setBorder(lineBorder);
+
+            unselectedColour.setPreferredSize(unselectedColourButton.getPreferredSize());
+            waterColour.setPreferredSize(waterColourButton.getPreferredSize());
+            boatColour.setPreferredSize(boatColourButton.getPreferredSize());
+
+            JPanel unselectedColourPanel = new JPanel(new BorderLayout());
+            unselectedColourPanel.add(unselectedColour, BorderLayout.CENTER);
+            unselectedColourPanel.add(unselectedColourButton, BorderLayout.SOUTH);
+
+            JPanel waterColourPanel = new JPanel(new BorderLayout());
+            waterColourPanel.add(waterColour, BorderLayout.CENTER);
+            waterColourPanel.add(waterColourButton, BorderLayout.SOUTH);
+
+            JPanel boatColourPanel = new JPanel(new BorderLayout());
+            boatColourPanel.add(boatColour, BorderLayout.CENTER);
+            boatColourPanel.add(boatColourButton, BorderLayout.SOUTH);
+
+            JPanel colourModel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
+            colourModel.add(unselectedColourPanel);
+            colourModel.add(waterColourPanel);
+            colourModel.add(boatColourPanel);
+            colourModel.setBorder(BorderFactory.createTitledBorder("Colour Model"));
+
+            JPanel userAction = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
+            userAction.add(saveColour);
+            userAction.add(cancelColour);
+            userAction.add(resetColour);
+
+            unselectedColourButton.addActionListener(this);
+            waterColourButton.addActionListener(this);
+            boatColourButton.addActionListener(this);
+
+            tcc = new JColorChooser();
+            tcc.getSelectionModel().addChangeListener(this);
+
+            add(colourModel, BorderLayout.NORTH);
+            add(tcc, BorderLayout.CENTER);
+            add(userAction, BorderLayout.SOUTH);
+
+            unselectedColourButton.doClick();
+
+        }
+        protected void colorGUI(){
+            //Create and set up the window.
+            JFrame frame = new JFrame("Choose Colour");
+            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+            //Create and set up the content pane.
+            JComponent newContentPane = new ColorChooser();
+            newContentPane.setOpaque(true); //content panes must be opaque
+            frame.setContentPane(newContentPane);
+            frame.setLocationRelativeTo(null);
+
+            //Display the window.
+            frame.pack();
+            frame.setVisible(true);
+        }
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JButton source = (JButton) e.getSource();
+
+            if (source == unselectedColourButton || source == waterColourButton || source == boatColourButton){
+                JButton clickedButton = (JButton) source;
+
+                if (lastClickedButton == clickedButton) {
+                    // If the same button is clicked again, do nothing
+                    return;
+                }
+                lastClickedButton = clickedButton;
+            } else if (source == saveColour){
+
+            } else if (source == cancelColour){
+
+            }else if (source == resetColour){
+
+            }
+        }
+
+        @Override
+        public void stateChanged(ChangeEvent e) {
+            // Update the color of the selected panel
+            Color selectedColor = tcc.getSelectionModel().getSelectedColor();
+
+            if (lastClickedButton == unselectedColourButton) {
+                unselectedColour.setBackground(selectedColor);
+            } else if (lastClickedButton == waterColourButton) {
+                waterColour.setBackground(selectedColor);
+            } else if (lastClickedButton == boatColourButton) {
+                boatColour.setBackground(selectedColor);
+            }
         }
     }
 
