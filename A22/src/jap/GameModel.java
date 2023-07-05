@@ -22,7 +22,7 @@ public class GameModel {
     private JPanel opponentBoardPanel;
 
 
-    private Player[] players;
+    private final Player[] players;
 
     private int timer;
 
@@ -37,12 +37,9 @@ public class GameModel {
 
     private int player2Points;
 
-    private ButtonState state;
     // Nested list, inner list represent size of boat
     private List<List<Boat>> designBoatList;
     private Integer boatSizeSearch;
-    private DefaultComboBoxModel<Boat> comboBoxModel;
-
     private Object innerList = null;
 
     private Boat boat;
@@ -50,9 +47,6 @@ public class GameModel {
     public GameModel() {
         boardSize = 4;
         players = new Player[2];
-        /**
-         * First player is index 0, machine is index 1
-         */
 
         players[0] = new Player("Player 1", true);
         players[1] = new Player("Player 2", false);
@@ -122,12 +116,18 @@ public class GameModel {
         } else if (eventSource instanceof JMenuItem) {
             JMenuItem menuItem = (JMenuItem) eventSource;
             String actionCommand = menuItem.getActionCommand();
-            if (actionCommand.equals("New")) {
-                actionEvent = actionEvent + "New game state implemented" + "<br>";
-            } else if (actionCommand.equals("Solution")) {
-                actionEvent = actionEvent + "Opponent ship has been shown" + "<br>";
-            } else if (actionCommand.equals("Exit")) {
-                actionEvent = actionEvent + "Player has chosen to exit" + "<br>";
+
+            switch (actionCommand){
+                case "New":
+                    actionEvent = actionEvent + "New game state implemented" + "<br>";
+                    break;
+                case "Solution":
+                    actionEvent = actionEvent + "Opponent ship has been shown" + "<br>";
+                    break;
+                case "Exit":
+                    actionEvent = actionEvent + "Player has chosen to exit" + "<br>";
+                    break;
+
             }
             setCurrentAction(actionEvent);
         }
@@ -136,7 +136,7 @@ public class GameModel {
     /**
      * Purpose: set currentAction String
      *
-     * @param actionEvent
+     * @param actionEvent - Updated action string
      */
     private void setCurrentAction(String actionEvent) {
         currentAction = actionEvent;
@@ -145,7 +145,7 @@ public class GameModel {
     /**
      * Purpose: get currentAction string for historyLog in GameController
      *
-     * @return
+     * @return - Control panel concatenate string
      */
     protected String getCurrentGameLog() {
         return currentAction;
@@ -192,8 +192,8 @@ public class GameModel {
     }
 
     /**
-     * @param button
-     * @param boat
+     * @param button - Passed JButton from board
+     * @param boat - Passed Boat from board
      */
     protected void updateButtonState(JButton button, Boat boat, Boolean reset) {
         // Init ButtonState
@@ -231,16 +231,14 @@ public class GameModel {
     protected JButton[][] createButtonBoard(Player player) {
         // Multiply dimensions by two. Intended result is if board is size 4 make it 8 by 8 grid
         int dimensions = boardSize * 2;
-        int numRows = dimensions;
-        int numCols = dimensions;
         String actor1 = "Pos ";
         String actor2 = "Opp Pos ";
 
         // Initialize 2D array for buttons
-        JButton[][] buttons = new JButton[numRows][numCols];
+        JButton[][] buttons = new JButton[dimensions][dimensions];
         // Create nested loop, in order to create clickable buttons for each iteration of the outer loop
-        for (int i = 0; i < numRows; i++) {
-            for (int j = 0; j < numCols; j++) {
+        for (int i = 0; i < dimensions; i++) {
+            for (int j = 0; j < dimensions; j++) {
                 /* Create a new button for the board */
                 JButton userButton = new JButton();
                 if (player.isActor()) {
@@ -298,25 +296,17 @@ public class GameModel {
     /**
      * Method Name: designBoatPlacement
      * Purpose: Pop-up window to design ship placement for user actor.
-     * Algorithm: new intance of JFrame, set location, default close operation
+     * Algorithm: new instance of JFrame, set location, default close operation
      */
     protected void populateDesignBoat() {
         designBoatList = new ArrayList<>();
-        Random random = new Random();
-        int randRow = boardSize * 2;
-        int randCol = boardSize * 2;
-
-        int red = random.nextInt(255);
-        int green = random.nextInt(50);
-        int blue = random.nextInt(256);
 
         //TODO Create instances of boat but need to set orientation through radio button..?
-        // Nested loop, outerloop is creating each boat, inner loop is number of boats per size
+        // Nested loop, outer loop is creating each boat, inner loop is number of boats per size
         for (int boatSize = boardSize; boatSize >= 1; boatSize--) {
             // List for current boat size
             List<Boat> boatSizeList = new ArrayList<>();
-            // Random colour
-            Color backgroundColor = new Color(red, green, blue);
+
             for (int boatCount = boardSize - boatSize + 1; boatCount >= 1; boatCount--) {
                 Boat boat = new Boat(boatSize, true);
                 boat.setText(boatSize);
@@ -347,7 +337,6 @@ public class GameModel {
             }
         }
 
-        Boat foundBoat = null;
         // Iterate nested List
         for (List<Boat> innerList : designBoatList) {
             // Iterate boat object in innerList
@@ -366,10 +355,9 @@ public class GameModel {
     /**
      * set Boat Object Orientation
      *
-     * @param eventSource
+     * @param eventSource - JRadioButton H or V
      */
     protected void setBoatOrientation(Object eventSource) {
-
 
         JRadioButton selectedRadioButton = (JRadioButton) eventSource;
         String actionCommand = selectedRadioButton.getActionCommand();
@@ -379,9 +367,7 @@ public class GameModel {
             // Iterate boat object in innerList
             for (Boat boat : innerList) {
                 // Getter and check if same value from JComboBox
-
                     boat.setBoatOrientation(selectedValue);
-
                 }
             }
         }
@@ -390,7 +376,7 @@ public class GameModel {
     /**
      * Place boat on 2D array
      *
-     * @param eventSource
+     * @param eventSource - JButton selection from Board
      */
     protected void placeSelectedBoat(Object eventSource) {
         int boatSizeSearch = GameController.getBoatSize();

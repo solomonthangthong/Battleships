@@ -1,7 +1,5 @@
 package jap;
 
-import jdk.jfr.Event;
-
 import javax.swing.*;
 
 public class GameController {
@@ -20,9 +18,9 @@ public class GameController {
     /**
      * Purpose: Calls Model and updates string, call view and refresh
      *
-     * @param eventSource
-     * @param controlPanelText
-     * @param <T>
+     * @param eventSource - Instances of any event
+     * @param controlPanelText - String of history actions from player
+     * @param <T> - Generic object
      */
     protected <T> void historyLog(T eventSource, JLabel controlPanelText) {
         gameModel.historyLog(eventSource, controlPanelText);
@@ -49,7 +47,6 @@ public class GameController {
      * @param opponentButtons    - opponent 2D array button grid (right side)
      */
     protected void updateModelViewBoard(Integer selectedDimension, JPanel userBoardPanel, JPanel opponentBoardPanel, JButton[][] userButtons, JButton[][] opponentButtons) {
-
         gameModel.setBoardSize(selectedDimension);
         gameModel.setUserPlayerButtons(gameModel.createButtonBoard(gameModel.getPlayer(true)));
         gameModel.setOpponentButtons(gameModel.createButtonBoard(gameModel.getPlayer(false)));
@@ -61,8 +58,8 @@ public class GameController {
     /**
      * Get instance of 2D array buttons from Game Model and return to View
      *
-     * @param actor
-     * @return
+     * @param actor - Player or Machine
+     * @return - 2D board for each player
      */
     protected JButton[][] getButtons(Boolean actor) {
         if (actor) {
@@ -93,7 +90,6 @@ public class GameController {
         if (!isBoatPlaced) {
             //TODO DEFAULT ORIENTATION TO VERTICAL BY RADIO BUTTON AND BE ABLE TO CHANGE IT?
             gameModel.placeSelectedBoat(eventSource);
-
         }
     }
 
@@ -105,8 +101,8 @@ public class GameController {
     /**
      * Purpose: sets gameModel user/opponent 2D array button grid to have random boats
      *
-     * @param actorPanel
-     * @param actor
+     * @param actorPanel - Player/Machine JPanel
+     * @param actor - Player/Machine
      */
     protected void randomBoatPlacement(JPanel actorPanel, Boolean actor) {
         if (actor) {
@@ -168,7 +164,7 @@ public class GameController {
                         historyLog(eventSource, controlPanelText);
                         gameModel.updateButtonState(null, (Boat) button, false);
 
-                    } else if (button instanceof JButton){
+                    } else if (button != null){
                         historyLog(eventSource, controlPanelText);
                         gameModel.updateButtonState(button, null, false);
                     }

@@ -31,8 +31,7 @@ import java.util.List;
  */
 public class GameView extends JFrame implements ActionListener {
     private GameController gameController;
-    private Menu menuBar;
-    private JFrame colourSelectWindow;
+    private final Menu menuBar;
     private JButton battleshipAbout;
     /**
      * Combobox to change GUI language.
@@ -52,7 +51,6 @@ public class GameView extends JFrame implements ActionListener {
      * Button to randomize both actor ship placement.
      */
     private JButton randBoatPlacement;
-    private JPanel controlPanel;
     /**
      * Label for controlPanel history box.
      */
@@ -80,7 +78,7 @@ public class GameView extends JFrame implements ActionListener {
     private JProgressBar player1Progress;
     private JProgressBar player2Progress;
     protected static int boatSizeSelectorValue;
-protected static boolean boatrOrientation;
+
     /**
      * Panel for displaying user actor playing board.
      */
@@ -126,7 +124,6 @@ protected static boolean boatrOrientation;
         createPanelView(gameModel.getBoardSize(), opponentPanel, false, progressPlayer2Panel);
 
 
-
         //play background music
         //String musicFile = "resources/backgroundMusic.wav";
         //playBackgroundMusic(musicFile);
@@ -149,7 +146,7 @@ protected static boolean boatrOrientation;
     /**
      *
      */
-    protected class Splash {
+    protected static class Splash {
         public void show() {
             JWindow window = new JWindow();
             window.getContentPane().add(new JLabel("", new ImageIcon("images/game_about.jpg"), SwingConstants.CENTER));
@@ -159,7 +156,7 @@ protected static boolean boatrOrientation;
             try {
                 Thread.sleep(5000);
             } catch (Exception e) {
-                ;
+
             }
             window.setVisible(false);
             window.dispose();
@@ -169,24 +166,24 @@ protected static boolean boatrOrientation;
     /**
      *
      */
-    protected class Menu extends JFrame implements ActionListener, MenuListener{
-        private JMenuBar menu;
+    protected class Menu extends JFrame implements ActionListener, MenuListener {
+        private final JMenuBar menu;
 
         /**
          *
          */
-        public Menu(){
+        public Menu() {
             menu = new JMenuBar();
 
             // Example found in Week 5 JavaSwing labs from Professor
             menu.add(buildMenu("Game",
-                    new Object[] { new JMenuItem("New", new ImageIcon("images/iconload.gif")),
+                    new Object[]{new JMenuItem("New", new ImageIcon("images/iconload.gif")),
                             new JMenuItem("Solution", new ImageIcon("images/iconsol.gif")),
                             new JMenuItem("Exit", new ImageIcon("images/iconext.gif"))
                     }, this));
 
             menu.add(buildMenu("Help",
-                    new Object[] { new JMenuItem("Colours", new ImageIcon("images/iconcol.gif")),
+                    new Object[]{new JMenuItem("Colours", new ImageIcon("images/iconcol.gif")),
                             new JMenuItem("About", new ImageIcon("images/iconabt.gif")),
                     }, this));
         }
@@ -194,18 +191,13 @@ protected static boolean boatrOrientation;
         /**
          * Creates a menu with menu items.
          *
-         * @param parent       if the parent is a instance of JMenu it adds items to the
-         *                     menu. if the parent is a string it creates the menu and
-         *                     then adds items to the menu.
-         * @param items        list of references to menu items names (strings). If the
-         *                     references null, a separator is added.
-         * @param eventHandler event handler for the menu items.
-         * @returns a reference to JMenu with optional menu items. null if parent is not
-         *          an instance of String or JMenu, or items is null
-         *
+         * @param parent - if the parent is an instance of JMenu it adds items to the menu. if the parent is a string it creates the menu and then adds items to the menu.
+         * @param items - list of references to menu items names (strings). If the references null, a separator is added.
+         * @param eventHandler - event handler for the menu items.
+         * @return - a reference to JMenu with optional menu items. null if parent is not an instance of String or JMenu, or items is null
          */
         private JMenu buildMenu(Object parent, Object[] items, Object eventHandler) {
-            JMenu m = null;
+            JMenu m;
             if (parent instanceof JMenu)
                 m = (JMenu) parent;
             else if (parent instanceof String)
@@ -214,29 +206,28 @@ protected static boolean boatrOrientation;
                 return null;
             if (items == null)
                 return null;
-            for (int i = 0; i < items.length; i++) {
-                if (items[i] == null)
+            for (Object item: items){
+                if (item == null){
                     m.addSeparator();
-                else
-                    m.add(buildMenuItem(items[i], eventHandler));
+                }
+                else {
+                    m.add(buildMenuItem(item, eventHandler));
+                }
             }
             return m;
         }
 
         /**
          * Creates a menu item.
+         * handler. if the parent is a string it creates the menu and then adds an event handler.
          *
-         *                     handler. if the parent is a string it creates the menu
-         *                     and then adds an event handler.
-         * @param eventHandler event handler for the menu items. Must be of type
-         *                     ActionListener
-         * @returns a reference to JMenuItem. null if parent is not an instance of
-         *          String or JMenuItem, or the event handler is an instance of
-         *          ActionListener
-         *
+         * @param item - Object from Menu bar
+         * @param eventHandler - event handler for the menu items. Must be of type ActionListener
+         * @return a reference to JMenuItem. null if parent is not an instance of
+         * String or JMenuItem, or the event handler is an instance of
          */
         private JMenuItem buildMenuItem(Object item, Object eventHandler) {
-            JMenuItem r = null;
+            JMenuItem r;
             if (item instanceof String)
                 r = new JMenuItem((String) item);
             else if (item instanceof JMenuItem)
@@ -251,31 +242,34 @@ protected static boolean boatrOrientation;
             return r;
         }
 
-        public JMenuBar getTheMenuBar(){
+        public JMenuBar getTheMenuBar() {
             return menu;
         }
+
         @Override
         public void actionPerformed(ActionEvent e) {
             String arg = e.getActionCommand();
             Object eventSource = e.getSource();
-            if (arg.equals("New")) {
-                gameController.historyLog(eventSource, controlPanelText);
-                // reset user actor
-                gameController.resetGame(true);
-                // reset user opponent
-                gameController.resetGame(false);
-            } else if (arg.equals("Solution")){
 
-            } else if(arg.equals("Exit")){
-                gameController.historyLog(eventSource, controlPanelText);
-            } else if(arg.equals("Colours")){
-                gameController.historyLog(eventSource, controlPanelText);
-                ColorChooser colorPanel = new ColorChooser();
-                colorPanel.colorGUI();
-
-            }
-            else if (arg.equals("About")){
-
+            switch(arg){
+                case "New":
+                    gameController.historyLog(eventSource, controlPanelText);
+                    // reset user actor
+                    gameController.resetGame(true);
+                    // reset user opponent
+                    gameController.resetGame(false);
+                    break;
+                case "Solution":
+                    // TODO set opponent board to visible
+                    break;
+                case "Colours":
+                    gameController.historyLog(eventSource, controlPanelText);
+                    ColorChooser colorPanel = new ColorChooser();
+                    colorPanel.colorGUI();
+                    break;
+                case "About":
+                    //TODO complete implmentation
+                    break;
             }
         }
 
@@ -295,9 +289,8 @@ protected static boolean boatrOrientation;
         }
     }
 
-    protected class ColorChooser extends JPanel implements ActionListener, ChangeListener {
-        private JColorChooser tcc;
-        protected JLabel banner;
+    protected static class ColorChooser extends JPanel implements ActionListener, ChangeListener {
+        private final JColorChooser tcc;
         protected JButton unselectedColourButton;
         protected JButton waterColourButton;
         protected JButton boatColourButton;
@@ -306,11 +299,11 @@ protected static boolean boatrOrientation;
         protected JPanel waterColour;
         protected JPanel boatColour;
         private JButton lastClickedButton;
-        private JButton saveColour;
-        private JButton cancelColour;
-        private JButton resetColour;
+        private final JButton saveColour;
+        private final JButton cancelColour;
+        private final JButton resetColour;
 
-        protected ColorChooser(){
+        protected ColorChooser() {
             super(new BorderLayout());
             LineBorder lineBorder = new LineBorder(Color.BLACK, 2);
 
@@ -374,7 +367,8 @@ protected static boolean boatrOrientation;
             unselectedColourButton.doClick();
 
         }
-        protected void colorGUI(){
+
+        protected void colorGUI() {
             //Create and set up the window.
             JFrame frame = new JFrame("Choose Colour");
             frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -389,23 +383,25 @@ protected static boolean boatrOrientation;
             frame.pack();
             frame.setVisible(true);
         }
+
         @Override
         public void actionPerformed(ActionEvent e) {
             JButton source = (JButton) e.getSource();
 
-            if (source == unselectedColourButton || source == waterColourButton || source == boatColourButton){
-                JButton clickedButton = (JButton) source;
+            if (source == unselectedColourButton || source == waterColourButton || source == boatColourButton) {
+                // NOT REDUNDANT ENSURES JBUTTON IS NOT SAVE,CANCEL, RESET OPTIONS
+                JButton clickedButton = source;
 
                 if (lastClickedButton == clickedButton) {
                     // If the same button is clicked again, do nothing
                     return;
                 }
                 lastClickedButton = clickedButton;
-            } else if (source == saveColour){
+            } else if (source == saveColour) {
 
-            } else if (source == cancelColour){
+            } else if (source == cancelColour) {
 
-            }else if (source == resetColour){
+            } else if (source == resetColour) {
 
             }
         }
@@ -480,7 +476,8 @@ protected static boolean boatrOrientation;
         selectionPanel.add(dimensionsPanel);
 
         //Control panel code
-        controlPanel = new JPanel();
+
+        JPanel controlPanel = new JPanel();
         controlPanel.setPreferredSize(new Dimension(200, 350));
         controlPanel.setBorder(BorderFactory.createRaisedBevelBorder());
 
@@ -575,7 +572,6 @@ protected static boolean boatrOrientation;
      * @param dimension  - Board dimension size, default is 4
      * @param actorPanel - User or Opponent JPanel
      * @param whichActor - True = user actor, false = machine actor
-     * @return - Button Array
      */
     private void createPanelView(int dimension, JPanel actorPanel, Boolean whichActor, JPanel lifeStatus) {
         int buttonSize = Math.min(50, 200 / dimension); // Adjust the button size based on dimension
@@ -585,8 +581,6 @@ protected static boolean boatrOrientation;
         dimension = dimension * 2;
         int numRows = dimension;
         int numCols = dimension;
-        String actor1 = "Pos ";
-        String actor2 = "Opp Pos ";
 
         // Initialize JPanel to hold array of buttons
         JPanel actorGrid = new JPanel(new GridLayout(numRows, numCols));
@@ -599,9 +593,8 @@ protected static boolean boatrOrientation;
             buttonForGrid = opponentButtons;
         }
         // Only loop through instance of Buttons from GameModel to assign action listner
-        for (int i = 0; i < buttonForGrid.length; i++) {
-            for (int j = 0; j < buttonForGrid[i].length; j++) {
-                JButton button = buttonForGrid[i][j];
+        for (JButton[] row : buttonForGrid) {
+            for (JButton button : row) {
                 button.addActionListener(this);
                 button.setPreferredSize(new Dimension(buttonSize, buttonSize));
                 actorGrid.add(button);
@@ -699,7 +692,7 @@ protected static boolean boatrOrientation;
     /**
      * Create JFrame and panels hosting items
      *
-     * @param size
+     * @param size - Boat size
      */
     protected void designBoatPlacement(Integer size) {
         designPanel = new JPanel(new BorderLayout());
@@ -717,14 +710,14 @@ protected static boolean boatrOrientation;
         JPanel actorGrid = new JPanel(new GridLayout(size * 2, size * 2));
 
         // Only loop through instance of Buttons from GameModel to assign action listener
-        for (int i = 0; i < userButtons.length; i++) {
-            for (int j = 0; j < userButtons[i].length; j++) {
-                JButton button = userButtons[i][j];
+        for (JButton[] row : userButtons) {
+            for (JButton button : row) {
                 button.addActionListener(this);
                 button.setPreferredSize(new Dimension(buttonSize, buttonSize));
                 actorGrid.add(button);
             }
         }
+
         boatSizeSelector = new JComboBox<>(comboBoxModel);
         boatSizeSelector.addActionListener(this);
         boatSizeSelector.setSelectedIndex(0);
@@ -762,7 +755,7 @@ protected static boolean boatrOrientation;
     /**
      * Set list of Boat Objects from GameModel
      *
-     * @param designBoatList
+     * @param designBoatList - ArrayList of User Player board
      */
     protected void setDesignBoatList(List designBoatList) {
         this.designBoatList = designBoatList;
@@ -783,7 +776,7 @@ protected static boolean boatrOrientation;
     /**
      * Set the updated String for control panel log
      *
-     * @param text
+     * @param text - Control panel Concat string
      */
     protected void updateControlPanelText(String text) {
         controlPanelText.setText(text);
@@ -830,29 +823,6 @@ protected static boolean boatrOrientation;
             clip.start();
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    protected class SplashScreen extends JWindow {
-
-        protected SplashScreen(String imagePath, int duration) {
-            setLayout(new BorderLayout());
-            JLabel splashImage = new JLabel(new ImageIcon(imagePath));
-            add(splashImage, BorderLayout.CENTER);
-            pack();
-
-            // Center the splash screen on the screen
-            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-
-            // Close the splash screen after the specified duration
-            new Thread(() -> {
-                try {
-                    Thread.sleep(duration);
-                    dispose();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }).start();
         }
     }
 

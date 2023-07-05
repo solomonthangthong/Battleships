@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Player {
-    private String playerName;
+    private final String playerName;
     private int health;
     private boolean actor;
     private int maxScore;

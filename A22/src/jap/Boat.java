@@ -20,10 +20,11 @@ public class Boat extends JButton {
 
     /**
      * Constructor for Boat Object
+     *
      * @param boatSize
      * @param orientation
      */
-    public Boat(int boatSize, boolean orientation){
+    public Boat(int boatSize, boolean orientation) {
         boatLength = boatSize;
         boatOrientation = orientation;
         isPlaced = false;
@@ -31,55 +32,61 @@ public class Boat extends JButton {
 
     }
 
-    public void setBackground(Color color){
+    public void setBackground(Color color) {
         super.setBackground(color);
     }
 
     //Can be removed later, only here to visually see if adhering to numerical representation
-    public void setText(Integer size){
+    public void setText(Integer size) {
         super.setText(String.valueOf(size));
     }
-    protected Integer getBoatLength(){
+
+    protected Integer getBoatLength() {
         return boatLength;
     }
-    protected void setBoatLength(Integer size){
+
+    protected void setBoatLength(Integer size) {
         this.boatLength = size;
     }
 
-    protected State getState(){
+    protected State getState() {
         return state;
     }
 
-    protected void setState(State state){
+    protected void setState(State state) {
         this.state = state;
     }
 
-    protected Boolean getCheckedForDesign(){
+    protected Boolean getCheckedForDesign() {
         return checkedForDesignPlacement;
     }
-    protected void setCheckedForDesign(Boolean checked){
+
+    protected void setCheckedForDesign(Boolean checked) {
         this.checkedForDesignPlacement = checked;
     }
-    protected Boolean getPlaced(){
+
+    protected Boolean getPlaced() {
         return isPlaced;
     }
 
-    protected void setPlaced(Boolean placed){
+    protected void setPlaced(Boolean placed) {
         this.isPlaced = placed;
     }
 
-    protected Boolean getBoatOrientation(){
+    protected Boolean getBoatOrientation() {
         return boatOrientation;
     }
 
-    protected void setBoatOrientation(Boolean orientation){
+    protected void setBoatOrientation(Boolean orientation) {
 
-            this.boatOrientation = orientation;
-        }
-    protected JButton[][] getBoatPosition(){
+        this.boatOrientation = orientation;
+    }
+
+    protected JButton[][] getBoatPosition() {
         return position;
     }
-    protected void setBoatPosition(JButton[][] position){
+
+    protected void setBoatPosition(JButton[][] position) {
         this.position = position;
     }
 
