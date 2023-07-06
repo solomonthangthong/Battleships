@@ -970,8 +970,9 @@ public class GameView extends JFrame implements ActionListener {
             clickClip.start();
             gameController.historyLog(eventSource, controlPanelText);
         } else if(eventSource == resetLayout){
-            //TODO reset layout in design
             gameController.resetRemainingBoat();
+            gameController.resetDesignBoatArrayList();
+            updateRemainingBoats();
         }else if (eventSource == saveLayout){
             userButtons = gameController.getButtons(true);
             gameController.transferDesignToUserPanel(selectedDimension, userButtons, userPanel, opponentPanel);

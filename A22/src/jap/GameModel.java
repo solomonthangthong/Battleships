@@ -2,9 +2,8 @@ package jap;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Random;
 
 public class GameModel {
 
@@ -338,6 +337,7 @@ public class GameModel {
                 boat.setText(boatSize);
                 boat.setForeground(Color.WHITE);
                 boatSizeList.add(boat);
+                // Increment numberOfBoats for remaining number
                 numberOfBoatsForDesign++;
             }
             designBoatList.add(boatSizeList);
@@ -345,6 +345,10 @@ public class GameModel {
 
         //TODO LOGIC TO NOT OVERLAP THE boats (grab from previous methods)
 
+    }
+
+    protected void clearDesignBoatList(){
+        designBoatList.clear();
     }
 
     protected List<List<Boat>> getDesignBoatList() {
@@ -516,31 +520,53 @@ public class GameModel {
         }
     }
 
-    protected void convertDesignJButtonsToBoat() {
+    protected void convertDesignJButtonsToBoat(Boolean update) {
+        Map<Integer, Color> sizeColorMap = new HashMap<>();
+        Random random = new Random();
 
         for (int row = 0; row < userButtons.length; row++) {
             for (int col = 0; col < userButtons.length; col++) {
 
                 JButton button = userButtons[row][col];
-                if (button.getName() == "Convert") {
+                Integer size = Integer.parseInt(button.getText());
+                String name = button.getName();
 
-                    int size = Integer.parseInt(button.getText());
+                // If update is not true, reset JButton for DesignWindow
+                if (update){
+
                     Boolean orientation;
-                    if (button.getBackground() == Color.BLUE) {
-                        orientation = true;
-                    } else {
-                        orientation = false;
+                    // Check if button name contains "Convert"
+                    if (name != null && name.contains("Convert")) {
+                        // Generate random colour for each unique size
+                        if (!sizeColorMap.containsKey(size)){
+                            Color randomColour = new Color(random.nextInt(256), random.nextInt(256), random.nextInt(256));
+                            sizeColorMap.put(size, randomColour);
+                        }
+
+                        // Determine Orientation
+                        if (button.getBackground() == Color.BLUE) {
+                            orientation = true;
+                        } else {
+                            orientation = false;
+                        }
+                        // Create new Boat
+                        Boat boat = new Boat(size, orientation);
+
+                        // If size is found in map use the same colour
+                        if (sizeColorMap.containsKey(size)){
+                            boat.setBackground(sizeColorMap.get(size));
+                        }
+                        boat.setForeground(Color.white);
+                        boat.setBoatLength(size);
+                        boat.setText(size);
+                        userButtons[row][col] = boat;
                     }
-                    Boat boat = new Boat(size, orientation);
-                    if (selectedColour == null) {
-                        boat.setBackground(Color.pink);
-                    } else {
-                        boat.setBackground(selectedColour);
+                }else {
+                    if (button.getName() == "Convert") {
+                        button.setText("0");
+                        button.setForeground(Color.black);
+                        button.setBackground(Color.lightGray);
                     }
-                    boat.setForeground(Color.white);
-                    boat.setBoatLength(size);
-                    boat.setText(size);
-                    userButtons[row][col] = boat;
                 }
             }
         }

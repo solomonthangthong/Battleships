@@ -65,7 +65,7 @@ public class GameController {
     }
 
     protected void transferDesignToUserPanel(Integer selectedDimension, JButton[][] replace, JPanel userBoardPanel, JPanel opponentBoardPanel){
-        gameModel.convertDesignJButtonsToBoat();
+        gameModel.convertDesignJButtonsToBoat(true);
         gameModel.setBoardSize(selectedDimension);
         gameModel.setUserBoardPanel(userBoardPanel);
         gameModel.setOpponentBoardPanel(opponentBoardPanel);
@@ -99,6 +99,12 @@ public class GameController {
         gameView.extractDesignBoatList();
         //TODO clear layout, or save, and then refresh view
         gameView.designBoatPlacement(gameModel.getBoardSize());
+    }
+
+    protected void resetDesignBoatArrayList(){
+        gameModel.clearDesignBoatList();
+        gameModel.convertDesignJButtonsToBoat(false);
+        gameModel.populateDesignBoat();
     }
 
     protected void placeBoatLocation(Object eventSource) {
