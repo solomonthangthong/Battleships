@@ -1,6 +1,7 @@
 package jap;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 
 public class GameController {
@@ -150,6 +151,8 @@ public class GameController {
 
     protected void resetGame(Boolean actor, JPanel userBoardPanel, JPanel opponentBoardPanel) {
         JButton[][] buttons;
+        Border whiteBorder = BorderFactory.createLineBorder(Color.white);
+
         if (actor) {
             buttons = gameModel.getUserPlayerButtons();
         } else {
@@ -163,9 +166,12 @@ public class GameController {
                     Boat boat = (Boat) buttons[i][j];
                     buttons[i][j] = gameModel.updateButtonState(null, boat, true);
                     buttons[i][j].setName((i + 1) + "," + (j + 1));
-                } else if (buttons[i][j] instanceof JButton){
-                    buttons[i][j] = gameModel.updateButtonState(buttons[i][j], null, true);
                 }
+                buttons[i][j] = gameModel.updateButtonState(buttons[i][j], null, true);
+                buttons[i][j].setBackground(Color.decode("#f56a4d"));
+                buttons[i][j].setForeground(Color.white);
+                buttons[i][j].setBorderPainted(true);
+                buttons[i][j].setBorder(whiteBorder);
             }
         }
         gameView.updateBoard(gameModel.getBoardSize(), userBoardPanel, opponentBoardPanel);

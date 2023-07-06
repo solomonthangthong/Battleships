@@ -1,6 +1,7 @@
 package jap;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
@@ -255,6 +256,7 @@ public class GameModel {
      */
     protected JButton[][] createButtonBoard(Player player) {
         // Multiply dimensions by two. Intended result is if board is size 4 make it 8 by 8 grid
+        Border whiteBorder = BorderFactory.createLineBorder(Color.white);
         int dimensions = boardSize * 2;
         String actor1 = "Pos ";
         String actor2 = "Opp Pos ";
@@ -272,14 +274,13 @@ public class GameModel {
                     userButton.setName(actor2 + (i + 1) + "," + (j + 1));
                 }
 
-                if (player.getActor()) {
-                    userButton.setBackground(Color.lightGray);
-                } else {
-                    userButton.setBackground(Color.lightGray);
-                }
+                userButton.setBackground(Color.decode("#f56a4d"));
+
                 // Set Default to 0
                 ButtonState state = new ButtonState(userButton);
-                userButton.setForeground(Color.BLACK);
+                userButton.setForeground(Color.white);
+                userButton.setBorderPainted(true);
+                userButton.setBorder(whiteBorder);
                 state.setState(State.DEFAULT);
                 //assign the button in the array
                 buttons[i][j] = userButton;

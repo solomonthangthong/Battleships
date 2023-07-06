@@ -113,7 +113,7 @@ public class GameView extends JFrame implements ActionListener {
 
     public GameView() {
         Splash s = new Splash();
-        s.show();
+        //s.show();
         menuBar = new Menu();
 
         initializeFrame();
@@ -463,7 +463,7 @@ public class GameView extends JFrame implements ActionListener {
     private void createPanels() {
         /* Centre Panel Controls */
         selectionPanel = new JPanel();
-        selectionPanel.setBackground(Color.decode("#8119FF"));
+        selectionPanel.setBackground(Color.decode("#feefec"));
         selectionPanel.setBorder(BorderFactory.createEmptyBorder(0, 69, 0, 69));
 
         // Load and display the logo
@@ -481,7 +481,7 @@ public class GameView extends JFrame implements ActionListener {
         languageButton.setName("Languages");
         languageButton.addActionListener(this);
         JPanel languageMenu = new JPanel();
-        languageMenu.setBackground(Color.decode("#8119FF"));
+        languageMenu.setBackground(Color.decode("#feefec"));
         languageMenu.add(new JLabel("Languages: "));
         languageMenu.add(languageButton);
         selectionPanel.add(languageMenu);
@@ -490,11 +490,13 @@ public class GameView extends JFrame implements ActionListener {
         designBoatPlacement = new JButton("Design");
         designBoatPlacement.setName("Design");
         designBoatPlacement.addActionListener(this);
+        designBoatPlacement.setBackground(Color.white);
         randBoatPlacement = new JButton("Randomize");
         randBoatPlacement.setName("Randomize");
         randBoatPlacement.addActionListener(this);
+        randBoatPlacement.setBackground(Color.white);
         JPanel designOptions = new JPanel();
-        designOptions.setBackground(Color.decode("#8119FF"));
+        designOptions.setBackground(Color.decode("#feefec"));
         designOptions.add(designBoatPlacement);
         designOptions.add(randBoatPlacement);
         selectionPanel.add(designOptions);
@@ -504,7 +506,7 @@ public class GameView extends JFrame implements ActionListener {
         dimensionComboBox = new JComboBox<>(dimensions);
         dimensionComboBox.addActionListener(this);
         JPanel dimensionsPanel = new JPanel();
-        dimensionsPanel.setBackground(Color.decode("#8119FF"));
+        dimensionsPanel.setBackground(Color.decode("#feefec"));
         dimensionsPanel.add(new JLabel("Dimensions:"));
         dimensionsPanel.add(dimensionComboBox);
         selectionPanel.add(dimensionsPanel);
@@ -541,17 +543,19 @@ public class GameView extends JFrame implements ActionListener {
         timeDisplay.setPreferredSize(new Dimension(55, 30));
         timeContainer.add(time);
         timeContainer.add(timeDisplay);
-        timeContainer.setBackground(Color.decode("#8119FF"));
+        timeContainer.setBackground(Color.decode("#feefec"));
         selectionPanel.add(timeContainer);
 
         /* Creates reset button */
         reset = new JButton("Reset");
         reset.setName("Reset");
+        reset.setBackground(Color.white);
         reset.addActionListener(this);
         selectionPanel.add(reset);
 
         /* Creates play button */
         play = new JButton("Play");
+        play.setBackground(Color.white);
         play.setName("Play");
         play.addActionListener(this);
         selectionPanel.add(play);
@@ -559,18 +563,19 @@ public class GameView extends JFrame implements ActionListener {
         // Creates right side panel container
         opponentPanel = new JPanel(new BorderLayout());
         opponentPanel.setPreferredSize(new Dimension(520, 119));
-        opponentPanel.setBackground(Color.decode("#FF990D"));
+        opponentPanel.setBackground(Color.decode("#feefec"));
 
         // Creates left side panel container
         userPanel = new JPanel(new BorderLayout());
         userPanel.setPreferredSize(new Dimension(520, 119));
-        userPanel.setBackground(Color.ORANGE);
+        userPanel.setBackground(Color.decode("#feefec"));
 
         //set user actor life bar
         progressPlayer1Panel = new JPanel();
         player1Progress = new JProgressBar();
         player1Progress.setPreferredSize(new Dimension(350, 35));
-        progressPlayer1Panel.setBackground(Color.ORANGE);
+        player1Progress.setBackground(Color.decode("#9de47c"));
+        progressPlayer1Panel.setBackground(Color.decode("#feefec"));
         progressPlayer1Panel.setPreferredSize(new Dimension(500, 50));
         progressPlayer1Panel.add(new JLabel("Life 1"));
         progressPlayer1Panel.add(player1Progress);
@@ -579,8 +584,9 @@ public class GameView extends JFrame implements ActionListener {
         progressPlayer2Panel = new JPanel();
         player2Progress = new JProgressBar();
         player2Progress.setPreferredSize(new Dimension(350, 35));
+        player2Progress.setBackground(Color.decode("#9de47c"));
 
-        progressPlayer2Panel.setBackground(Color.decode("#FF990D"));
+        progressPlayer2Panel.setBackground(Color.decode("#feefec"));
         progressPlayer2Panel.setPreferredSize(new Dimension(500, 50));
         progressPlayer2Panel.add(new JLabel("Life 2"));
         progressPlayer2Panel.add(player2Progress);
@@ -630,18 +636,15 @@ public class GameView extends JFrame implements ActionListener {
         //add column and row numbers on user Grid
         for (int k = 0; k < numCols; k++) {
             //make  new label for each col
-            JLabel columnLabels = new JLabel(String.valueOf(k + 1));
+            JLabel columnLabels = new JLabel(String.valueOf(k + 1));;
             //set same dimensions as selection box
             columnLabels.setPreferredSize(new Dimension(labelSize, labelSize));
             columnLabels.setHorizontalAlignment(SwingConstants.CENTER);
             //add column labels to the panel
             columnLabelsPanel.add(columnLabels);
 
-            if (whichActor) {
-                columnLabelsPanel.setBackground(Color.ORANGE);
-            } else {
-                columnLabelsPanel.setBackground(Color.decode("#FF990D"));
-            }
+            columnLabelsPanel.setBackground(Color.decode("#feefec"));
+
         }
 
         //make a new row panel to hold the labels
@@ -656,11 +659,8 @@ public class GameView extends JFrame implements ActionListener {
             rowLabel.setHorizontalAlignment(SwingConstants.CENTER);
             //add row labels to labels panel
             rowLabelPanel.add(rowLabel);
-            if (whichActor) {
-                rowLabelPanel.setBackground(Color.ORANGE);
-            } else {
-                rowLabelPanel.setBackground(Color.decode("#FF990D"));
-            }
+            rowLabelPanel.setBackground(Color.decode("#feefec"));
+
 
         }
 
@@ -962,8 +962,10 @@ public class GameView extends JFrame implements ActionListener {
             clickClip.start();
             // updateModelViewBoard was changeDimensions
             // resizeBoard and change dimension were essentially the same in previous iteration
-            gameController.updateModelViewBoard(selectedDimension, userPanel, opponentPanel);
             gameController.historyLog(eventSource, controlPanelText);
+            gameController.updateModelViewBoard(selectedDimension, userPanel, opponentPanel);
+            gameController.randomBoatPlacement(opponentPanel, false);
+            createPanelView(selectedDimension, opponentPanel, false, progressPlayer2Panel);
         } else if (eventSource == reset) {
             clickClip.start();
             gameController.historyLog(eventSource, controlPanelText);
