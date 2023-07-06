@@ -201,6 +201,10 @@ public class GameModel {
         return numberOfBoatsForDesign;
     }
 
+    protected void setNumberOfBoatsForDesign(Integer reset){
+        this.numberOfBoatsForDesign = reset;
+    }
+
     protected void setSelectedColour(Color color) {
         this.selectedColour = color;
     }

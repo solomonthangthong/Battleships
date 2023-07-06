@@ -132,6 +132,10 @@ public class GameController {
         int remainder = gameModel.getNumberOfBoatsForDesign();
         return remainder;
     }
+    protected void resetRemainingBoat(){
+        int reset = 0;
+        gameModel.setNumberOfBoatsForDesign(reset);
+    }
 
     protected void startGame() {
 

@@ -12,6 +12,8 @@ import javax.swing.event.MenuListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.Serializable;
 import java.util.List;
@@ -566,33 +568,22 @@ public class GameView extends JFrame implements ActionListener {
         //set user actor life bar
         progressPlayer1Panel = new JPanel();
         player1Progress = new JProgressBar();
+        player1Progress.setPreferredSize(new Dimension(350, 35));
         progressPlayer1Panel.setBackground(Color.ORANGE);
-        progressPlayer1Panel.setPreferredSize(new Dimension(250, 25));
+        progressPlayer1Panel.setPreferredSize(new Dimension(500, 50));
         progressPlayer1Panel.add(new JLabel("Life 1"));
         progressPlayer1Panel.add(player1Progress);
 
         //set opponent actor life bar
         progressPlayer2Panel = new JPanel();
         player2Progress = new JProgressBar();
+        player2Progress.setPreferredSize(new Dimension(350, 35));
 
         progressPlayer2Panel.setBackground(Color.decode("#FF990D"));
-        progressPlayer2Panel.setPreferredSize(new Dimension(250, 25));
+        progressPlayer2Panel.setPreferredSize(new Dimension(500, 50));
         progressPlayer2Panel.add(new JLabel("Life 2"));
         progressPlayer2Panel.add(player2Progress);
 
-    }
-
-    /**
-     * Method Name: addPanelsToMainFrame
-     * Purpose: Add created panels into the main frame.
-     * Algorithm: Create new contentpane, set layout, add user actor, control panel, and machine actor
-     */
-    private void addPanelsToMainFrame() {
-        Container contentPane = getContentPane();
-        contentPane.setLayout(new BorderLayout());
-        contentPane.add(userPanel, BorderLayout.WEST);
-        contentPane.add(selectionPanel, BorderLayout.CENTER);
-        contentPane.add(opponentPanel, BorderLayout.EAST);
     }
 
     /**
@@ -674,9 +665,22 @@ public class GameView extends JFrame implements ActionListener {
 
         // Arrange layout positions for each component
         actorPanel.add(rowLabelPanel, BorderLayout.WEST);
-        actorPanel.add(lifeStatus, BorderLayout.NORTH);
+        actorPanel.add(lifeStatus, BorderLayout.SOUTH);
         actorPanel.add(actorGrid, BorderLayout.CENTER);
-        actorPanel.add(columnLabelsPanel, BorderLayout.SOUTH);
+        actorPanel.add(columnLabelsPanel, BorderLayout.NORTH);
+    }
+
+    /**
+     * Method Name: addPanelsToMainFrame
+     * Purpose: Add created panels into the main frame.
+     * Algorithm: Create new contentpane, set layout, add user actor, control panel, and machine actor
+     */
+    private void addPanelsToMainFrame() {
+        Container contentPane = getContentPane();
+        contentPane.setLayout(new BorderLayout());
+        contentPane.add(userPanel, BorderLayout.WEST);
+        contentPane.add(selectionPanel, BorderLayout.CENTER);
+        contentPane.add(opponentPanel, BorderLayout.EAST);
     }
 
     /**
@@ -737,18 +741,23 @@ public class GameView extends JFrame implements ActionListener {
         /* New JFrame for pop-up window to design board */
         designWindow.setSize(550, 550);
         //TODO find a way to set designWindow to null on close for gameController if (eventSource == button && designWindow != null)
+
+        // Window listener if closed when not expecting reset Remaining boat count
+        designWindow.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                JFrame sourceFrame  = (JFrame) e.getSource();
+                gameController.resetRemainingBoat();
+                designWindow = null;
+                sourceFrame.dispose();
+            }
+        });
+
         designWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         designWindow.setLocationRelativeTo(null);
         designWindow.setVisible(true);
     }
-    protected void setRemainingBoats(){
-        this.remainingBoats = gameController.getRemainingBoats();
-    }
-    private void updateRemainingBoats(){
-        setRemainingBoats();
-        remainingBoat.setText("Remaining: " + remainingBoats);
 
-    }
     /**
      * Create JFrame and panels hosting items
      *
@@ -815,6 +824,15 @@ public class GameView extends JFrame implements ActionListener {
 
         designWindow.add(designPanel, BorderLayout.CENTER);
         designWindow.add(bottomPanel, BorderLayout.SOUTH);
+    }
+
+    protected void setRemainingBoats(){
+        this.remainingBoats = gameController.getRemainingBoats();
+    }
+    private void updateRemainingBoats(){
+        setRemainingBoats();
+        remainingBoat.setText("Remaining: " + remainingBoats);
+
     }
 
     /**
@@ -952,10 +970,12 @@ public class GameView extends JFrame implements ActionListener {
             clickClip.start();
             gameController.historyLog(eventSource, controlPanelText);
         } else if(eventSource == resetLayout){
-
+            //TODO reset layout in design
+            gameController.resetRemainingBoat();
         }else if (eventSource == saveLayout){
             userButtons = gameController.getButtons(true);
             gameController.transferDesignToUserPanel(selectedDimension, userButtons, userPanel, opponentPanel);
+            gameController.resetRemainingBoat();
             designWindow.dispose();
             designWindow = null;
         }else {
