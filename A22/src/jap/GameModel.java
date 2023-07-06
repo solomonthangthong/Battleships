@@ -40,6 +40,7 @@ public class GameModel {
     private List<List<Boat>> designBoatList;
     private Integer boatSizeSearch;
     private Integer numberOfBoatsForDesign;
+    private Border whiteBorder;
 
     private Object innerList = null;
 
@@ -256,7 +257,7 @@ public class GameModel {
      */
     protected JButton[][] createButtonBoard(Player player) {
         // Multiply dimensions by two. Intended result is if board is size 4 make it 8 by 8 grid
-        Border whiteBorder = BorderFactory.createLineBorder(Color.white);
+        whiteBorder = BorderFactory.createLineBorder(Color.white);
         int dimensions = boardSize * 2;
         String actor1 = "Pos ";
         String actor2 = "Opp Pos ";
@@ -612,9 +613,12 @@ public class GameModel {
                     board[randRow + position][randCol] = boat;
                     if (player.getActor()) {
                         boat.setBackground(backgroundColor);
+                        boat.setBorder(whiteBorder);
                         boat.setVisibility(true);
                     } else {
-                        boat.setBackground(Color.lightGray);
+                        boat.setBackground(Color.decode("#f56a4d"));
+                        boat.setForeground(Color.white);
+                        boat.setBorder(whiteBorder);
                         boat.setVisibility(false);
                     }
                     boat.setPlaced(true);
@@ -634,9 +638,12 @@ public class GameModel {
                     board[randRow][randCol + position] = boat;
                     if (player.getActor()) {
                         boat.setBackground(backgroundColor);
+                        boat.setBorder(whiteBorder);
                         boat.setVisibility(true);
                     } else {
-                        boat.setBackground(Color.lightGray);
+                        boat.setBackground(Color.decode("#f56a4d"));
+                        boat.setForeground(Color.white);
+                        boat.setBorder(whiteBorder);
                         boat.setVisibility(false);
                     }
                     boat.setPlaced(true);

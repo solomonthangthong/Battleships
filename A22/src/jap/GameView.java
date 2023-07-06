@@ -470,6 +470,7 @@ public class GameView extends JFrame implements ActionListener {
         ImageIcon image = new ImageIcon("images/logo.png");
         if (new File("images/logo.png").exists()) {
             JButton imageLogo = new JButton(image);
+            imageLogo.setBackground(Color.white);
             selectionPanel.add(imageLogo);
         } else {
             System.out.println("Image not found");
