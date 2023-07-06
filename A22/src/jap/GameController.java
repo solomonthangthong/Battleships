@@ -15,6 +15,7 @@ public class GameController {
         view.setBoardButtons(true, getButtons(true));
         view.setBoardButtons(false, getButtons(false));
         view.createPanelView(gameModel.getBoardSize(), view.getUserPanel(), true, view.getProgressPlayer1Panel());
+        randomBoatPlacement(view.getOpponentPanel(), false);
         view.createPanelView(gameModel.getBoardSize(), view.getOpponentPanel(), false, view.getProgressPlayer2Panel());
 
     }
