@@ -1,6 +1,7 @@
 package jap;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class GameController {
     private GameModel gameModel;
@@ -51,6 +52,21 @@ public class GameController {
         gameModel.setBoardSize(selectedDimension);
         gameModel.setUserPlayerButtons(gameModel.createButtonBoard(gameModel.getPlayer(true)));
         gameModel.setOpponentButtons(gameModel.createButtonBoard(gameModel.getPlayer(false)));
+        gameModel.setUserBoardPanel(userBoardPanel);
+        gameModel.setOpponentBoardPanel(opponentBoardPanel);
+        gameView.updateBoard(gameModel.getBoardSize(), gameModel.getUserBoardPanel(), gameModel.getOpponentBoardPanel());
+    }
+
+    protected void changeBoatColor(JButton[][] buttons, JPanel userBoardPanel, JPanel opponentBoardPanel){
+        gameModel.changeBoatColor(buttons);
+        gameView.updateBoard(gameModel.getBoardSize(), gameModel.getUserBoardPanel(), gameModel.getOpponentBoardPanel());
+        gameModel.setUserPlayerButtons(buttons);
+
+    }
+
+    protected void transferDesignToUserPanel(Integer selectedDimension, JButton[][] replace, JPanel userBoardPanel, JPanel opponentBoardPanel){
+        gameModel.convertDesignJButtonsToBoat();
+        gameModel.setBoardSize(selectedDimension);
         gameModel.setUserBoardPanel(userBoardPanel);
         gameModel.setOpponentBoardPanel(opponentBoardPanel);
         gameView.updateBoard(gameModel.getBoardSize(), gameModel.getUserBoardPanel(), gameModel.getOpponentBoardPanel());
@@ -121,7 +137,7 @@ public class GameController {
 
     }
 
-    protected void resetGame(Boolean actor) {
+    protected void resetGame(Boolean actor, JPanel userBoardPanel, JPanel opponentBoardPanel) {
         JButton[][] buttons;
         if (actor) {
             buttons = gameModel.getUserPlayerButtons();
@@ -132,9 +148,20 @@ public class GameController {
         int squareBoard = gameModel.getBoardSize() * 2;
         for (int i = 0; i < squareBoard; i++) {
             for (int j = 0; j < squareBoard; j++) {
-                gameModel.updateButtonState(buttons[i][j], null, true);
+                if(buttons[i][j] instanceof Boat){
+                    Boat boat = (Boat) buttons[i][j];
+                    buttons[i][j] = gameModel.updateButtonState(null, boat, true);
+                    buttons[i][j].setName((i + 1) + "," + (j + 1));
+                } else if (buttons[i][j] instanceof JButton){
+                    buttons[i][j] = gameModel.updateButtonState(buttons[i][j], null, true);
+                }
             }
         }
+        gameView.updateBoard(gameModel.getBoardSize(), userBoardPanel, opponentBoardPanel);
+    }
+
+    protected void setBoatColor(Color color){
+        gameModel.setSelectedColour(color);
     }
 
     protected void hitBoard() {

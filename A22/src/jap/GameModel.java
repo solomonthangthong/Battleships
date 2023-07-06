@@ -43,6 +43,8 @@ public class GameModel {
 
     private Object innerList = null;
 
+    private Color selectedColour;
+
     private Boat boat;
 
     public GameModel() {
@@ -121,7 +123,7 @@ public class GameModel {
             JMenuItem menuItem = (JMenuItem) eventSource;
             String actionCommand = menuItem.getActionCommand();
 
-            switch (actionCommand){
+            switch (actionCommand) {
                 case "New":
                     actionEvent = actionEvent + "New game state implemented" + "<br>";
                     break;
@@ -195,15 +197,19 @@ public class GameModel {
         return opponentBoardPanel;
     }
 
-    protected Integer getNumberOfBoatsForDesign(){
+    protected Integer getNumberOfBoatsForDesign() {
         return numberOfBoatsForDesign;
+    }
+
+    protected void setSelectedColour(Color color) {
+        this.selectedColour = color;
     }
 
     /**
      * @param button - Passed JButton from board
-     * @param boat - Passed Boat from board
+     * @param boat   - Passed Boat from board
      */
-    protected void updateButtonState(JButton button, Boat boat, Boolean reset) {
+    protected <T> JButton updateButtonState(JButton button, Boat boat, Boolean reset) {
         // Init ButtonState
         ButtonState state;
         //TODO complete integration of evaluating boats for HIT/MISS
@@ -219,15 +225,23 @@ public class GameModel {
             state.setState(State.DEFAULT);
             button.setBackground(Color.lightGray);
             button.setForeground(Color.black);
+            return button;
         } else if (button != null) {
             if (state.getState() != State.DEFAULT) {
                 state.setState(State.MISS);
             }
             // if Boat is passed, and state is NOT HIT, state becomes hit
-        } else if (boat.getState() != State.HIT) {
-            state.setState(State.HIT);
+        } else if (boat != null && reset) {
+            JButton replaceButton = new JButton();
+            state = new ButtonState(replaceButton);
+            state.setState(State.DEFAULT);
+            replaceButton.setBackground(Color.lightGray);
+            replaceButton.setForeground(Color.black);
+
+            return replaceButton;
         }
 
+        return button;
     }
 
     /**
@@ -376,10 +390,10 @@ public class GameModel {
             // Iterate boat object in innerList
             for (Boat boat : innerList) {
                 // Getter and check if same value from JComboBox
-                    boat.setBoatOrientation(selectedValue);
-                }
+                boat.setBoatOrientation(selectedValue);
             }
         }
+    }
 
 
     /**
@@ -428,18 +442,19 @@ public class GameModel {
                             }
 
                             if (!overlap) {
-                                //JButton[][] boatPosition = new JButton[boatSizeSearch][1];
-                                Boat[][] boatPosition = new Boat[boatSizeSearch][1];
+                                JButton[][] boatPosition = new JButton[boatSizeSearch][1];
+                                //Boat[][] boatPosition = new Boat[boatSizeSearch][1];
                                 for (int i = 0; i < boatSizeSearch; i++) {
-                                    //boatPosition[i][0] = userButtons[clickedRow + i][clickedCol];
-                                    //boatPosition[i][0].setBackground(Color.BLUE);
-                                    //boatPosition[i][0].setForeground(Color.white);
-                                    //boatPosition[i][0].setText(String.valueOf(boatSizeSearch));
-                                    Boat localBoat = new Boat(boatSizeSearch, true);
+                                    boatPosition[i][0] = userButtons[clickedRow + i][clickedCol];
+                                    boatPosition[i][0].setBackground(Color.BLUE);
+                                    boatPosition[i][0].setForeground(Color.white);
+                                    boatPosition[i][0].setText(String.valueOf(boatSizeSearch));
+                                    boatPosition[i][0].setName("Convert");
+                                  /*  Boat localBoat = new Boat(boatSizeSearch, true);
                                     userButtons[clickedRow + i][clickedCol] = localBoat;
                                     localBoat.setBackground(Color.BLUE);
                                     localBoat.setForeground(Color.white);
-                                    localBoat.setText(String.valueOf(boatSizeSearch));
+                                    localBoat.setText(String.valueOf(boatSizeSearch));*/
                                 }
                                 boat.setPlaced(true);
                                 boat.setBoatPosition(boatPosition);
@@ -469,6 +484,7 @@ public class GameModel {
                                     boatPosition[0][i].setBackground(Color.RED);
                                     boatPosition[0][i].setForeground(Color.white);
                                     boatPosition[0][i].setText(String.valueOf(boatSizeSearch));
+                                    boatPosition[0][i].setName("Convert");
                                 }
                                 boat.setPlaced(true);
                                 boat.setBoatPosition(boatPosition);
@@ -481,6 +497,46 @@ public class GameModel {
                             System.out.println("Boat does not fit within the board dimensions!");
                         }
                     }
+                }
+            }
+        }
+    }
+
+    protected void changeBoatColor(JButton[][] buttons) {
+        for (int row = 0; row < buttons.length; row++) {
+            for (int col = 0; col < buttons.length; col++) {
+                if (buttons[row][col] instanceof Boat){
+                    buttons[row][col].setBackground(selectedColour);
+                }
+            }
+        }
+    }
+
+    protected void convertDesignJButtonsToBoat() {
+
+        for (int row = 0; row < userButtons.length; row++) {
+            for (int col = 0; col < userButtons.length; col++) {
+
+                JButton button = userButtons[row][col];
+                if (button.getName() == "Convert") {
+
+                    int size = Integer.parseInt(button.getText());
+                    Boolean orientation;
+                    if (button.getBackground() == Color.BLUE) {
+                        orientation = true;
+                    } else {
+                        orientation = false;
+                    }
+                    Boat boat = new Boat(size, orientation);
+                    if (selectedColour == null) {
+                        boat.setBackground(Color.pink);
+                    } else {
+                        boat.setBackground(selectedColour);
+                    }
+                    boat.setForeground(Color.white);
+                    boat.setBoatLength(size);
+                    boat.setText(size);
+                    userButtons[row][col] = boat;
                 }
             }
         }
@@ -523,10 +579,10 @@ public class GameModel {
                 for (int position = 0; position < boatSize; position++) {
                     Boat boat = new Boat(boatSize, true);
                     board[randRow + position][randCol] = boat;
-                    if (player.getActor()){
+                    if (player.getActor()) {
                         boat.setBackground(backgroundColor);
                         boat.setVisibility(true);
-                    }else {
+                    } else {
                         boat.setBackground(Color.lightGray);
                         boat.setVisibility(false);
                     }
@@ -545,12 +601,11 @@ public class GameModel {
                 for (int position = 0; position < boatSize; position++) {
                     Boat boat = new Boat(boatSize, false);
                     board[randRow][randCol + position] = boat;
-                    if (player.getActor()){
+                    if (player.getActor()) {
                         boat.setBackground(backgroundColor);
                         boat.setVisibility(true);
-                    }else {
+                    } else {
                         boat.setBackground(Color.lightGray);
-
                         boat.setVisibility(false);
                     }
                     boat.setPlaced(true);

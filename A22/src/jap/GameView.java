@@ -106,6 +106,8 @@ public class GameView extends JFrame implements ActionListener {
     private JButton resetLayout;
     private JButton saveLayout;
 
+    private Color globalColour;
+
     public GameView() {
         Splash s = new Splash();
         s.show();
@@ -246,9 +248,9 @@ public class GameView extends JFrame implements ActionListener {
                 case "New":
                     gameController.historyLog(eventSource, controlPanelText);
                     // reset user actor
-                    gameController.resetGame(true);
+                    gameController.resetGame(true, userPanel, opponentPanel);
                     // reset user opponent
-                    gameController.resetGame(false);
+                    gameController.resetGame(false, userPanel, opponentPanel);
                     break;
                 case "Solution":
                     // TODO set opponent board to visible
@@ -280,7 +282,8 @@ public class GameView extends JFrame implements ActionListener {
         }
     }
 
-    protected static class ColorChooser extends JPanel implements ActionListener, ChangeListener {
+    protected class ColorChooser extends JPanel implements ActionListener, ChangeListener {
+        private JFrame frame;
         private final JColorChooser tcc;
         protected JButton unselectedColourButton;
         protected JButton waterColourButton;
@@ -347,6 +350,9 @@ public class GameView extends JFrame implements ActionListener {
             unselectedColourButton.addActionListener(this);
             waterColourButton.addActionListener(this);
             boatColourButton.addActionListener(this);
+            saveColour.addActionListener(this);
+            cancelColour.addActionListener(this);
+            resetColour.addActionListener(this);
 
             tcc = new JColorChooser();
             tcc.getSelectionModel().addChangeListener(this);
@@ -361,13 +367,12 @@ public class GameView extends JFrame implements ActionListener {
 
         protected void colorGUI() {
             //Create and set up the window.
-            JFrame frame = new JFrame("Choose Colour");
+            frame = new JFrame("Choose Colour");
             frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
             //Create and set up the content pane.
-            JComponent newContentPane = new ColorChooser();
-            newContentPane.setOpaque(true); //content panes must be opaque
-            frame.setContentPane(newContentPane);
+            frame.setContentPane(this);
+            setOpaque(true); //content panes must be opaque
             frame.setLocationRelativeTo(null);
 
             //Display the window.
@@ -389,6 +394,13 @@ public class GameView extends JFrame implements ActionListener {
                 }
                 lastClickedButton = clickedButton;
             } else if (source == saveColour) {
+                userButtons = gameController.getButtons(true);
+                gameController.setBoatColor(globalColour);
+                gameController.changeBoatColor(userButtons, userPanel, opponentPanel);
+
+                if (frame != null){
+                    frame.dispose();
+                }
 
             } else if (source == cancelColour) {
 
@@ -408,6 +420,7 @@ public class GameView extends JFrame implements ActionListener {
                 waterColour.setBackground(selectedColor);
             } else if (lastClickedButton == boatColourButton) {
                 boatColour.setBackground(selectedColor);
+                globalColour = selectedColor;
             }
         }
     }
@@ -680,6 +693,28 @@ public class GameView extends JFrame implements ActionListener {
         userBoardPanel.removeAll();
         opponentBoardPanel.removeAll();
 
+        // Clear previous actionListeners
+        for (int i = 0; i < userButtons.length; i++) {
+            for (int j = 0; j < userButtons[i].length; j++) {
+                JButton button = userButtons[i][j];
+                ActionListener[] listeners = button.getActionListeners();
+                for (ActionListener listener : listeners) {
+                    button.removeActionListener(listener);
+                }
+            }
+        }
+
+        // Clear previous actionListeners
+        for (int i = 0; i < opponentButtons.length; i++) {
+            for (int j = 0; j < opponentButtons[i].length; j++) {
+                JButton button = opponentButtons[i][j];
+                ActionListener[] listeners = button.getActionListeners();
+                for (ActionListener listener : listeners) {
+                    button.removeActionListener(listener);
+                }
+            }
+        }
+
         // Call Controller to grab GameModel JButtons
         userButtons = gameController.getButtons(true);
         opponentButtons = gameController.getButtons(false);
@@ -891,6 +926,7 @@ public class GameView extends JFrame implements ActionListener {
             boatSizeSelectorValue = (int) boatSizeSelector.getSelectedItem(); // Set the default boat size to the first value
             gameController.historyLog(eventSource, controlPanelText);
             gameController.placeBoatLocation(eventSource);
+
         } else if (eventSource == randBoatPlacement) {
             //clickClip.start();
 
@@ -919,8 +955,7 @@ public class GameView extends JFrame implements ActionListener {
 
         }else if (eventSource == saveLayout){
             userButtons = gameController.getButtons(true);
-            gameController.updateModelViewBoard(selectedDimension, userPanel, opponentPanel);
-            createPanelView(selectedDimension, userPanel, true, progressPlayer1Panel);
+            gameController.transferDesignToUserPanel(selectedDimension, userButtons, userPanel, opponentPanel);
             designWindow.dispose();
             designWindow = null;
         }else {
