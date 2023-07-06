@@ -21,7 +21,6 @@ public class GameModel {
 
     private JPanel opponentBoardPanel;
 
-
     private final Player[] players;
 
     private int timer;
@@ -40,6 +39,8 @@ public class GameModel {
     // Nested list, inner list represent size of boat
     private List<List<Boat>> designBoatList;
     private Integer boatSizeSearch;
+    private Integer numberOfBoatsForDesign;
+
     private Object innerList = null;
 
     private Boat boat;
@@ -53,6 +54,9 @@ public class GameModel {
 
         userButtons = createButtonBoard(players[0]);
         opponentButtons = createButtonBoard(players[1]);
+
+        numberOfBoatsForDesign = 0;
+
     }
 
     protected Player getPlayer(Boolean actor) {
@@ -191,6 +195,10 @@ public class GameModel {
         return opponentBoardPanel;
     }
 
+    protected Integer getNumberOfBoatsForDesign(){
+        return numberOfBoatsForDesign;
+    }
+
     /**
      * @param button - Passed JButton from board
      * @param boat - Passed Boat from board
@@ -241,13 +249,13 @@ public class GameModel {
             for (int j = 0; j < dimensions; j++) {
                 /* Create a new button for the board */
                 JButton userButton = new JButton();
-                if (player.isActor()) {
+                if (player.getActor()) {
                     userButton.setName(actor1 + (i + 1) + "," + (j + 1));
                 } else {
                     userButton.setName(actor2 + (i + 1) + "," + (j + 1));
                 }
 
-                if (player.isActor()) {
+                if (player.getActor()) {
                     userButton.setBackground(Color.lightGray);
                 } else {
                     userButton.setBackground(Color.lightGray);
@@ -312,6 +320,7 @@ public class GameModel {
                 boat.setText(boatSize);
                 boat.setForeground(Color.WHITE);
                 boatSizeList.add(boat);
+                numberOfBoatsForDesign++;
             }
             designBoatList.add(boatSizeList);
         }
@@ -411,6 +420,7 @@ public class GameModel {
                             // Check for overlap
                             boolean overlap = false;
                             for (int i = 0; i < boatSizeSearch; i++) {
+                                //TODO change condition to check instanceof Boats
                                 if (userButtons[clickedRow + i][clickedCol].getBackground() == Color.red || userButtons[clickedRow + i][clickedCol].getBackground() == Color.blue) {
                                     overlap = true;
                                     break;
@@ -418,14 +428,22 @@ public class GameModel {
                             }
 
                             if (!overlap) {
-                                JButton[][] boatPosition = new JButton[boatSizeSearch][1];
+                                //JButton[][] boatPosition = new JButton[boatSizeSearch][1];
+                                Boat[][] boatPosition = new Boat[boatSizeSearch][1];
                                 for (int i = 0; i < boatSizeSearch; i++) {
-                                    boatPosition[i][0] = userButtons[clickedRow + i][clickedCol];
-                                    boatPosition[i][0].setBackground(Color.BLUE);
-                                    boatPosition[i][0].setText(String.valueOf(boatSizeSearch));
+                                    //boatPosition[i][0] = userButtons[clickedRow + i][clickedCol];
+                                    //boatPosition[i][0].setBackground(Color.BLUE);
+                                    //boatPosition[i][0].setForeground(Color.white);
+                                    //boatPosition[i][0].setText(String.valueOf(boatSizeSearch));
+                                    Boat localBoat = new Boat(boatSizeSearch, true);
+                                    userButtons[clickedRow + i][clickedCol] = localBoat;
+                                    localBoat.setBackground(Color.BLUE);
+                                    localBoat.setForeground(Color.white);
+                                    localBoat.setText(String.valueOf(boatSizeSearch));
                                 }
                                 boat.setPlaced(true);
                                 boat.setBoatPosition(boatPosition);
+                                numberOfBoatsForDesign--;
                                 System.out.println("Boat placed successfully!");
                             } else {
                                 System.out.println("Boat overlaps with another boat!");
@@ -449,10 +467,12 @@ public class GameModel {
                                 for (int i = 0; i < boatSizeSearch; i++) {
                                     boatPosition[0][i] = userButtons[clickedRow][clickedCol + i];
                                     boatPosition[0][i].setBackground(Color.RED);
+                                    boatPosition[0][i].setForeground(Color.white);
                                     boatPosition[0][i].setText(String.valueOf(boatSizeSearch));
                                 }
                                 boat.setPlaced(true);
                                 boat.setBoatPosition(boatPosition);
+                                numberOfBoatsForDesign--;
                                 System.out.println("Boat placed successfully!");
                             } else {
                                 System.out.println("Boat overlaps with another boat!");
@@ -503,7 +523,13 @@ public class GameModel {
                 for (int position = 0; position < boatSize; position++) {
                     Boat boat = new Boat(boatSize, true);
                     board[randRow + position][randCol] = boat;
-                    boat.setBackground(backgroundColor);
+                    if (player.getActor()){
+                        boat.setBackground(backgroundColor);
+                        boat.setVisibility(true);
+                    }else {
+                        boat.setBackground(Color.lightGray);
+                        boat.setVisibility(false);
+                    }
                     boat.setPlaced(true);
                     //Can be removed later, only here to visually see if adhering to numerical representation
                     boat.setText(boatSize);
@@ -519,7 +545,14 @@ public class GameModel {
                 for (int position = 0; position < boatSize; position++) {
                     Boat boat = new Boat(boatSize, false);
                     board[randRow][randCol + position] = boat;
-                    boat.setBackground(backgroundColor);
+                    if (player.getActor()){
+                        boat.setBackground(backgroundColor);
+                        boat.setVisibility(true);
+                    }else {
+                        boat.setBackground(Color.lightGray);
+
+                        boat.setVisibility(false);
+                    }
                     boat.setPlaced(true);
                     //Can be removed later, only here to visually see if adhering to numerical representation
                     boat.setText(boatSize);

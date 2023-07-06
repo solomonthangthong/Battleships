@@ -90,6 +90,13 @@ public class Boat extends JButton {
         this.position = position;
     }
 
+    protected Boolean getVisibility(){
+        return isVisible;
+    }
+    protected void setVisibility(Boolean visible){
+        this.isVisible = visible;
+    }
+
     //TODO make boat visible or not (opponent side should not show)
 
     //TODO add position JButton[][]

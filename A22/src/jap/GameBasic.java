@@ -27,8 +27,9 @@ public class GameBasic {
      */
     public static void main(String[] args) {
         GameModel gameModel = new GameModel();
-        GameController gameController = new GameController(gameModel);
-        GameView gameView = new GameView(gameController, gameModel);
+        GameView gameView = new GameView();
+        GameController gameController = new GameController(gameModel, gameView);
+
         gameView.setResizable(false);
         gameView.setVisible(true);
 

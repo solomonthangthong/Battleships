@@ -56,6 +56,8 @@ public class GameView extends JFrame implements ActionListener {
      */
     private JLabel controlPanelText;
     private JPanel timeContainer;
+    private int remainingBoats;
+    JLabel remainingBoat;
     /**
      * Button to start the game.
      */
@@ -104,25 +106,14 @@ public class GameView extends JFrame implements ActionListener {
     private JButton resetLayout;
     private JButton saveLayout;
 
-    public GameView(GameController gameController, GameModel gameModel) {
+    public GameView() {
         Splash s = new Splash();
         s.show();
         menuBar = new Menu();
 
-        // Create instance Controller
-        this.gameController = gameController;
-        gameController.setGameView(this);
         initializeFrame();
         createPanels();
         addPanelsToMainFrame();
-
-        // Create 2D arrays of buttons default dimension 4
-        userButtons = gameController.getButtons(true);
-        opponentButtons = gameController.getButtons(false);
-
-        createPanelView(gameModel.getBoardSize(), userPanel, true, progressPlayer1Panel);
-        createPanelView(gameModel.getBoardSize(), opponentPanel, false, progressPlayer2Panel);
-
 
         //play background music
         //String musicFile = "resources/backgroundMusic.wav";
@@ -421,6 +412,33 @@ public class GameView extends JFrame implements ActionListener {
         }
     }
 
+    protected void setGameController(GameController controller){
+        this.gameController = controller;
+    }
+
+    protected void setBoardButtons(Boolean actor, JButton[][] board){
+        if (actor){
+            userButtons = board;
+        } else{
+            opponentButtons = board;
+        }
+    }
+
+    protected JPanel getUserPanel(){
+        return userPanel;
+    }
+
+    protected JPanel getOpponentPanel(){
+        return opponentPanel;
+    }
+    protected JPanel getProgressPlayer1Panel(){
+        return progressPlayer1Panel;
+    }
+
+    protected JPanel getProgressPlayer2Panel(){
+        return progressPlayer2Panel;
+    }
+
     /**
      * Method Name: createPanels
      * Purpose: This method creates and configure panels for user interface and called internally for initialization.
@@ -573,7 +591,7 @@ public class GameView extends JFrame implements ActionListener {
      * @param actorPanel - User or Opponent JPanel
      * @param whichActor - True = user actor, false = machine actor
      */
-    private void createPanelView(int dimension, JPanel actorPanel, Boolean whichActor, JPanel lifeStatus) {
+    protected void createPanelView(int dimension, JPanel actorPanel, Boolean whichActor, JPanel lifeStatus) {
         int buttonSize = Math.min(50, 200 / dimension); // Adjust the button size based on dimension
         int labelSize = Math.min(50, 200 / dimension); // Adjust the button size based on dimension
 
@@ -592,7 +610,7 @@ public class GameView extends JFrame implements ActionListener {
         } else {
             buttonForGrid = opponentButtons;
         }
-        // Only loop through instance of Buttons from GameModel to assign action listner
+        // Only loop through instance of Buttons from GameModel to assign action listener
         for (JButton[] row : buttonForGrid) {
             for (JButton button : row) {
                 button.addActionListener(this);
@@ -688,7 +706,14 @@ public class GameView extends JFrame implements ActionListener {
         designWindow.setLocationRelativeTo(null);
         designWindow.setVisible(true);
     }
+    protected void setRemainingBoats(){
+        this.remainingBoats = gameController.getRemainingBoats();
+    }
+    private void updateRemainingBoats(){
+        setRemainingBoats();
+        remainingBoat.setText("Remaining: " + remainingBoats);
 
+    }
     /**
      * Create JFrame and panels hosting items
      *
@@ -702,44 +727,49 @@ public class GameView extends JFrame implements ActionListener {
         JLabel directionLabel = new JLabel("Direction:");
         JLabel horizontalLabel = new JLabel("H");
         JLabel verticalLabel = new JLabel("V");
-
+        setRemainingBoats();
+        remainingBoat = new JLabel("Remaining: " + remainingBoats);
+        remainingBoat.setForeground(Color.lightGray);
         resetLayout = new JButton("Reset Layout");
         saveLayout = new JButton("Save");
 
+        resetLayout.addActionListener(this);
+        saveLayout.addActionListener(this);
+
         int buttonSize = Math.min(50, 200 / size); // Adjust the button size based on dimension
-        JPanel actorGrid = new JPanel(new GridLayout(size * 2, size * 2));
+        JPanel designGrid = new JPanel(new GridLayout(size * 2, size * 2));
 
         // Only loop through instance of Buttons from GameModel to assign action listener
         for (JButton[] row : userButtons) {
             for (JButton button : row) {
                 button.addActionListener(this);
                 button.setPreferredSize(new Dimension(buttonSize, buttonSize));
-                actorGrid.add(button);
+                designGrid.add(button);
             }
         }
 
         boatSizeSelector = new JComboBox<>(comboBoxModel);
+        boatHorizontal = new JRadioButton();
+        boatVertical = new JRadioButton();
+        // ButtonGroup where only one can be selected at a time (horizontal vertical)
+        ButtonGroup orientationGroup = new ButtonGroup();
+
         boatSizeSelector.addActionListener(this);
         boatSizeSelector.setSelectedIndex(0);
-        // checking if works in default in constructor
-        /*boatVertical = new JRadioButton();
-        boatVertical.setSelected(true);*/
-        boatHorizontal = new JRadioButton();
+
         boatHorizontal.addActionListener(this);
         boatHorizontal.setActionCommand("false");
 
-        boatVertical = new JRadioButton();
         boatVertical.setSelected(true);
         boatVertical.addActionListener(this);
         boatVertical.setActionCommand("true");
 
-        // ButtonGroup where only one can be selected at a time (horizontal vertical)
-        ButtonGroup orientationGroup = new ButtonGroup();
         orientationGroup.add(boatVertical);
         orientationGroup.add(boatHorizontal);
-        designPanel.add(actorGrid);
+        designPanel.add(designGrid);
         bottomPanel.add(boatLabel);
         bottomPanel.add(boatSizeSelector);
+        bottomPanel.add(remainingBoat);
         bottomPanel.add(directionLabel);
         bottomPanel.add(boatHorizontal);
         bottomPanel.add(horizontalLabel);
@@ -865,7 +895,7 @@ public class GameView extends JFrame implements ActionListener {
             //clickClip.start();
 
             gameController.historyLog(eventSource, controlPanelText);
-            gameController.updateModelViewBoard(selectedDimension, userPanel, opponentPanel, userButtons, opponentButtons);
+            gameController.updateModelViewBoard(selectedDimension, userPanel, opponentPanel);
             // Need to see if GameModel Buttons are updated with Boat
             gameController.randomBoatPlacement(opponentPanel, false);
             gameController.randomBoatPlacement(userPanel, true);
@@ -877,7 +907,7 @@ public class GameView extends JFrame implements ActionListener {
             clickClip.start();
             // updateModelViewBoard was changeDimensions
             // resizeBoard and change dimension were essentially the same in previous iteration
-            gameController.updateModelViewBoard(selectedDimension, userPanel, opponentPanel, userButtons, opponentButtons);
+            gameController.updateModelViewBoard(selectedDimension, userPanel, opponentPanel);
             gameController.historyLog(eventSource, controlPanelText);
         } else if (eventSource == reset) {
             clickClip.start();
@@ -885,13 +915,25 @@ public class GameView extends JFrame implements ActionListener {
         } else if (eventSource == play) {
             clickClip.start();
             gameController.historyLog(eventSource, controlPanelText);
-        } else {
+        } else if(eventSource == resetLayout){
+
+        }else if (eventSource == saveLayout){
+            userButtons = gameController.getButtons(true);
+            gameController.updateModelViewBoard(selectedDimension, userPanel, opponentPanel);
+            createPanelView(selectedDimension, userPanel, true, progressPlayer1Panel);
+            designWindow.dispose();
+            designWindow = null;
+        }else {
             clickClip.start();
             gameController.boardButtonEvent(userButtons, eventSource, controlPanelText, designWindow);
             gameController.boardButtonEvent(opponentButtons, eventSource, controlPanelText, designWindow);
 
-            designWindow.repaint();
-            designWindow.revalidate();
+            if (designWindow != null){
+                updateRemainingBoats();
+                userButtons = gameController.getButtons(true);
+                designWindow.repaint();
+                designWindow.revalidate();
+            }
         }
     }
 }

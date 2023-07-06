@@ -6,13 +6,16 @@ public class GameController {
     private GameModel gameModel;
     private GameView gameView;
 
-    public GameController(GameModel gameModel) {
-        this.gameModel = gameModel;
+    public GameController(GameModel model, GameView view) {
+        this.gameModel = model;
+        this.gameView = view;
 
-    }
+        view.setGameController(this);
+        view.setBoardButtons(true, getButtons(true));
+        view.setBoardButtons(false, getButtons(false));
+        view.createPanelView(gameModel.getBoardSize(), view.getUserPanel(), true, view.getProgressPlayer1Panel());
+        view.createPanelView(gameModel.getBoardSize(), view.getOpponentPanel(), false, view.getProgressPlayer2Panel());
 
-    protected void setGameView(GameView gameView) {
-        this.gameView = gameView;
     }
 
     /**
@@ -43,10 +46,8 @@ public class GameController {
      * @param selectedDimension  - boardSize
      * @param userBoardPanel     - Visual user Panel (left side)
      * @param opponentBoardPanel - Visual opponent panel (right side)
-     * @param userButtons        - user 2D array button grid (left side)
-     * @param opponentButtons    - opponent 2D array button grid (right side)
      */
-    protected void updateModelViewBoard(Integer selectedDimension, JPanel userBoardPanel, JPanel opponentBoardPanel, JButton[][] userButtons, JButton[][] opponentButtons) {
+    protected void updateModelViewBoard(Integer selectedDimension, JPanel userBoardPanel, JPanel opponentBoardPanel) {
         gameModel.setBoardSize(selectedDimension);
         gameModel.setUserPlayerButtons(gameModel.createButtonBoard(gameModel.getPlayer(true)));
         gameModel.setOpponentButtons(gameModel.createButtonBoard(gameModel.getPlayer(false)));
@@ -69,7 +70,6 @@ public class GameController {
         }
     }
 
-
     protected static int getBoatSize() {
         return GameView.boatSizeSelectorValue;
     }
@@ -90,11 +90,11 @@ public class GameController {
         if (!isBoatPlaced) {
             //TODO DEFAULT ORIENTATION TO VERTICAL BY RADIO BUTTON AND BE ABLE TO CHANGE IT?
             gameModel.placeSelectedBoat(eventSource);
+            getRemainingBoats();
         }
     }
 
     protected void checkOrientation(Object eventSource){
-
         gameModel.setBoatOrientation(eventSource);
     }
 
@@ -110,6 +110,11 @@ public class GameController {
         } else {
             gameModel.setOpponentButtons(gameModel.generateBoatSize(false));
         }
+    }
+
+    protected Integer getRemainingBoats(){
+        int remainder = gameModel.getNumberOfBoatsForDesign();
+        return remainder;
     }
 
     protected void startGame() {

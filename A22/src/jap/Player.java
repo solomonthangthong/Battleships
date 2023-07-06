@@ -26,7 +26,7 @@ public class Player {
         boats = new ArrayList<>();
     }
 
-    protected boolean isActor(){
+    protected boolean getActor(){
         return actor;
     }
 
