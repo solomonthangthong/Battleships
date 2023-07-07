@@ -240,8 +240,9 @@ public class GameModel {
             button.setForeground(Color.black);
             return button;
         } else if (button != null) {
-            if (state.getState() != State.DEFAULT) {
+            if (state.getState() == State.DEFAULT) {
                 state.setState(State.MISS);
+                button.setBackground(Color.lightGray);
             }
             // if Boat is passed, and state is NOT HIT, state becomes hit
         } else if (boat != null && reset) {
@@ -254,6 +255,7 @@ public class GameModel {
             return replaceButton;
         }else if (boat != null) {
             state.setState(State.HIT);
+            boat.setBackground(Color.lightGray);
         }
 
         return button;

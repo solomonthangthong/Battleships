@@ -277,6 +277,7 @@ public class GameView extends JFrame implements ActionListener {
                     gameController.resetGame(false, userPanel, opponentPanel);
                     // Autofill Machine boats after new state
                     gameController.randomBoatPlacement(opponentPanel, false);
+                    createPanelView(selectedDimension, userPanel, true, progressPlayer1Panel);
                     createPanelView(selectedDimension, opponentPanel, false, progressPlayer2Panel);
 
                     break;
