@@ -59,21 +59,21 @@ public class GameController {
         gameView.updateBoard(gameModel.getOpponentButtons(), gameModel.getOpponentBoardPanel());
     }
 
-    protected void configurationString(Boolean whichActor, JButton[][] actorBoard){
+    protected void configurationString(Boolean whichActor, JButton[][] actorBoard) {
         String hello;
-        if (whichActor){
+        if (whichActor) {
             hello = gameModel.configurationString(true, actorBoard);
             gameModel.setPlayer1Config(hello);
-        } else{
+        } else {
             hello = gameModel.configurationString(false, actorBoard);
             gameModel.setPlayer2Config(hello);
         }
     }
 
-    protected void changeBoatColor(JButton[][] buttons, JPanel actorPanel, Boolean actor){
+    protected void changeBoatColor(JButton[][] buttons, JPanel actorPanel, Boolean actor) {
         gameModel.changeBoatColor(buttons);
 
-        if (actor){
+        if (actor) {
             gameModel.setUserBoardPanel(actorPanel);
             gameView.updateBoard(buttons, actorPanel);
             gameModel.setUserPlayerButtons(buttons);
@@ -195,7 +195,7 @@ public class GameController {
                 buttons[i][j].setBorder(whiteBorder);
             }
         }
-        if (actor){
+        if (actor) {
             gameView.updateBoard(buttons, userBoardPanel);
         } else {
             gameView.updateBoard(buttons, opponentBoardPanel);
@@ -207,7 +207,7 @@ public class GameController {
         gameModel.setSelectedColour(color);
     }
 
-    protected void setBoatVisible(){
+    protected void setBoatVisible() {
         gameModel.setBoatVisible();
     }
 
@@ -245,18 +245,16 @@ public class GameController {
         }
     }
 
-protected boolean isValid(JButton selectedButton){
+    protected boolean isValid(JButton selectedButton) {
         return gameModel.isValidSelection(selectedButton);
 
-}
-
-
+    }
 
     protected JButton randomSelection(int boardSize) {
         return gameModel.randomSelection(boardSize);
     }
 
-        private void performHitMissLogic(JButton button, JLabel controlPanelText) {
+    private void performHitMissLogic(JButton button, JLabel controlPanelText) {
         if (button instanceof Boat) {
             // Button is a boat, it's a hit
             System.out.print("Hit");
