@@ -4,6 +4,7 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.util.Random;
 
 public class GameController {
     private GameModel gameModel;
@@ -137,42 +138,6 @@ public class GameController {
     protected void checkOrientation(Object eventSource) {
         gameModel.setBoatOrientation(eventSource);
     }
-//    protected void playGame(){
-
-
-
-        // Player selects a square
-
-        // Computer randomly selects a square
-
-//        gameModel.computerMove();
-//
-//
-//        gameModel.checkGameStatus();
-//    }
-
-//    protected void playerMove() {
-//        // TODO: Implement the logic for the player's move, where they select a square
-//        // Get the selected square from the player
-//        Square selectedSquare = boardButtonEvent(gameModel.getUserPlayerButtons());
-//
-//        // Check if the selected square is a valid move
-//        if (isValidMove(selectedSquare)) {
-//            // Perform actions based on the selected square
-//            int row = selectedSquare.getRow();
-//            int col = selectedSquare.getColumn();
-//            gameModel.updateButtonState(row, col, true); // Assuming you have a method to update the button state in the game model
-//
-//            // Refresh the view to reflect the changes
-//            gameView.refreshBoard();
-//
-//            // Check game status (e.g., win, lose, or continue)
-//            checkGameStatus();
-//        } else {
-//            // Display an error message or handle invalid moves
-//            JOptionPane.showMessageDialog(null, "Invalid move. Please select a valid square.");
-//        }
-//    }
 
     /**
      * Purpose: sets gameModel user/opponent 2D array button grid to have random boats
@@ -276,8 +241,18 @@ public class GameController {
         rowIndex++;
     }
 
+protected boolean isValid(JButton selectedButton){
+        return gameModel.isValidSelection(selectedButton);
 
-    private void performHitMissLogic(JButton button, JLabel controlPanelText) {
+}
+
+
+
+    protected JButton randomSelection(int boardSize) {
+        return gameModel.randomSelection(boardSize);
+    }
+
+        private void performHitMissLogic(JButton button, JLabel controlPanelText) {
         if (button instanceof Boat) {
             // Button is a boat, it's a hit
             System.out.print("Hit");

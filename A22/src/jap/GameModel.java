@@ -385,8 +385,38 @@ public class GameModel {
         //TODO LOGIC TO NOT OVERLAP THE boats (grab from previous methods)
 
     }
+    protected JButton randomSelection(int boardSize) {
+        Random random = new Random();
+        int row;
+        int column;
+        JButton selectedButton;
+        ButtonState state = null;
+
+        do {
+            row = random.nextInt(boardSize);
+            column = random.nextInt(boardSize);
+            selectedButton = userButtons[row][column];
 
 
+        } while(selectedButton.getText()=="HIT" || selectedButton.getText()=="MISS");
+
+        return selectedButton;
+    }
+
+    protected boolean isValidSelection(JButton selectedButton){
+        if (selectedButton.getText()=="HIT" || selectedButton.getText()=="MISS"){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+
+
+
+    public JButton[][] getUserButtons() {
+        return userButtons;
+    }
     protected void clearDesignBoatList(){
         designBoatList.clear();
     }

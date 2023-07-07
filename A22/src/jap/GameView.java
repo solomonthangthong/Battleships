@@ -1149,8 +1149,18 @@ timer.start();
         } else {
             if (playClicked) {
                 clickClip.start();
-                gameController.boardButtonEvent(userButtons, eventSource, controlPanelText, designWindow);
-                gameController.boardButtonEvent(opponentButtons, eventSource, controlPanelText, designWindow);
+                // User play - can only click opponent board.
+
+          do{
+
+              gameController.boardButtonEvent(opponentButtons, eventSource, controlPanelText, designWindow);
+               }while( gameController.isValid((JButton) eventSource));
+                //computer selects a square
+               JButton selectedButton = gameController.randomSelection(selectedDimension * 2);
+                if (selectedButton != null) {
+                    gameController.boardButtonEvent(userButtons, selectedButton, controlPanelText, designWindow);
+                }
+                //ADD METHOD HERE TO CHECK BOTH PROGRESS BARS THAT SOLOMON IS DOING   if progress bar = 0 . Display win or loss
             }
             if (designWindow != null) {
                 updateRemainingBoats();

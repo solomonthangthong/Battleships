@@ -18,7 +18,9 @@ public class ButtonState {
 
         this.state = State.DEFAULT;
     }
-
+    protected JButton getButton() {
+        return button;
+    }
     /**
      * Constructorf or Boat Object
      * @param boat
@@ -54,8 +56,9 @@ public class ButtonState {
                 break;
             default:
                 break;
-        }
+        } if (boat != null){
+        boat.setText(state == State.HIT ? "HIT" : "MISS");
+
     }
-
-
+}
 }
