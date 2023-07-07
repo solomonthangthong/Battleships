@@ -1,6 +1,7 @@
 package jap;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class ButtonState {
     private JButton button;
@@ -14,6 +15,8 @@ public class ButtonState {
     public ButtonState(JButton button) {
         this.button = button;
         this.boat = null;
+
+        this.state = State.DEFAULT;
     }
 
     /**
@@ -23,6 +26,8 @@ public class ButtonState {
     public ButtonState(Boat boat) {
         this.button = null;
         this.boat = boat;
+
+        this.state = State.DEFAULT;
     }
 
 
@@ -42,9 +47,10 @@ public class ButtonState {
                 button.setText("0");
                 break;
             case HIT:
-                boat.setState(State.HIT);
+                boat.setText("HIT");
                 break;
             case MISS:
+                button.setText("MISS");
                 break;
             default:
                 break;

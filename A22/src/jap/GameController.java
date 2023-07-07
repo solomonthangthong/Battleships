@@ -3,6 +3,7 @@ package jap;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 
 public class GameController {
     private GameModel gameModel;
@@ -25,9 +26,9 @@ public class GameController {
     /**
      * Purpose: Calls Model and updates string, call view and refresh
      *
-     * @param eventSource - Instances of any event
+     * @param eventSource      - Instances of any event
      * @param controlPanelText - String of history actions from player
-     * @param <T> - Generic object
+     * @param <T>              - Generic object
      */
     protected <T> void historyLog(T eventSource, JLabel controlPanelText) {
         gameModel.historyLog(eventSource, controlPanelText);
@@ -80,7 +81,7 @@ public class GameController {
 
     }
 
-    protected void transferDesignToUserPanel(Integer selectedDimension, JButton[][] replace, JPanel userBoardPanel, JPanel opponentBoardPanel){
+    protected void transferDesignToUserPanel(Integer selectedDimension, JButton[][] replace, JPanel userBoardPanel, JPanel opponentBoardPanel) {
         gameModel.convertDesignJButtonsToBoat(true);
         gameModel.setBoardSize(selectedDimension);
         gameModel.setUserBoardPanel(userBoardPanel);
@@ -105,7 +106,8 @@ public class GameController {
     protected static int getBoatSize() {
         return GameView.boatSizeSelectorValue;
     }
-    protected void openDesignBoat(){
+
+    protected void openDesignBoat() {
         //gameView.designBoatWindow();
         //TODO add logic to check if randomize has been used
         gameModel.setUserPlayerButtons(gameModel.createButtonBoard(gameModel.getPlayer(true)));
@@ -117,7 +119,7 @@ public class GameController {
         gameView.designBoatPlacement(gameModel.getBoardSize());
     }
 
-    protected void resetDesignBoatArrayList(){
+    protected void resetDesignBoatArrayList() {
         gameModel.clearDesignBoatList();
         gameModel.convertDesignJButtonsToBoat(false);
         gameModel.populateDesignBoat();
@@ -132,15 +134,51 @@ public class GameController {
         }
     }
 
-    protected void checkOrientation(Object eventSource){
+    protected void checkOrientation(Object eventSource) {
         gameModel.setBoatOrientation(eventSource);
     }
+//    protected void playGame(){
+
+
+
+        // Player selects a square
+
+        // Computer randomly selects a square
+
+//        gameModel.computerMove();
+//
+//
+//        gameModel.checkGameStatus();
+//    }
+
+//    protected void playerMove() {
+//        // TODO: Implement the logic for the player's move, where they select a square
+//        // Get the selected square from the player
+//        Square selectedSquare = boardButtonEvent(gameModel.getUserPlayerButtons());
+//
+//        // Check if the selected square is a valid move
+//        if (isValidMove(selectedSquare)) {
+//            // Perform actions based on the selected square
+//            int row = selectedSquare.getRow();
+//            int col = selectedSquare.getColumn();
+//            gameModel.updateButtonState(row, col, true); // Assuming you have a method to update the button state in the game model
+//
+//            // Refresh the view to reflect the changes
+//            gameView.refreshBoard();
+//
+//            // Check game status (e.g., win, lose, or continue)
+//            checkGameStatus();
+//        } else {
+//            // Display an error message or handle invalid moves
+//            JOptionPane.showMessageDialog(null, "Invalid move. Please select a valid square.");
+//        }
+//    }
 
     /**
      * Purpose: sets gameModel user/opponent 2D array button grid to have random boats
      *
      * @param actorPanel - Player/Machine JPanel
-     * @param actor - Player/Machine
+     * @param actor      - Player/Machine
      */
     protected void randomBoatPlacement(JPanel actorPanel, Boolean actor) {
         if (actor) {
@@ -150,17 +188,18 @@ public class GameController {
         }
     }
 
-    protected Integer getRemainingBoats(){
+    protected Integer getRemainingBoats() {
         int remainder = gameModel.getNumberOfBoatsForDesign();
         return remainder;
     }
-    protected void resetRemainingBoat(){
+
+    protected void resetRemainingBoat() {
         int reset = 0;
         gameModel.setNumberOfBoatsForDesign(reset);
     }
 
     protected void startGame() {
-
+        gameView.playClicked = true;
     }
 
     protected void resetGame(Boolean actor, JPanel userBoardPanel, JPanel opponentBoardPanel) {
@@ -176,7 +215,7 @@ public class GameController {
         int squareBoard = gameModel.getBoardSize() * 2;
         for (int i = 0; i < squareBoard; i++) {
             for (int j = 0; j < squareBoard; j++) {
-                if(buttons[i][j] instanceof Boat){
+                if (buttons[i][j] instanceof Boat) {
                     Boat boat = (Boat) buttons[i][j];
                     buttons[i][j] = gameModel.updateButtonState(null, boat, true);
                     buttons[i][j].setName((i + 1) + "," + (j + 1));
@@ -191,7 +230,7 @@ public class GameController {
         gameView.updateBoard(gameModel.getBoardSize(), userBoardPanel, opponentBoardPanel);
     }
 
-    protected void setBoatColor(Color color){
+    protected void setBoatColor(Color color) {
         gameModel.setSelectedColour(color);
     }
 
@@ -227,18 +266,29 @@ public class GameController {
                 if (eventSource == button) {
                     //TODO incorporate hit miss logic
                     //TODO incorporate hit miss logic
-                    if (button instanceof Boat) {
-                        historyLog(eventSource, controlPanelText);
-                        gameModel.updateButtonState(null, (Boat) button, false);
+                    performHitMissLogic(button, controlPanelText);
 
-                    } else if (button != null){
-                        historyLog(eventSource, controlPanelText);
-                        gameModel.updateButtonState(button, null, false);
-                    }
+
                 }
-                columnIndex++;
             }
-            rowIndex++;
+            columnIndex++;
+        }
+        rowIndex++;
+    }
+
+
+    private void performHitMissLogic(JButton button, JLabel controlPanelText) {
+        if (button instanceof Boat) {
+            // Button is a boat, it's a hit
+            System.out.print("Hit");
+            historyLog(button, controlPanelText);
+            gameModel.updateButtonState(null, (Boat) button, false);
+        } else {
+            // Button is empty, it's a miss
+            System.out.print("Miss");
+            historyLog(button, controlPanelText);
+            gameModel.updateButtonState(button, null, false);
         }
     }
+
 }

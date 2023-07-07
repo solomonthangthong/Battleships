@@ -130,6 +130,7 @@ public class GameView extends JFrame implements ActionListener {
 
     private Color globalColour;
     private ColorChooser colorPanel;
+    protected boolean playClicked;
 
     public GameView() {
         Splash s = new Splash();
@@ -588,14 +589,31 @@ public class GameView extends JFrame implements ActionListener {
         /* Create Time window */
         //TODO: Add time duration when play button logic is created
         timeLabel = new JLabel();
-        JPanel timeDisplay = new JPanel();
+        JLabel timeDisplay = new JLabel();
         JPanel timeContainer = new JPanel();
         timeDisplay.setBorder(BorderFactory.createRaisedBevelBorder());
         timeDisplay.setPreferredSize(new Dimension(55, 30));
+        timeDisplay.setAlignmentX(Component.CENTER_ALIGNMENT);
         timeContainer.add(timeLabel);
         timeContainer.add(timeDisplay);
+        timeContainer.setAlignmentX(Component.CENTER_ALIGNMENT);
         timeContainer.setBackground(Color.decode("#feefec"));
         selectionPanel.add(timeContainer);
+
+        //display timer
+        Timer timer = new Timer(1000, new ActionListener() {
+            int count = 0;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                count++;
+                timeDisplay.setText(String.valueOf(count));
+            }
+        });
+   //start timer
+timer.start();
+
+
 
         /* Creates reset button */
         reset = new JButton();
@@ -1111,6 +1129,7 @@ public class GameView extends JFrame implements ActionListener {
         } else if (eventSource == play) {
             clickClip.start();
             gameController.historyLog(eventSource, controlPanelText);
+            gameController.startGame();
         } else if (eventSource == resetLayout) {
             gameController.resetRemainingBoat();
             gameController.resetDesignBoatArrayList();
@@ -1127,16 +1146,24 @@ public class GameView extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(null, "Place remaining boats in order to save", "Warning", JOptionPane.WARNING_MESSAGE);
             }
         } else {
-            clickClip.start();
-            gameController.boardButtonEvent(userButtons, eventSource, controlPanelText, designWindow);
-            gameController.boardButtonEvent(opponentButtons, eventSource, controlPanelText, designWindow);
-
+            if (playClicked) {
+                clickClip.start();
+                gameController.boardButtonEvent(userButtons, eventSource, controlPanelText, designWindow);
+                gameController.boardButtonEvent(opponentButtons, eventSource, controlPanelText, designWindow);
+            }
             if (designWindow != null) {
                 updateRemainingBoats();
                 userButtons = gameController.getButtons(true);
                 designWindow.repaint();
                 designWindow.revalidate();
             }
+//            else {
+//                clickClip.start();
+//                gameController.boardButtonEvent(userButtons, eventSource, controlPanelText, designWindow);
+//                gameController.boardButtonEvent(opponentButtons, eventSource, controlPanelText, designWindow);
+//            }
+
+
         }
     }
 }

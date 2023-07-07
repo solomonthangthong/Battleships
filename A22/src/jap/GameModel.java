@@ -252,6 +252,8 @@ public class GameModel {
             replaceButton.setForeground(Color.black);
 
             return replaceButton;
+        }else if (boat != null) {
+            state.setState(State.HIT);
         }
 
         return button;
@@ -381,6 +383,7 @@ public class GameModel {
         //TODO LOGIC TO NOT OVERLAP THE boats (grab from previous methods)
 
     }
+
 
     protected void clearDesignBoatList(){
         designBoatList.clear();
