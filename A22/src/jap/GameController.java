@@ -2,6 +2,7 @@ package jap;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.plaf.basic.BasicButtonUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.Random;
@@ -21,6 +22,7 @@ public class GameController {
         randomBoatPlacement(view.getOpponentPanel(), false);
         view.createPanelView(gameModel.getBoardSize(), view.getOpponentPanel(), false, view.getProgressPlayer2Panel());
         configurationString(false, gameModel.getOpponentButtons());
+        disableUserButtons(true);
 
     }
 
@@ -187,12 +189,14 @@ public class GameController {
                     Boat boat = (Boat) buttons[i][j];
                     buttons[i][j] = gameModel.updateButtonState(null, boat, true);
                     buttons[i][j].setName((i + 1) + "," + (j + 1));
+                    boat.setUI(new HiddenTextButtonUI());
                 }
                 buttons[i][j] = gameModel.updateButtonState(buttons[i][j], null, true);
                 buttons[i][j].setBackground(Color.decode("#f56a4d"));
                 buttons[i][j].setForeground(Color.white);
                 buttons[i][j].setBorderPainted(true);
                 buttons[i][j].setBorder(whiteBorder);
+                buttons[i][j].setUI(new HiddenTextButtonUI());
             }
         }
         if (actor) {
@@ -222,32 +226,52 @@ public class GameController {
      */
     protected void boardButtonEvent(JButton[][] buttons, Object eventSource, JLabel controlPanelText, JFrame designWindow) {
 
-        int rowIndex = 0;
-        for (JButton[] row : buttons) {
-            int columnIndex = 0;
-            for (JButton button : row) {
-                //TODO Reset rowIndex and columnIndex to 0 after loops are done, or redo enhanced Loop and use normal for loop
-                // Checks the button clicked in grid and pop up window is opened for placing
-                if (eventSource == button && designWindow != null) {
-                    System.out.print("rowIndex = " + rowIndex + "\ncolumnIndex = " + columnIndex + "\n");
+        for (int i = 0; i < buttons.length; i++) {
+            for (int j = 0; j < buttons[i].length; j++) {
+                if (eventSource == buttons[i][j] && designWindow != null) {
+                    System.out.print("rowIndex = " + i + "\ncolumnIndex = " + j + "\n");
                     gameModel.placeSelectedBoat(eventSource);
+                } else if (eventSource == buttons[i][j] && buttons[i][j].isEnabled()) {
+                    performHitMissLogic(buttons[i][j], controlPanelText);
+                } else if (eventSource instanceof Boat && eventSource == buttons[i][j] && buttons[i][j].isEnabled()) {
+                    performHitMissLogic((Boat) eventSource, controlPanelText);
+                } else if (eventSource == buttons[i][j] && !buttons[i][j].isEnabled()){
+                    break;
                 }
-                if (eventSource == button) {
-                    //TODO incorporate hit miss logic
-                    //TODO incorporate hit miss logic
-                    performHitMissLogic(button, controlPanelText);
-
-
-                }
-                columnIndex++;
             }
-            rowIndex++;
         }
+    }
+
+    protected void disableUserButtons(Boolean didMachinePlay) {
+        JButton[][] buttons;
+        buttons = gameModel.getUserPlayerButtons();
+        Integer size = gameModel.getBoardSize() * 2;
+
+        // Check if machine played TRUE TO DISABLE, FALSE TO ENABLE?
+        if (didMachinePlay) {
+            for (int i = 0; i < size; i++) {
+                for (int j = 0; j < size; j++) {
+                    if (buttons[i][j] != null) {
+                        buttons[i][j].setEnabled(false);
+                        buttons[i][j].setUI(new HiddenTextButtonUI());
+                    }
+                }
+            }
+        } else {
+            for (int i = 0; i < size; i++) {
+                for (int j = 0; j < size; j++) {
+                    if (buttons[i][j] != null) {
+                        buttons[i][j].setEnabled(true);
+                        buttons[i][j].setUI(new HiddenTextButtonUI());
+                    }
+                }
+            }
+        }
+        gameView.setBoardButtons(true, buttons);
     }
 
     protected boolean isValid(JButton selectedButton) {
         return gameModel.isValidSelection(selectedButton);
-
     }
 
     protected JButton randomSelection(int boardSize) {
@@ -265,6 +289,16 @@ public class GameController {
             System.out.print("Miss");
             historyLog(button, controlPanelText);
             gameModel.updateButtonState(button, null, false);
+        }
+    }
+
+    /**
+     * Custom ButtonUI implementation that hides the grayed-out text of a disabled JButton.
+     */
+    private static class HiddenTextButtonUI extends BasicButtonUI {
+        @Override
+        public void paint(Graphics g, JComponent c) {
+            // Override the paint method to prevent painting the text
         }
     }
 

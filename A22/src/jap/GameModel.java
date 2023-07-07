@@ -2,6 +2,7 @@ package jap;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.plaf.basic.BasicButtonUI;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
@@ -45,6 +46,9 @@ public class GameModel {
     private Border whiteBorder;
     private Color selectedColour;
 
+    private Color waterColour;
+    private Color hitBoatColor;
+
 
     public GameModel() {
         boardSize = 4;
@@ -57,6 +61,10 @@ public class GameModel {
         opponentButtons = createButtonBoard(players[1]);
 
         numberOfBoatsForDesign = 0;
+
+
+        waterColour = Color.decode("#008fa2");
+        hitBoatColor = Color.decode("#db9c59");
 
     }
 
@@ -237,12 +245,13 @@ public class GameModel {
         if (button != null && reset) {
             state.setState(State.DEFAULT);
             button.setBackground(Color.lightGray);
-            button.setForeground(Color.black);
+            button.setForeground(button.getBackground());
             return button;
         } else if (button != null) {
             if (state.getState() == State.DEFAULT) {
                 state.setState(State.MISS);
-                button.setBackground(Color.lightGray);
+                button.setBackground(waterColour);
+                button.setForeground(button.getBackground());
             }
             // if Boat is passed, and state is NOT HIT, state becomes hit
         } else if (boat != null && reset) {
@@ -255,7 +264,8 @@ public class GameModel {
             return replaceButton;
         }else if (boat != null) {
             state.setState(State.HIT);
-            boat.setBackground(Color.lightGray);
+            boat.setBackground(hitBoatColor);
+            boat.setForeground(boat.getBackground());
         }
 
         return button;
@@ -283,8 +293,10 @@ public class GameModel {
                 JButton userButton = new JButton();
                 if (player.getActor()) {
                     userButton.setName(actor1 + (i + 1) + "," + (j + 1));
+                    userButton.setUI(new HiddenTextButtonUI());
                 } else {
                     userButton.setName(actor2 + (i + 1) + "," + (j + 1));
+                    userButton.setUI(new HiddenTextButtonUI());
                 }
 
                 userButton.setBackground(Color.decode("#f56a4d"));
@@ -295,11 +307,22 @@ public class GameModel {
                 userButton.setBorderPainted(true);
                 userButton.setBorder(whiteBorder);
                 state.setState(State.DEFAULT);
+                userButton.setUI(new HiddenTextButtonUI());
                 //assign the button in the array
                 buttons[i][j] = userButton;
             }
         }
         return buttons;
+    }
+
+    /**
+     * Custom ButtonUI implementation that hides the grayed-out text of a disabled JButton.
+     */
+    private static class HiddenTextButtonUI extends BasicButtonUI {
+        @Override
+        public void paint(Graphics g, JComponent c) {
+            // Override the paint method to prevent painting the text
+        }
     }
 
     protected String configurationString(Boolean actor, JButton[][] actorButtons){
@@ -700,17 +723,16 @@ public class GameModel {
                     if (player.getActor()) {
                         boat.setBackground(backgroundColor);
                         boat.setBorder(whiteBorder);
-                        boat.setVisibility(true);
                     } else {
                         boat.setBackground(Color.decode("#f56a4d"));
                         boat.setForeground(Color.white);
                         boat.setBorder(whiteBorder);
-                        boat.setVisibility(false);
                     }
                     boat.setPlaced(true);
                     //Can be removed later, only here to visually see if adhering to numerical representation
                     boat.setText(boatSize);
                     boat.setForeground(Color.WHITE);
+                    boat.setUI(new HiddenTextButtonUI());
                     player.addBoat(boat);
                 }
             } else {
@@ -725,17 +747,16 @@ public class GameModel {
                     if (player.getActor()) {
                         boat.setBackground(backgroundColor);
                         boat.setBorder(whiteBorder);
-                        boat.setVisibility(true);
                     } else {
                         boat.setBackground(Color.decode("#f56a4d"));
                         boat.setForeground(Color.white);
                         boat.setBorder(whiteBorder);
-                        boat.setVisibility(false);
                     }
                     boat.setPlaced(true);
                     //Can be removed later, only here to visually see if adhering to numerical representation
                     boat.setText(boatSize);
                     boat.setForeground(Color.WHITE);
+                    boat.setUI(new HiddenTextButtonUI());
                     player.addBoat(boat);
                 }
             }

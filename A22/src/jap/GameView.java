@@ -276,6 +276,7 @@ public class GameView extends JFrame implements ActionListener {
                     gameController.randomBoatPlacement(opponentPanel, false);
                     createPanelView(selectedDimension, userPanel, true, progressPlayer1Panel);
                     createPanelView(selectedDimension, opponentPanel, false, progressPlayer2Panel);
+                    gameController.disableUserButtons(true);
 
                     break;
                 case "Solution":
@@ -827,6 +828,7 @@ public class GameView extends JFrame implements ActionListener {
      * Method Name: updateBoard
      * Purpose: Is called in GameController, When dimension JComboBox is changed, this method clears both actor board panels, and creates new board based on the size of the dimension selected.
      * Algorithm: remove both actor panels, create new board, revalidate, repaint
+     *
      * @param buttons
      * @param actorBoardPanel
      */
@@ -1111,6 +1113,7 @@ public class GameView extends JFrame implements ActionListener {
             // Remove actionListeners and Update Panels
             createPanelView(selectedDimension, opponentPanel, false, progressPlayer2Panel);
             gameController.configurationString(false, opponentButtons);
+            gameController.disableUserButtons(true);
         } else if (eventSource == reset) {
             clickClip.start();
             gameController.historyLog(eventSource, controlPanelText);
@@ -1130,6 +1133,8 @@ public class GameView extends JFrame implements ActionListener {
                 gameController.configurationString(true, userButtons);
                 designWindow.dispose();
                 designWindow = null;
+                createPanelView(selectedDimension,userPanel,true,progressPlayer1Panel);
+                gameController.disableUserButtons(true);
             } else if (remainingBoats != 0) {
                 JOptionPane.showMessageDialog(null, "Place remaining boats in order to save", "Warning", JOptionPane.WARNING_MESSAGE);
             }
@@ -1137,19 +1142,20 @@ public class GameView extends JFrame implements ActionListener {
             if (playClicked) {
                 clickClip.start();
                 // User play - can only click opponent board.
-
-          do{
-
-              gameController.boardButtonEvent(opponentButtons, eventSource, controlPanelText, designWindow);
-               }while( gameController.isValid((JButton) eventSource));
+                do {
+                    gameController.boardButtonEvent(opponentButtons, eventSource, controlPanelText, designWindow);
+                } while (gameController.isValid((JButton) eventSource));
                 //computer selects a square
-               JButton selectedButton = gameController.randomSelection(selectedDimension * 2);
+                JButton selectedButton = gameController.randomSelection(selectedDimension * 2);
                 if (selectedButton != null) {
+                    gameController.disableUserButtons(false);
                     gameController.boardButtonEvent(userButtons, selectedButton, controlPanelText, designWindow);
+                    gameController.disableUserButtons(true);
                 }
                 //ADD METHOD HERE TO CHECK BOTH PROGRESS BARS THAT SOLOMON IS DOING   if progress bar = 0 . Display win or loss
             }
             if (designWindow != null) {
+                gameController.boardButtonEvent(userButtons, eventSource, controlPanelText, designWindow);
                 updateRemainingBoats();
                 userButtons = gameController.getButtons(true);
                 designWindow.repaint();
