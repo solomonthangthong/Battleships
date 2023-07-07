@@ -125,6 +125,10 @@ public class GameController {
         gameView.designBoatPlacement(gameModel.getBoardSize());
     }
 
+    protected void getDesignBoatList(){
+        gameView.setDesignBoatList(gameModel.getDesignBoatList());
+    }
+
     protected void resetDesignBoatArrayList() {
         gameModel.clearDesignBoatList();
         gameModel.convertDesignJButtonsToBoat(false);
@@ -224,7 +228,7 @@ public class GameController {
      * @param eventSource      - Object event action
      * @param controlPanelText - JLabel passed, and then later uses .getName() to extract information
      */
-    protected void boardButtonEvent(JButton[][] buttons, Object eventSource, JLabel controlPanelText, JFrame designWindow) {
+    protected void boardButtonEvent(JButton[][] buttons, Object eventSource, JLabel controlPanelText, JFrame designWindow, Boolean who) {
 
         for (int i = 0; i < buttons.length; i++) {
             for (int j = 0; j < buttons[i].length; j++) {
@@ -232,11 +236,7 @@ public class GameController {
                     System.out.print("rowIndex = " + i + "\ncolumnIndex = " + j + "\n");
                     gameModel.placeSelectedBoat(eventSource);
                 } else if (eventSource == buttons[i][j] && buttons[i][j].isEnabled()) {
-                    performHitMissLogic(buttons[i][j], controlPanelText);
-                } else if (eventSource instanceof Boat && eventSource == buttons[i][j] && buttons[i][j].isEnabled()) {
-                    performHitMissLogic((Boat) eventSource, controlPanelText);
-                } else if (eventSource == buttons[i][j] && !buttons[i][j].isEnabled()){
-                    break;
+                    performHitMissLogic(buttons[i][j], controlPanelText, who);
                 }
             }
         }
@@ -253,7 +253,7 @@ public class GameController {
                 for (int j = 0; j < size; j++) {
                     if (buttons[i][j] != null) {
                         buttons[i][j].setEnabled(false);
-                        buttons[i][j].setUI(new HiddenTextButtonUI());
+                        //buttons[i][j].setUI(new HiddenTextButtonUI());
                     }
                 }
             }
@@ -262,7 +262,7 @@ public class GameController {
                 for (int j = 0; j < size; j++) {
                     if (buttons[i][j] != null) {
                         buttons[i][j].setEnabled(true);
-                        buttons[i][j].setUI(new HiddenTextButtonUI());
+                       //buttons[i][j].setUI(new HiddenTextButtonUI());
                     }
                 }
             }
@@ -278,12 +278,28 @@ public class GameController {
         return gameModel.randomSelection(boardSize);
     }
 
-    private void performHitMissLogic(JButton button, JLabel controlPanelText) {
+    private void performHitMissLogic(JButton button, JLabel controlPanelText, Boolean who) {
         if (button instanceof Boat) {
             // Button is a boat, it's a hit
             System.out.print("Hit");
             historyLog(button, controlPanelText);
             gameModel.updateButtonState(null, (Boat) button, false);
+            JProgressBar progress;
+            if (who) {
+                // False is opponent ProgressBar
+                progress = gameView.getProgressBar(false);
+                int currentValue = progress.getValue();
+                int decrementValue = 1;
+                int newValue = (currentValue - decrementValue);
+                progress.setValue(newValue);
+
+            } else {
+                progress = gameView.getProgressBar(true);
+                int currentValue = progress.getValue();
+                int decrementValue = 1;
+                int newValue = (currentValue - decrementValue);
+                progress.setValue(newValue);
+            }
         } else {
             // Button is empty, it's a miss
             System.out.print("Miss");

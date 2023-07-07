@@ -122,7 +122,6 @@ public class GameView extends JFrame implements ActionListener {
 
     private JLabel boatLabel;
     private JLabel directionLabel;
-    private String remainderString;
     private JFrame about;
 
     private Color globalColour;
@@ -133,6 +132,10 @@ public class GameView extends JFrame implements ActionListener {
         Splash s = new Splash();
         //s.show();
         menuBar = new Menu();
+
+        UIManager.put("ProgressBar.foreground", Color.decode("#9de47c"));
+        UIManager.put("ProgressBar.background", Color.lightGray);
+        UIManager.put("ProgressBar.selectionForeground", Color.decode("#f56a4d"));
 
         initializeFrame();
         createPanels();
@@ -277,7 +280,7 @@ public class GameView extends JFrame implements ActionListener {
                     createPanelView(selectedDimension, userPanel, true, progressPlayer1Panel);
                     createPanelView(selectedDimension, opponentPanel, false, progressPlayer2Panel);
                     gameController.disableUserButtons(true);
-
+                    updateProgressBar();
                     break;
                 case "Solution":
                     // TODO set opponent board to visible
@@ -510,12 +513,21 @@ public class GameView extends JFrame implements ActionListener {
         return progressPlayer2Panel;
     }
 
+    protected JProgressBar getProgressBar(Boolean actor){
+        if (actor){
+            return player1Progress;
+        } else {
+            return player2Progress;
+        }
+    }
+
     /**
      * Method Name: createPanels
      * Purpose: This method creates and configure panels for user interface and called internally for initialization.
      * Algorithm: Create selectionPanel, all control panel buttons, create both actor panel, and health bars.
      */
     private void createPanels() {
+
         // Control Panel
         selectionPanel = new JPanel();
         selectionPanel.setBackground(Color.decode("#feefec"));
@@ -561,6 +573,7 @@ public class GameView extends JFrame implements ActionListener {
         // Dimensions dropdown
         Integer[] dimensions = {4, 5, 6, 7, 8, 9, 10};
         dimensionComboBox = new JComboBox<>(dimensions);
+        dimensionComboBox.setSelectedItem(0);
         dimensionComboBox.addActionListener(this);
         JPanel dimensionsPanel = new JPanel();
         dimensionsPanel.setBackground(Color.decode("#feefec"));
@@ -648,9 +661,6 @@ public class GameView extends JFrame implements ActionListener {
         progressPlayer1Panel = new JPanel();
         player1Progress = new JProgressBar();
         player1Progress.setPreferredSize(new Dimension(350, 35));
-        player1Progress.setBackground(Color.decode("#9de47c"));
-        player1Progress.setMinimum(0);
-        player1Progress.setMaximum(boatSizeSelectorValue * boatSizeSelectorValue);
         player1Progress.setStringPainted(true);
         //TODO Decrement colour size instead of StringPainted value
         progressPlayer1Panel.setBackground(Color.decode("#feefec"));
@@ -663,8 +673,7 @@ public class GameView extends JFrame implements ActionListener {
         progressPlayer2Panel = new JPanel();
         player2Progress = new JProgressBar();
         player2Progress.setPreferredSize(new Dimension(350, 35));
-        player2Progress.setBackground(Color.decode("#9de47c"));
-
+        player2Progress.setStringPainted(true);
         progressPlayer2Panel.setBackground(Color.decode("#feefec"));
         progressPlayer2Panel.setPreferredSize(new Dimension(500, 50));
         player2Life = new JLabel();
@@ -673,7 +682,7 @@ public class GameView extends JFrame implements ActionListener {
 
         // Environment variables from properties to switch Button language text
         updateLanguage(Locale.getDefault());
-
+        updateProgressBar();
     }
 
     /**
@@ -730,6 +739,28 @@ public class GameView extends JFrame implements ActionListener {
         }
 
 
+    }
+
+    protected void updateProgressBar(){
+        int selectedDimensions = (int) dimensionComboBox.getSelectedItem();
+
+        // (D*(D+1)*(D+2))/6 Formula
+        int sum = 0;
+        for (int i = 1; i <= selectedDimensions; i++) {
+            sum += (selectedDimensions - i + 1) * i;
+        }
+
+        player1Progress.setMaximum(sum);
+        player1Progress.setValue(sum);
+        player1Progress.setMinimum(0);
+        player1Progress.revalidate();
+        player1Progress.repaint();
+
+        player2Progress.setMaximum(sum);
+        player2Progress.setValue(sum);
+        player2Progress.setMinimum(0);
+        player2Progress.revalidate();
+        player2Progress.repaint();
     }
 
     /**
@@ -1045,6 +1076,8 @@ public class GameView extends JFrame implements ActionListener {
         updateLanguage(locale);
     }
 
+
+
     /**
      * Method name: actionPerformed
      * Purpose: Executed when action event occurs
@@ -1114,6 +1147,7 @@ public class GameView extends JFrame implements ActionListener {
             createPanelView(selectedDimension, opponentPanel, false, progressPlayer2Panel);
             gameController.configurationString(false, opponentButtons);
             gameController.disableUserButtons(true);
+            updateProgressBar();
         } else if (eventSource == reset) {
             clickClip.start();
             gameController.historyLog(eventSource, controlPanelText);
@@ -1139,23 +1173,29 @@ public class GameView extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(null, "Place remaining boats in order to save", "Warning", JOptionPane.WARNING_MESSAGE);
             }
         } else {
+
             if (playClicked) {
                 clickClip.start();
                 // User play - can only click opponent board.
                 do {
-                    gameController.boardButtonEvent(opponentButtons, eventSource, controlPanelText, designWindow);
+                    gameController.boardButtonEvent(opponentButtons, eventSource, controlPanelText, designWindow, true);
                 } while (gameController.isValid((JButton) eventSource));
                 //computer selects a square
                 JButton selectedButton = gameController.randomSelection(selectedDimension * 2);
                 if (selectedButton != null) {
                     gameController.disableUserButtons(false);
-                    gameController.boardButtonEvent(userButtons, selectedButton, controlPanelText, designWindow);
+                    gameController.boardButtonEvent(userButtons, selectedButton, controlPanelText, designWindow, false);
                     gameController.disableUserButtons(true);
                 }
                 //ADD METHOD HERE TO CHECK BOTH PROGRESS BARS THAT SOLOMON IS DOING   if progress bar = 0 . Display win or loss
+                if (player1Progress.getValue() == 0){
+
+                } else if (player2Progress.getValue() == 0){
+
+                }
             }
             if (designWindow != null) {
-                gameController.boardButtonEvent(userButtons, eventSource, controlPanelText, designWindow);
+                gameController.boardButtonEvent(userButtons, eventSource, controlPanelText, designWindow, true);
                 updateRemainingBoats();
                 userButtons = gameController.getButtons(true);
                 designWindow.repaint();

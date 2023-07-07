@@ -43,6 +43,8 @@ public class GameModel {
     private List<List<Boat>> designBoatList;
     private Integer boatSizeSearch;
     private Integer numberOfBoatsForDesign;
+
+    private Integer numberOfBoatForHealthBar;
     private Border whiteBorder;
     private Color selectedColour;
 
@@ -61,6 +63,7 @@ public class GameModel {
         opponentButtons = createButtonBoard(players[1]);
 
         numberOfBoatsForDesign = 0;
+        numberOfBoatForHealthBar = 0;
 
 
         waterColour = Color.decode("#008fa2");
@@ -251,7 +254,8 @@ public class GameModel {
             if (state.getState() == State.DEFAULT) {
                 state.setState(State.MISS);
                 button.setBackground(waterColour);
-                button.setForeground(button.getBackground());
+                button.setForeground(Color.decode("#999999"));
+                button.updateUI();
             }
             // if Boat is passed, and state is NOT HIT, state becomes hit
         } else if (boat != null && reset) {
@@ -265,7 +269,8 @@ public class GameModel {
         }else if (boat != null) {
             state.setState(State.HIT);
             boat.setBackground(hitBoatColor);
-            boat.setForeground(boat.getBackground());
+            boat.setForeground(Color.decode("#999999"));
+            boat.updateUI();
         }
 
         return button;
@@ -293,10 +298,8 @@ public class GameModel {
                 JButton userButton = new JButton();
                 if (player.getActor()) {
                     userButton.setName(actor1 + (i + 1) + "," + (j + 1));
-                    userButton.setUI(new HiddenTextButtonUI());
                 } else {
                     userButton.setName(actor2 + (i + 1) + "," + (j + 1));
-                    userButton.setUI(new HiddenTextButtonUI());
                 }
 
                 userButton.setBackground(Color.decode("#f56a4d"));
@@ -695,6 +698,7 @@ public class GameModel {
      */
     protected void createRandomBoat(JButton[][] board, int boatSize, int dimension, Random random, Player player) {
         boolean boatPlaced = false;
+        designBoatList = new ArrayList<>();
 
         int red = random.nextInt(255);
         int green = random.nextInt(50);
@@ -702,7 +706,7 @@ public class GameModel {
 
         // Loop until boats are placed
         while (!boatPlaced) {
-
+            List<Boat> boatSizeList = new ArrayList<>();
             int randRow = random.nextInt(2 * dimension);
             int randCol = random.nextInt(2 * dimension);
             // Create colour  with the random RGB values, to distinguish between # of boats
@@ -731,9 +735,10 @@ public class GameModel {
                     boat.setPlaced(true);
                     //Can be removed later, only here to visually see if adhering to numerical representation
                     boat.setText(boatSize);
-                    boat.setForeground(Color.WHITE);
+                    //boat.setForeground(Color.WHITE);
                     boat.setUI(new HiddenTextButtonUI());
                     player.addBoat(boat);
+                    boatSizeList.add(boat);
                 }
             } else {
                 if (isOccupiedOnBoard(board, randCol, randRow, boatSize, dimension, false)) {
@@ -755,11 +760,13 @@ public class GameModel {
                     boat.setPlaced(true);
                     //Can be removed later, only here to visually see if adhering to numerical representation
                     boat.setText(boatSize);
-                    boat.setForeground(Color.WHITE);
+                    //boat.setForeground(Color.WHITE);
                     boat.setUI(new HiddenTextButtonUI());
                     player.addBoat(boat);
+                    boatSizeList.add(boat);
                 }
             }
+            designBoatList.add(boatSizeList);
             boatPlaced = true;
         }
     }
