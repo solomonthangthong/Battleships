@@ -841,10 +841,6 @@ public class GameView extends JFrame implements ActionListener {
         userButtons = gameController.getButtons(true);
         opponentButtons = gameController.getButtons(false);
 
-        // Create Panels
-        createPanelView(selectedDimension, userPanel, true, progressPlayer1Panel);
-        createPanelView(selectedDimension, opponentPanel, false, progressPlayer2Panel);
-
         // Revalidate and Repaint
         opponentBoardPanel.revalidate();
         userBoardPanel.revalidate();
@@ -1100,7 +1096,13 @@ public class GameView extends JFrame implements ActionListener {
             // resizeBoard and change dimension were essentially the same in previous iteration
             gameController.historyLog(eventSource, controlPanelText);
             gameController.updateModelViewBoard(selectedDimension, userPanel, opponentPanel);
+
+            // Remove actionListeners and Update Panels
+            createPanelView(selectedDimension, userPanel, true, progressPlayer1Panel);
+
+            // Instant create new Boats for Machine
             gameController.randomBoatPlacement(opponentPanel, false);
+            // Remove actionListeners and Update Panels
             createPanelView(selectedDimension, opponentPanel, false, progressPlayer2Panel);
             gameController.configurationString(false, opponentButtons);
         } else if (eventSource == reset) {
