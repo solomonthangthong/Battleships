@@ -18,6 +18,7 @@ public class GameController {
         view.createPanelView(gameModel.getBoardSize(), view.getUserPanel(), true, view.getProgressPlayer1Panel());
         randomBoatPlacement(view.getOpponentPanel(), false);
         view.createPanelView(gameModel.getBoardSize(), view.getOpponentPanel(), false, view.getProgressPlayer2Panel());
+        configurationString(false, gameModel.getOpponentButtons());
 
     }
 
@@ -59,9 +60,22 @@ public class GameController {
         gameView.updateBoard(gameModel.getBoardSize(), gameModel.getUserBoardPanel(), gameModel.getOpponentBoardPanel());
     }
 
+    protected void configurationString(Boolean whichActor, JButton[][] actorBoard){
+        String hello;
+        if (whichActor){
+            hello = gameModel.configurationString(true, actorBoard);
+            gameModel.setPlayer1Config(hello);
+        } else{
+            hello = gameModel.configurationString(false, actorBoard);
+            gameModel.setPlayer2Config(hello);
+        }
+    }
+
     protected void changeBoatColor(JButton[][] buttons, JPanel userBoardPanel, JPanel opponentBoardPanel){
         gameModel.changeBoatColor(buttons);
-        gameView.updateBoard(gameModel.getBoardSize(), gameModel.getUserBoardPanel(), gameModel.getOpponentBoardPanel());
+        gameModel.setUserBoardPanel(userBoardPanel);
+        gameModel.setOpponentBoardPanel(opponentBoardPanel);
+        gameView.updateBoard(gameModel.getBoardSize(), userBoardPanel, opponentBoardPanel);
         gameModel.setUserPlayerButtons(buttons);
 
     }
@@ -179,6 +193,10 @@ public class GameController {
 
     protected void setBoatColor(Color color){
         gameModel.setSelectedColour(color);
+    }
+
+    protected void setBoatVisible(){
+        gameModel.setBoatVisible();
     }
 
     protected void hitBoard() {

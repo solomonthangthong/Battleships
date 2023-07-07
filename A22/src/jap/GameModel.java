@@ -22,7 +22,9 @@ public class GameModel {
     private JPanel opponentBoardPanel;
 
     private final Player[] players;
-
+    private String player1Config;
+    private String player2Config;
+    private boolean userTurn;
     private int timer;
 
     private JComboBox<String> language;
@@ -41,12 +43,8 @@ public class GameModel {
     private Integer boatSizeSearch;
     private Integer numberOfBoatsForDesign;
     private Border whiteBorder;
-
-    private Object innerList = null;
-
     private Color selectedColour;
 
-    private Boat boat;
 
     public GameModel() {
         boardSize = 4;
@@ -210,6 +208,16 @@ public class GameModel {
         this.selectedColour = color;
     }
 
+    protected void setPlayer1Config(String config) {
+        this.player1Config = config;
+        System.out.print(player1Config + "\n");
+    }
+
+    protected void setPlayer2Config(String config) {
+        this.player2Config = config;
+        System.out.print(player2Config + "\n");
+    }
+
     /**
      * @param button - Passed JButton from board
      * @param boat   - Passed Boat from board
@@ -288,6 +296,31 @@ public class GameModel {
             }
         }
         return buttons;
+    }
+
+    protected String configurationString(Boolean actor, JButton[][] actorButtons){
+        JButton[][] buttons;
+        String configString = "";
+        if (actor){
+            userButtons = actorButtons;
+            buttons = userButtons;
+
+        }else {
+            opponentButtons = actorButtons;
+            buttons = opponentButtons;
+        }
+
+        for (int i = 0; i < buttons.length; i++){
+            for (int j = 0; j < buttons.length; j++){
+                if (buttons[i][j] instanceof Boat){
+                    Boat boat = (Boat) buttons[i][j];
+                    configString = configString + String.valueOf(boat.getBoatLength());
+                } else if (buttons[i][j] != null){
+                    configString = configString + buttons[i][j].getText();
+                }
+            }
+        }
+        return configString;
     }
 
     /**
@@ -460,11 +493,6 @@ public class GameModel {
                                     boatPosition[i][0].setForeground(Color.white);
                                     boatPosition[i][0].setText(String.valueOf(boatSizeSearch));
                                     boatPosition[i][0].setName("Convert");
-                                  /*  Boat localBoat = new Boat(boatSizeSearch, true);
-                                    userButtons[clickedRow + i][clickedCol] = localBoat;
-                                    localBoat.setBackground(Color.BLUE);
-                                    localBoat.setForeground(Color.white);
-                                    localBoat.setText(String.valueOf(boatSizeSearch));*/
                                 }
                                 boat.setPlaced(true);
                                 boat.setBoatPosition(boatPosition);
@@ -517,6 +545,29 @@ public class GameModel {
             for (int col = 0; col < buttons.length; col++) {
                 if (buttons[row][col] instanceof Boat){
                     buttons[row][col].setBackground(selectedColour);
+                }
+            }
+        }
+    }
+
+    protected void setBoatVisible(){
+        Map<Integer, Color> sizeColorMap = new HashMap<>();
+        Random random = new Random();
+
+        for (int row = 0; row < opponentButtons.length; row++){
+            for (int col = 0; col < opponentButtons.length; col++){
+                if (opponentButtons[row][col] instanceof Boat){
+                    Boat boat = (Boat) opponentButtons[row][col];
+
+                    if (!sizeColorMap.containsKey(boat.getBoatLength())){
+                        Color randomColour = new Color(random.nextInt(256), random.nextInt(256), random.nextInt(256));
+                        sizeColorMap.put(boat.getBoatLength(), randomColour);
+                    }
+                    if (sizeColorMap.containsKey(boat.getBoatLength()) && boat.getVisibility() == false){
+                        boat.setVisibility(true);
+                        boat.setBackground(sizeColorMap.get(boat.getBoatLength()));
+                    }
+
                 }
             }
         }
