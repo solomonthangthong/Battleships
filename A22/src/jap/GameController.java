@@ -59,7 +59,8 @@ public class GameController {
         gameModel.setOpponentButtons(gameModel.createButtonBoard(gameModel.getPlayer(false)));
         gameModel.setUserBoardPanel(userBoardPanel);
         gameModel.setOpponentBoardPanel(opponentBoardPanel);
-        gameView.updateBoard(gameModel.getBoardSize(), gameModel.getUserBoardPanel(), gameModel.getOpponentBoardPanel());
+        gameView.updateBoard(gameModel.getUserPlayerButtons(), gameModel.getUserBoardPanel());
+        gameView.updateBoard(gameModel.getOpponentButtons(), gameModel.getOpponentBoardPanel());
     }
 
     protected void configurationString(Boolean whichActor, JButton[][] actorBoard){
@@ -73,12 +74,18 @@ public class GameController {
         }
     }
 
-    protected void changeBoatColor(JButton[][] buttons, JPanel userBoardPanel, JPanel opponentBoardPanel){
+    protected void changeBoatColor(JButton[][] buttons, JPanel actorPanel, Boolean actor){
         gameModel.changeBoatColor(buttons);
-        gameModel.setUserBoardPanel(userBoardPanel);
-        gameModel.setOpponentBoardPanel(opponentBoardPanel);
-        gameView.updateBoard(gameModel.getBoardSize(), userBoardPanel, opponentBoardPanel);
-        gameModel.setUserPlayerButtons(buttons);
+
+        if (actor){
+            gameModel.setUserBoardPanel(actorPanel);
+            gameView.updateBoard(buttons, actorPanel);
+            gameModel.setUserPlayerButtons(buttons);
+        } else {
+            gameModel.setOpponentBoardPanel(actorPanel);
+            gameView.updateBoard(buttons, actorPanel);
+            gameModel.setOpponentButtons(buttons);
+        }
 
     }
 
@@ -87,7 +94,7 @@ public class GameController {
         gameModel.setBoardSize(selectedDimension);
         gameModel.setUserBoardPanel(userBoardPanel);
         gameModel.setOpponentBoardPanel(opponentBoardPanel);
-        gameView.updateBoard(gameModel.getBoardSize(), gameModel.getUserBoardPanel(), gameModel.getOpponentBoardPanel());
+        gameView.updateBoard(replace, gameModel.getUserBoardPanel());
     }
 
     /**
@@ -192,7 +199,12 @@ public class GameController {
                 buttons[i][j].setBorder(whiteBorder);
             }
         }
-        gameView.updateBoard(gameModel.getBoardSize(), userBoardPanel, opponentBoardPanel);
+        if (actor){
+            gameView.updateBoard(buttons, userBoardPanel);
+        } else {
+            gameView.updateBoard(buttons, opponentBoardPanel);
+        }
+
     }
 
     protected void setBoatColor(Color color) {

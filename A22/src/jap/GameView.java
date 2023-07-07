@@ -444,9 +444,15 @@ public class GameView extends JFrame implements ActionListener {
                 }
                 lastClickedButton = clickedButton;
             } else if (source == saveColour) {
+                int selectedDimension = (int) dimensionComboBox.getSelectedItem();
+
                 userButtons = gameController.getButtons(true);
                 gameController.setBoatColor(globalColour);
-                gameController.changeBoatColor(userButtons, userPanel, opponentPanel);
+                gameController.changeBoatColor(userButtons, userPanel, true);
+                gameController.changeBoatColor(opponentButtons, opponentPanel, false);
+
+                createPanelView(selectedDimension, userPanel, true, progressPlayer1Panel);
+                createPanelView(selectedDimension, opponentPanel, false, progressPlayer2Panel);
 
                 if (frame != null) {
                     frame.dispose();
@@ -611,8 +617,8 @@ public class GameView extends JFrame implements ActionListener {
                 timeDisplay.setText(String.valueOf(count));
             }
         });
-   //start timer
-timer.start();
+        //start timer
+        timer.start();
 
 
 
@@ -695,7 +701,7 @@ timer.start();
         String[] keys = {"languageLabel", "designBoatPlacement", "randBoatPlacement", "dimensionsLabel", "timeLabel", "reset", "play", "player1Life", "player2Life", "unselectedColourButton", "waterColourButton", "boatColourButton", "saveColour", "cancelColour", "resetColour", "boatLabel", "directionLabel", "resetLayout", "saveLayout", "remainderString"};
         String[] buttonName = new String[keys.length];
 
-        for (int i = 0; i < keys.length; i++){
+        for (int i = 0; i < keys.length; i++) {
             buttonName[i] = resourceBundle.getString(keys[i]);
         }
         languageLabel.setText(buttonName[0]);
@@ -829,26 +835,14 @@ timer.start();
      * @param userBoardPanel     - user actor panel.
      * @param opponentBoardPanel - machine actor panel.
      */
-    protected void updateBoard(Integer selectedDimension, JPanel userBoardPanel, JPanel opponentBoardPanel) {
+    protected void updateBoard(JButton[][] buttons, JPanel actorBoardPanel) {
 
-        userBoardPanel.removeAll();
-        opponentBoardPanel.removeAll();
-
-        // Clear previous actionListeners
-        for (int i = 0; i < userButtons.length; i++) {
-            for (int j = 0; j < userButtons[i].length; j++) {
-                JButton button = userButtons[i][j];
-                ActionListener[] listeners = button.getActionListeners();
-                for (ActionListener listener : listeners) {
-                    button.removeActionListener(listener);
-                }
-            }
-        }
+        actorBoardPanel.removeAll();
 
         // Clear previous actionListeners
-        for (int i = 0; i < opponentButtons.length; i++) {
-            for (int j = 0; j < opponentButtons[i].length; j++) {
-                JButton button = opponentButtons[i][j];
+        for (int i = 0; i < buttons.length; i++) {
+            for (int j = 0; j < buttons[i].length; j++) {
+                JButton button = buttons[i][j];
                 ActionListener[] listeners = button.getActionListeners();
                 for (ActionListener listener : listeners) {
                     button.removeActionListener(listener);
@@ -861,10 +855,8 @@ timer.start();
         opponentButtons = gameController.getButtons(false);
 
         // Revalidate and Repaint
-        opponentBoardPanel.revalidate();
-        userBoardPanel.revalidate();
-        opponentBoardPanel.repaint();
-        userBoardPanel.repaint();
+        actorBoardPanel.revalidate();
+        actorBoardPanel.repaint();
     }
 
     /**
@@ -1044,7 +1036,7 @@ timer.start();
         }
     }
 
-    protected void languageChanger(){
+    protected void languageChanger() {
         selectedLanguage = (String) languageButton.getSelectedItem();
         Locale locale;
 
