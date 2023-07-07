@@ -37,7 +37,6 @@ import java.util.ResourceBundle;
 public class GameView extends JFrame implements ActionListener {
     private GameController gameController;
     private final Menu menuBar;
-    private JFrame colourSelectWindow;
     private JButton battleshipAbout;
     /**
      * Combobox to change GUI language.
@@ -45,7 +44,6 @@ public class GameView extends JFrame implements ActionListener {
     private JComboBox<String> languageButton;
     private JLabel languageLabel;
     private String selectedLanguage;
-
     private ResourceBundle resourceBundle;
 
     /**
@@ -68,7 +66,6 @@ public class GameView extends JFrame implements ActionListener {
      * Label for controlPanel history box.
      */
     private JLabel controlPanelText;
-    private JPanel timeContainer;
     private int remainingBoats;
     JLabel remainingBoat;
     /**
@@ -830,10 +827,8 @@ public class GameView extends JFrame implements ActionListener {
      * Method Name: updateBoard
      * Purpose: Is called in GameController, When dimension JComboBox is changed, this method clears both actor board panels, and creates new board based on the size of the dimension selected.
      * Algorithm: remove both actor panels, create new board, revalidate, repaint
-     *
-     * @param selectedDimension  - user determined size of board.
-     * @param userBoardPanel     - user actor panel.
-     * @param opponentBoardPanel - machine actor panel.
+     * @param buttons
+     * @param actorBoardPanel
      */
     protected void updateBoard(JButton[][] buttons, JPanel actorBoardPanel) {
 

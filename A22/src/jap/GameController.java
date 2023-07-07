@@ -41,10 +41,6 @@ public class GameController {
 
     }
 
-    protected void changeLanguage() {
-
-    }
-
     /**
      * Method Name: updateModelViewBoard
      * Purpose: Update gameModel variables (boardSize, 2D buttons, panels, and calls view to fresh GUI)
@@ -215,10 +211,6 @@ public class GameController {
         gameModel.setBoatVisible();
     }
 
-    protected void hitBoard() {
-
-    }
-
     /**
      * Method Name: boardButtonEvent
      * Purpose: Loop through array of buttons to find user action event
@@ -247,10 +239,10 @@ public class GameController {
 
 
                 }
+                columnIndex++;
             }
-            columnIndex++;
+            rowIndex++;
         }
-        rowIndex++;
     }
 
 protected boolean isValid(JButton selectedButton){
