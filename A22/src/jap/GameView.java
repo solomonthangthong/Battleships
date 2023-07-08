@@ -166,6 +166,7 @@ public class GameView extends JFrame implements ActionListener {
 
 
     }
+
     protected void registerGameController(GameController controller) {
         this.gameController = controller;
     }
@@ -633,10 +634,11 @@ public class GameView extends JFrame implements ActionListener {
         return userButtons;
     }
 
-    protected JComboBox getBoatSizeSelector(){
+    protected JComboBox getBoatSizeSelector() {
         return boatSizeSelector;
     }
-    protected void setBoatSizeSelectorValue(Integer selected){
+
+    protected void setBoatSizeSelectorValue(Integer selected) {
         this.boatSizeSelectorValue = selected;
     }
 
@@ -660,6 +662,7 @@ public class GameView extends JFrame implements ActionListener {
         });
         timer.start();
     }
+
     private void resetTimer() {
         count = 0;
         if (timer != null) {
@@ -787,8 +790,7 @@ public class GameView extends JFrame implements ActionListener {
             Object eventSource = e.getSource();
             gameController.handleResetButton(eventSource, controlPanelText);
             //reset clock
-        resetTimer();
-
+            resetTimer();
 
 
         });
