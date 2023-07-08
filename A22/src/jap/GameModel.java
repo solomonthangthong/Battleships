@@ -51,7 +51,9 @@ public class GameModel {
     private Color waterColour;
     private Color hitBoatColor;
 
-
+    /**
+     * Constructor for GameModel class
+     */
     public GameModel() {
         boardSize = 4;
         players = new Player[2];
@@ -71,6 +73,11 @@ public class GameModel {
 
     }
 
+    /**
+     * Getter method for which player is being played
+     * @param actor
+     * @return
+     */
     protected Player getPlayer(Boolean actor) {
         if (actor) {
             return players[0];
@@ -167,63 +174,123 @@ public class GameModel {
         return currentAction;
     }
 
+    /**
+     * Getter method for Board Size
+     * @return
+     */
     protected Integer getBoardSize() {
         return boardSize;
     }
 
+    /**
+     * Setter for Board Size
+     * @param size
+     */
     protected void setBoardSize(Integer size) {
         this.boardSize = size;
     }
 
+    /**
+     * Getter method for user Buttons
+     * @return
+     */
     protected JButton[][] getUserPlayerButtons() {
         return userButtons;
     }
 
+    /**
+     * Setter for User Buttons
+     * @param userPlayerButtons
+     */
     protected void setUserPlayerButtons(JButton[][] userPlayerButtons) {
         this.userButtons = userPlayerButtons;
     }
 
+    /**
+     * Setter method for Opponent Buttons
+     * @param opponentPlayerButtons
+     */
     protected void setOpponentButtons(JButton[][] opponentPlayerButtons) {
         this.opponentButtons = opponentPlayerButtons;
     }
 
+    /**
+     * Getter method for Opponent Buttons
+     * @return
+     */
     protected JButton[][] getOpponentButtons() {
         return opponentButtons;
     }
 
+    /**
+     * Setter method for UserBoard Panel
+     * @param actorPanel
+     */
     protected void setUserBoardPanel(JPanel actorPanel) {
         this.userBoardPanel = actorPanel;
     }
 
+    /**
+     * Getter method for UserBoard Panel
+     * @return
+     */
     protected JPanel getUserBoardPanel() {
         return userBoardPanel;
     }
 
+    /**
+     * Setter method for Opponent Board Panel
+     * @param actorPanel
+     */
     protected void setOpponentBoardPanel(JPanel actorPanel) {
         this.opponentBoardPanel = actorPanel;
     }
 
+    /**
+     * Getter method for Opponent Board Panel
+     * @return
+     */
     protected JPanel getOpponentBoardPanel() {
         return opponentBoardPanel;
     }
 
+    /**
+     * Getter method for number of boats (remaining boat count)
+     * @return
+     */
     protected Integer getNumberOfBoatsForDesign() {
         return numberOfBoatsForDesign;
     }
 
+    /**
+     * Setter number of boats for Design (remaining boat count)
+     * @param reset
+     */
     protected void setNumberOfBoatsForDesign(Integer reset){
         this.numberOfBoatsForDesign = reset;
     }
 
+    /**
+     * SelectedColour??? Setter method
+     * @param color
+     */
     protected void setSelectedColour(Color color) {
         this.selectedColour = color;
     }
 
+    /**
+     * set Player1 board layout in String representation
+     * @param config
+     */
     protected void setPlayer1Config(String config) {
         this.player1Config = config;
         System.out.print(player1Config + "\n");
     }
 
+    /**
+     * set Player2 board layout in String representation
+     * @param config
+     */
     protected void setPlayer2Config(String config) {
         this.player2Config = config;
         System.out.print(player2Config + "\n");
@@ -271,6 +338,7 @@ public class GameModel {
             boat.setBackground(hitBoatColor);
             boat.setForeground(Color.decode("#999999"));
             boat.updateUI();
+            boat.setEnabled(false);
         }
 
         return button;
@@ -328,6 +396,12 @@ public class GameModel {
         }
     }
 
+    /**
+     * String configuration for board layout
+     * @param actor
+     * @param actorButtons
+     * @return
+     */
     protected String configurationString(Boolean actor, JButton[][] actorButtons){
         JButton[][] buttons;
         String configString = "";
@@ -390,9 +464,7 @@ public class GameModel {
      */
     protected void populateDesignBoat() {
         designBoatList = new ArrayList<>();
-
-        //TODO Create instances of boat but need to set orientation through radio button..?
-        // Nested loop, outer loop is creating each boat, inner loop is number of boats per size
+        //
         for (int boatSize = boardSize; boatSize >= 1; boatSize--) {
             // List for current boat size
             List<Boat> boatSizeList = new ArrayList<>();
@@ -408,9 +480,13 @@ public class GameModel {
             designBoatList.add(boatSizeList);
         }
 
-        //TODO LOGIC TO NOT OVERLAP THE boats (grab from previous methods)
-
     }
+
+    /**
+     * Machine method to select user grid with random variable
+     * @param boardSize
+     * @return
+     */
     protected JButton randomSelection(int boardSize) {
         Random random = new Random();
         int row;
@@ -429,6 +505,11 @@ public class GameModel {
         return selectedButton;
     }
 
+    /**
+     * Check if selection if valid
+     * @param selectedButton
+     * @return - Boolean value
+     */
     protected boolean isValidSelection(JButton selectedButton){
         if (selectedButton.getText()=="HIT" || selectedButton.getText()=="MISS"){
             return false;
@@ -438,45 +519,19 @@ public class GameModel {
         }
     }
 
-
-
-    public JButton[][] getUserButtons() {
-        return userButtons;
-    }
+    /**
+     * Clear the list when reset game/ or new state
+     */
     protected void clearDesignBoatList(){
         designBoatList.clear();
     }
 
+    /**
+     * Getter method for DesignBoatList array
+     * @return
+     */
     protected List<List<Boat>> getDesignBoatList() {
         return designBoatList;
-    }
-
-    protected Boolean checkIfPlaced(Object eventSource) {
-        boatSizeSearch = 0;
-
-        // Check for object JComboBox
-        if (eventSource instanceof JComboBox) {
-            JComboBox<?> comboBox = (JComboBox<?>) eventSource;
-            Object selectedItem = comboBox.getSelectedItem();
-            // Check whether we pass String or Int JComboBox
-            if (selectedItem instanceof Integer) {
-                boatSizeSearch = (Integer) comboBox.getSelectedItem();
-            }
-        }
-
-        // Iterate nested List
-        for (List<Boat> innerList : designBoatList) {
-            // Iterate boat object in innerList
-            for (Boat boat : innerList) {
-                // Getter and check if same value from JComboBox
-                if (boat.getBoatLength() == boatSizeSearch && !boat.getCheckedForDesign()) {
-                    //TODO cross check 2D array board if there any boats place, if not place this boat?
-                    boat.setCheckedForDesign(true);
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     /**
@@ -538,7 +593,6 @@ public class GameModel {
                             // Check for overlap
                             boolean overlap = false;
                             for (int i = 0; i < boatSizeSearch; i++) {
-                                //TODO change condition to check instanceof Boats
                                 if (userButtons[clickedRow + i][clickedCol].getBackground() == Color.red || userButtons[clickedRow + i][clickedCol].getBackground() == Color.blue) {
                                     overlap = true;
                                     break;
@@ -601,6 +655,10 @@ public class GameModel {
         }
     }
 
+    /**
+     * Maybe I can remove this later
+     * @param buttons
+     */
     protected void changeBoatColor(JButton[][] buttons) {
         for (int row = 0; row < buttons.length; row++) {
             for (int col = 0; col < buttons.length; col++) {
@@ -611,6 +669,9 @@ public class GameModel {
         }
     }
 
+    /**
+     * For Solution method to reveal Opponent boat, and where the boats are placed
+     */
     protected void setBoatVisible(){
         Map<Integer, Color> sizeColorMap = new HashMap<>();
         Random random = new Random();
@@ -634,6 +695,10 @@ public class GameModel {
         }
     }
 
+    /**
+     * Convert JButtons from Design mode into boats and place into user grid
+     * @param update
+     */
     protected void convertDesignJButtonsToBoat(Boolean update) {
         Map<Integer, Color> sizeColorMap = new HashMap<>();
         Random random = new Random();
@@ -673,6 +738,7 @@ public class GameModel {
                         boat.setForeground(Color.white);
                         boat.setBoatLength(size);
                         boat.setText(size);
+                        boat.setUI(new HiddenTextButtonUI());
                         userButtons[row][col] = boat;
                     }
                 }else {

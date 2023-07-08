@@ -107,6 +107,8 @@ public class GameView extends JFrame implements ActionListener {
     private JPanel opponentPanel;
 
     private JPanel designPanel;
+    private Boolean designSaved;
+    private Boolean randomizedClick;
     // Stores the items
     private DefaultComboBoxModel comboBoxModel;
     private JComboBox boatSizeSelector;
@@ -140,6 +142,10 @@ public class GameView extends JFrame implements ActionListener {
         initializeFrame();
         createPanels();
         addPanelsToMainFrame();
+
+        playClicked = false;
+        randomizedClick = false;
+        designSaved = false;
 
 
         //play background music
@@ -314,6 +320,7 @@ public class GameView extends JFrame implements ActionListener {
                     createPanelView(selectedDimension, userPanel, true, progressPlayer1Panel);
                     createPanelView(selectedDimension, opponentPanel, false, progressPlayer2Panel);
                     gameController.disableUserButtons(true);
+                    enableControlPanelButtons();
                     updateProgressBar();
                     break;
                 case "Solution":
@@ -354,6 +361,9 @@ public class GameView extends JFrame implements ActionListener {
 
     }
 
+    /**
+     * ColorChooser Class
+     */
     protected class ColorChooser extends JPanel implements ActionListener, ChangeListener {
         private JFrame frame;
         private final JColorChooser tcc;
@@ -368,6 +378,9 @@ public class GameView extends JFrame implements ActionListener {
         private final JButton cancelColour;
         private final JButton resetColour;
 
+        /**
+         * Constructor for ColorChooser Class
+         */
         protected ColorChooser() {
             super(new BorderLayout());
             LineBorder lineBorder = new LineBorder(Color.BLACK, 2);
@@ -446,6 +459,11 @@ public class GameView extends JFrame implements ActionListener {
 
         }
 
+        /**
+         * Generic method to setText for JButton/JLabels from language.properties
+         * @param component
+         * @param name
+         */
         protected void setTextForComponent(AbstractButton component, String name) {
             component.setText(name);
         }
@@ -519,10 +537,24 @@ public class GameView extends JFrame implements ActionListener {
         }
     }
 
+    /**
+     * Setter method for GameController
+     * @param controller
+     */
     protected void setGameController(GameController controller) {
         this.gameController = controller;
     }
 
+    protected void setPlayRandomDesignBooleans(Boolean play, Boolean randomize, Boolean design){
+        this.playClicked = play;
+        this.randomizedClick = randomize;
+        this.designSaved = design;
+    }
+    /**
+     * Pass GameModel passes and set this grid instances to GameModel
+     * @param actor
+     * @param board
+     */
     protected void setBoardButtons(Boolean actor, JButton[][] board) {
         if (actor) {
             userButtons = board;
@@ -1109,8 +1141,18 @@ public class GameView extends JFrame implements ActionListener {
         }
         updateLanguage(locale);
     }
-
-
+    protected void disableControlPanelButtons(){
+        randBoatPlacement.setEnabled(false);
+        designBoatPlacement.setEnabled(false);
+        play.setEnabled(false);
+        dimensionComboBox.setEnabled(false);
+    }
+    protected void enableControlPanelButtons(){
+        randBoatPlacement.setEnabled(true);
+        designBoatPlacement.setEnabled(true);
+        play.setEnabled(true);
+        dimensionComboBox.setEnabled(true);
+    }
 
     /**
      * Method name: actionPerformed
@@ -1131,10 +1173,12 @@ public class GameView extends JFrame implements ActionListener {
             clickClip.start();
             gameController.historyLog(eventSource, controlPanelText);
             languageChanger();
+            // Check designWindow if vertical or horizontal selected
         } else if (eventSource == boatVertical || eventSource == boatHorizontal) {
             clickClip.start();
             gameController.historyLog(eventSource, controlPanelText);
             gameController.checkOrientation(eventSource);
+            // If eventSource is Design button
         } else if (eventSource == designBoatPlacement) {
             clickClip.start();
             gameController.historyLog(eventSource, controlPanelText);
@@ -1143,12 +1187,13 @@ public class GameView extends JFrame implements ActionListener {
             designBoatWindow();
             gameController.openDesignBoat();
             languageChanger();
+            // JComboBox for designWindow
         } else if (eventSource == boatSizeSelector) {
             clickClip.start();
             //modify this to make it dynamic - use get and set to access size of boat
             boatSizeSelectorValue = (int) boatSizeSelector.getSelectedItem(); // Set the default boat size to the first value
             gameController.historyLog(eventSource, controlPanelText);
-            gameController.placeBoatLocation(eventSource);
+            // Randomize Button event source
         } else if (eventSource == randBoatPlacement) {
             //TODO fix actionListener currently double created resulting in double print
             //clickClip.start();
@@ -1165,6 +1210,8 @@ public class GameView extends JFrame implements ActionListener {
             gameController.configurationString(true, userButtons);
             gameController.configurationString(false, opponentButtons);
 
+            randomizedClick = true;
+            // Change dimension event Object
         } else if (eventSource == dimensionComboBox) {
             clickClip.start();
             // updateModelViewBoard was changeDimensions
@@ -1182,6 +1229,7 @@ public class GameView extends JFrame implements ActionListener {
             gameController.configurationString(false, opponentButtons);
             gameController.disableUserButtons(true);
             updateProgressBar();
+            // Reset action
         } else if (eventSource == reset) {
             clickClip.start();
             gameController.historyLog(eventSource, controlPanelText);
@@ -1189,12 +1237,22 @@ public class GameView extends JFrame implements ActionListener {
         } else if (eventSource == play) {
             clickClip.start();
             gameController.historyLog(eventSource, controlPanelText);
-            gameController.startGame();
+            if (randomizedClick || designSaved){
+                gameController.startGame();
+                playClicked = true;
+                disableControlPanelButtons();
+            } else {
+                JOptionPane.showMessageDialog(null, "Place ships with Design button or use Randomize to start the game.", "Warning", JOptionPane.WARNING_MESSAGE);
+                playClicked = false;
+            }
+            // Reset Layout in DesignWindow
         } else if (eventSource == resetLayout) {
             gameController.resetRemainingBoat();
             gameController.resetDesignBoatArrayList();
             updateRemainingBoats();
+            // Save Layout in DesignWindow
         } else if (eventSource == saveLayout) {
+            // Defensive programming check if all ships are placed
             if (remainingBoats == 0) {
                 userButtons = gameController.getButtons(true);
                 gameController.transferDesignToUserPanel(selectedDimension, userButtons, userPanel, opponentPanel);
@@ -1204,11 +1262,12 @@ public class GameView extends JFrame implements ActionListener {
                 designWindow = null;
                 createPanelView(selectedDimension,userPanel,true,progressPlayer1Panel);
                 gameController.disableUserButtons(true);
+                designSaved = true;
+                // Prompt showMessageDialog if all boats aren't placed
             } else if (remainingBoats != 0) {
                 JOptionPane.showMessageDialog(null, "Place remaining boats in order to save", "Warning", JOptionPane.WARNING_MESSAGE);
             }
         } else {
-
             if (playClicked) {
                 clickClip.start();
                 // User play - can only click opponent board.
@@ -1248,7 +1307,6 @@ public class GameView extends JFrame implements ActionListener {
 //                gameController.boardButtonEvent(userButtons, eventSource, controlPanelText, designWindow);
 //                gameController.boardButtonEvent(opponentButtons, eventSource, controlPanelText, designWindow);
 //            }
-
 
         }
     }

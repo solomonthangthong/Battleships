@@ -135,15 +135,6 @@ public class GameController {
         gameModel.populateDesignBoat();
     }
 
-    protected void placeBoatLocation(Object eventSource) {
-        boolean isBoatPlaced = gameModel.checkIfPlaced(eventSource);
-        if (!isBoatPlaced) {
-            //TODO DEFAULT ORIENTATION TO VERTICAL BY RADIO BUTTON AND BE ABLE TO CHANGE IT?
-            gameModel.placeSelectedBoat(eventSource);
-            getRemainingBoats();
-        }
-    }
-
     protected void checkOrientation(Object eventSource) {
         gameModel.setBoatOrientation(eventSource);
     }
@@ -208,13 +199,16 @@ public class GameController {
         } else {
             gameView.updateBoard(buttons, opponentBoardPanel);
         }
-
+        gameView.setPlayRandomDesignBooleans(false, false,false);
     }
 
     protected void setBoatColor(Color color) {
         gameModel.setSelectedColour(color);
     }
 
+    /**
+     * For Solution method to reveal Opponent boat, and where the boats are placed
+     */
     protected void setBoatVisible() {
         gameModel.setBoatVisible();
     }
@@ -242,6 +236,10 @@ public class GameController {
         }
     }
 
+    /**
+     *
+     * @param didMachinePlay
+     */
     protected void disableUserButtons(Boolean didMachinePlay) {
         JButton[][] buttons;
         buttons = gameModel.getUserPlayerButtons();
