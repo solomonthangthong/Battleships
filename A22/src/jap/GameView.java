@@ -124,7 +124,6 @@ public class GameView extends JFrame implements ActionListener {
 
     private JLabel boatLabel;
     private JLabel directionLabel;
-    private JFrame about;
 
     private Color globalColour;
     private ColorChooser colorPanel;
@@ -354,11 +353,6 @@ public class GameView extends JFrame implements ActionListener {
         public void menuCanceled(MenuEvent e) {
             // Empty implementation
         }
-    }
-
-    protected void aboutWindow() {
-
-
     }
 
     /**
