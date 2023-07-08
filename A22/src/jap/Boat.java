@@ -2,7 +2,21 @@ package jap;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.io.Serializable;
 
+/**
+ * Class Name: Boat
+ * Method List:
+ * Constants List:
+ * Boat Object that extends JButton
+ *
+ * @author Andrew Lorimer, Solomon Thangthong
+ * @version 1.0
+ * @see JButton
+ * @see Serializable
+ * @since 11.0.19
+ */
 public class Boat extends JButton {
     private static final long serialVersionUID = 1L;
 
@@ -34,73 +48,125 @@ public class Boat extends JButton {
 
     }
 
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
+     * @param color the desired background <code>Color</code>
+     */
     public void setBackground(Color color) {
         super.setBackground(color);
     }
 
-    //Can be removed later, only here to visually see if adhering to numerical representation
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
+     * @param size
+     */
     public void setText(Integer size) {
         super.setText(String.valueOf(size));
     }
 
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
+     * @return
+     */
     protected Integer getBoatLength() {
         return boatLength;
     }
 
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
+     * @param size
+     */
     protected void setBoatLength(Integer size) {
         this.boatLength = size;
     }
 
-    protected State getState() {
-        return state;
-    }
-
-    protected void setState(State state) {
-        this.state = state;
-    }
-
-    protected Boolean getCheckedForDesign() {
-        return checkedForDesignPlacement;
-    }
-
-    protected void setCheckedForDesign(Boolean checked) {
-        this.checkedForDesignPlacement = checked;
-    }
-
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
+     * @return
+     */
     protected Boolean getPlaced() {
         return isPlaced;
     }
 
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
+     * @param placed
+     */
     protected void setPlaced(Boolean placed) {
         this.isPlaced = placed;
     }
 
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
+     * @return
+     */
     protected Boolean getBoatOrientation() {
         return boatOrientation;
     }
 
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
+     * @param orientation
+     */
     protected void setBoatOrientation(Boolean orientation) {
 
         this.boatOrientation = orientation;
     }
 
-    protected JButton[][] getBoatPosition() {
-        return position;
-    }
-
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
+     * @param position
+     */
     protected void setBoatPosition(JButton[][] position) {
         this.position = position;
     }
 
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
+     * @return
+     */
     protected Boolean getVisibility(){
         return isVisible;
     }
+
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
+     * @param visible
+     */
     protected void setVisibility(Boolean visible){
         this.isVisible = visible;
     }
-
-    //TODO make boat visible or not (opponent side should not show)
-
-    //TODO add position JButton[][]
-
 }

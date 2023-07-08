@@ -15,7 +15,7 @@ package jap;
  * Purpose: Host file for main method and entry
  *
  * @author Andrew Lorimer, Solomon Thangthong
- * @version 1
+ * @version 2.0
  * @since 11.0.19
  */
 public class GameBasic {

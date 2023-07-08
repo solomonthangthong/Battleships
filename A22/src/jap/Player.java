@@ -1,8 +1,20 @@
 package jap;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class Name: Player
+ * Method List:
+ * Constants List:
+ * Player Object containing Player information
+ *
+ * @author Andrew Lorimer, Solomon Thangthong
+ * @version 1.0
+ * @see JButton
+ * @since 11.0.19
+ */
 public class Player {
     private final String playerName;
     private int health;
@@ -12,9 +24,12 @@ public class Player {
 
     private List<Boat> boats;
 
-    //TODO get player name as string and set it
+
     /**
-     * Constructor for Player
+     * Method Name:
+     * Purpose: Constructor for Player
+     * Algorithm:
+     *
      * @param name
      * @param actor
      */
@@ -26,17 +41,26 @@ public class Player {
         boats = new ArrayList<>();
     }
 
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
+     * @return
+     */
     protected boolean getActor(){
         return actor;
     }
 
     /**
+     * Method Name:
      * Purpose: Add instance of Boat object to Players boat List.
+     * Algorithm:
+     *
      * @param boatInstance
      */
     protected void addBoat(Boat boatInstance){
         boats.add(boatInstance);
     }
 
-    //TODO Add match list to hold # of matches if same player plays more than once
 }
