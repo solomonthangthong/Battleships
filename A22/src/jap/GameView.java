@@ -167,21 +167,17 @@ public class GameView extends JFrame implements ActionListener {
 
     }
 
-
-
-    public void resetGame(int selectedDimension){
-
+    protected void resetGame(int selectedDimension){
         // reset user actor
         gameController.resetGame(true, userPanel, opponentPanel);
         // reset user opponent
         gameController.resetGame(false, userPanel, opponentPanel);
         // Autofill Machine boats after new state
-        gameController.randomBoatPlacement(opponentPanel, false);
+        gameController.randomBoatPlacement(false);
         createPanelView(selectedDimension, userPanel, true, progressPlayer1Panel);
         createPanelView(selectedDimension, opponentPanel, false, progressPlayer2Panel);
         gameController.disableUserButtons(true);
         updateProgressBar();
-
     }
     /**
      *
@@ -200,12 +196,11 @@ public class GameView extends JFrame implements ActionListener {
                 window.getContentPane().add(new JLabel("", new ImageIcon("images/game_lost.jpg"), SwingConstants.CENTER));
             }
 
-
             window.setBounds(500, 150, 300, 200);
             window.setLocationRelativeTo(null);
             window.setVisible(true);
             window.setAlwaysOnTop(true);
-            int delay = 4000;
+            int delay = 2500;
             Timer timer = new Timer(delay, c -> {
                 window.setVisible(false);
                 window.dispose();
@@ -215,7 +210,6 @@ public class GameView extends JFrame implements ActionListener {
             timer.start();
         }
         }
-
 
     /**
      *
@@ -308,19 +302,8 @@ public class GameView extends JFrame implements ActionListener {
 
             switch (arg) {
                 case "New":
-
-                    gameController.historyLog(eventSource, controlPanelText);
-                    // reset user actor
-                    gameController.resetGame(true, userPanel, opponentPanel);
-                    // reset user opponent
-                    gameController.resetGame(false, userPanel, opponentPanel);
-                    // Autofill Machine boats after new state
-                    gameController.randomBoatPlacement(false);
-                    createPanelView(selectedDimension, userPanel, true, progressPlayer1Panel);
-                    createPanelView(selectedDimension, opponentPanel, false, progressPlayer2Panel);
-                    gameController.disableUserButtons(true);
+                    resetGame(selectedDimension);
                     enableControlPanelButtons();
-                    updateProgressBar();
                     break;
                 case "Solution":
                     // TODO set opponent board to visible
@@ -1233,6 +1216,7 @@ public class GameView extends JFrame implements ActionListener {
             clickClip.start();
             gameController.historyLog(eventSource, controlPanelText);
             resetGame(selectedDimension);
+            enableControlPanelButtons();
         } else if (eventSource == play) {
             clickClip.start();
             gameController.historyLog(eventSource, controlPanelText);
