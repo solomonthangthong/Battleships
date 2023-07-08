@@ -56,7 +56,8 @@ public class GameView extends JFrame implements ActionListener {
      * Button to open new window to design boat placement.
      */
     private JButton designBoatPlacement;
-    private JFrame designWindow;
+    // Maybe use getter and setter?
+    protected JFrame designWindow;
 
     /**
      * Button to randomize both actor ship placement.
@@ -65,7 +66,7 @@ public class GameView extends JFrame implements ActionListener {
     /**
      * Label for controlPanel history box.
      */
-    private JLabel controlPanelText;
+    protected JLabel controlPanelText;
     private int remainingBoats;
     JLabel remainingBoat;
     /**
@@ -107,7 +108,7 @@ public class GameView extends JFrame implements ActionListener {
     private JPanel opponentPanel;
 
     private Boolean designSaved;
-    private Boolean randomizedClick;
+    protected Boolean randomizedClick;
     // Stores the items
     private DefaultComboBoxModel<Integer> comboBoxModel;
     private JComboBox<Integer> boatSizeSelector;
@@ -138,10 +139,6 @@ public class GameView extends JFrame implements ActionListener {
         UIManager.put("ProgressBar.background", Color.lightGray);
         UIManager.put("ProgressBar.selectionForeground", Color.decode("#f56a4d"));
 
-        initializeFrame();
-        createPanels();
-        addPanelsToMainFrame();
-
         playClicked = false;
         randomizedClick = false;
         designSaved = false;
@@ -165,6 +162,9 @@ public class GameView extends JFrame implements ActionListener {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 
+    }
+    protected void registerGameController(GameController controller) {
+        this.gameController = controller;
     }
 
     protected void resetGame(int selectedDimension) {
@@ -192,6 +192,7 @@ public class GameView extends JFrame implements ActionListener {
 //display message and icon
         JOptionPane.showMessageDialog(this, description, "About Battleship", JOptionPane.INFORMATION_MESSAGE, icon);
     }
+
 
     /**
      *
@@ -538,14 +539,46 @@ public class GameView extends JFrame implements ActionListener {
         }
     }
 
-    /**
-     * Setter method for GameController
-     *
-     * @param controller - GameController instance
-     */
-    protected void setGameController(GameController controller) {
-        this.gameController = controller;
+    protected JLabel getControlPanelText() {
+        return controlPanelText;
     }
+
+    protected JProgressBar getPlayer1Progress() {
+        return player1Progress;
+    }
+
+    protected JProgressBar getPlayer2Progress() {
+        return player2Progress;
+    }
+
+    protected JComboBox getDimensionComboBox() {
+        return dimensionComboBox;
+    }
+
+    protected Boolean getRandomizedClick() {
+        return randomizedClick;
+    }
+
+    protected Boolean getDesignSaved() {
+        return designSaved;
+    }
+
+    protected void setDesignSaved(Boolean saved) {
+        this.designSaved = saved;
+    }
+
+    protected Boolean getPlayClicked() {
+        return playClicked;
+    }
+
+    protected void setPlayClicked(Boolean play) {
+        this.playClicked = play;
+    }
+
+    protected void setRandomizedClick(Boolean random) {
+        this.randomizedClick = random;
+    }
+
 
     protected void setPlayRandomDesignBooleans(Boolean play, Boolean randomize, Boolean design) {
         this.playClicked = play;
@@ -583,6 +616,22 @@ public class GameView extends JFrame implements ActionListener {
         return progressPlayer2Panel;
     }
 
+    protected JButton[][] getOpponentButtons() {
+        return opponentButtons;
+    }
+
+    protected JButton[][] getUserButtons() {
+        return userButtons;
+    }
+
+    protected JComboBox getBoatSizeSelector(){
+        return boatSizeSelector;
+    }
+    protected void setBoatSizeSelectorValue(Integer selected){
+        this.boatSizeSelectorValue = selected;
+    }
+
+
     protected JProgressBar getProgressBar(Boolean actor) {
         if (actor) {
             return player1Progress;
@@ -596,7 +645,7 @@ public class GameView extends JFrame implements ActionListener {
      * Purpose: This method creates and configure panels for user interface and called internally for initialization.
      * Algorithm: Create selectionPanel, all control panel buttons, create both actor panel, and health bars.
      */
-    private void createPanels() {
+    protected void createPanels() {
 
         // Control Panel
         selectionPanel = new JPanel();
@@ -617,7 +666,10 @@ public class GameView extends JFrame implements ActionListener {
         String[] languages = {"English", "French"};
         languageButton = new JComboBox<>(languages);
         languageButton.setSelectedItem("English");
-        languageButton.addActionListener(this);
+        languageButton.addActionListener(e -> {
+            Object eventSource = e.getSource();
+            gameController.handleLanguageButton(eventSource, controlPanelText);
+        });
         languageLabel = new JLabel();
         JPanel languageMenu = new JPanel();
         languageMenu.setBackground(Color.decode("#feefec"));
@@ -628,11 +680,17 @@ public class GameView extends JFrame implements ActionListener {
         // Design and Randomize buttons
         designBoatPlacement = new JButton();
         designBoatPlacement.setName("Design");
-        designBoatPlacement.addActionListener(this);
+        designBoatPlacement.addActionListener(e -> {
+            Object eventSource = e.getSource();
+            gameController.handleDesignBoatPlacement(eventSource, controlPanelText);
+        });
         designBoatPlacement.setBackground(Color.white);
         randBoatPlacement = new JButton();
         randBoatPlacement.setName("Randomize");
-        randBoatPlacement.addActionListener(this);
+        randBoatPlacement.addActionListener(e -> {
+            Object eventSource = e.getSource();
+            gameController.handleRandBoatPlacement(eventSource, controlPanelText);
+        });
         randBoatPlacement.setBackground(Color.white);
         JPanel designOptions = new JPanel();
         designOptions.setBackground(Color.decode("#feefec"));
@@ -642,9 +700,12 @@ public class GameView extends JFrame implements ActionListener {
 
         // Dimensions dropdown
         Integer[] dimensions = {4, 5, 6, 7, 8, 9, 10};
-        dimensionComboBox = new JComboBox<>(dimensions);
+        dimensionComboBox = new JComboBox(dimensions);
         dimensionComboBox.setSelectedItem(0);
-        dimensionComboBox.addActionListener(this);
+        dimensionComboBox.addActionListener(e -> {
+            Object eventSource = e.getSource();
+            gameController.handleDimensionComboBox(eventSource, controlPanelText);
+        });
         JPanel dimensionsPanel = new JPanel();
         dimensionsPanel.setBackground(Color.decode("#feefec"));
         dimensionsLabel = new JLabel();
@@ -701,20 +762,24 @@ public class GameView extends JFrame implements ActionListener {
         //start timer
         timer.start();
 
-
-
         /* Creates reset button */
         reset = new JButton();
         reset.setName("Reset");
+        reset.addActionListener(e -> {
+            Object eventSource = e.getSource();
+            gameController.handleResetButton(eventSource, controlPanelText);
+        });
         reset.setBackground(Color.white);
-        reset.addActionListener(this);
         selectionPanel.add(reset);
 
         /* Creates play button */
         play = new JButton();
         play.setBackground(Color.white);
         play.setName("Play");
-        play.addActionListener(this);
+        play.addActionListener(e -> {
+            Object eventSource = e.getSource();
+            gameController.handlePlayButton(eventSource, controlPanelText);
+        });
         selectionPanel.add(play);
 
         // Creates right side panel container
@@ -864,7 +929,10 @@ public class GameView extends JFrame implements ActionListener {
         // Only loop through instance of Buttons from GameModel to assign action listener
         for (JButton[] row : buttonForGrid) {
             for (JButton button : row) {
-                button.addActionListener(this);
+                button.addActionListener(e -> {
+                    Object eventSource = e.getSource();
+                    gameController.handleJButtonClicks(eventSource, controlPanelText);
+                });
                 button.setPreferredSize(new Dimension(buttonSize, buttonSize));
                 actorGrid.add(button);
             }
@@ -917,7 +985,7 @@ public class GameView extends JFrame implements ActionListener {
      * Purpose: Add created panels into the main frame.
      * Algorithm: Create new contentpane, set layout, add user actor, control panel, and machine actor
      */
-    private void addPanelsToMainFrame() {
+    protected void addPanelsToMainFrame() {
         Container contentPane = getContentPane();
         contentPane.setLayout(new BorderLayout());
         contentPane.add(userPanel, BorderLayout.WEST);
@@ -938,6 +1006,7 @@ public class GameView extends JFrame implements ActionListener {
         actorBoardPanel.removeAll();
 
         // Clear previous actionListeners
+        // TODO CHECK IF THIS WORKS WITH NEW REFACTOR
         for (JButton[] buttonRow : buttons) {
             for (JButton button : buttonRow) {
                 ActionListener[] listeners = button.getActionListeners();
@@ -1000,8 +1069,14 @@ public class GameView extends JFrame implements ActionListener {
         resetLayout = new JButton();
         saveLayout = new JButton();
 
-        resetLayout.addActionListener(this);
-        saveLayout.addActionListener(this);
+        resetLayout.addActionListener(e -> {
+            Object eventSource = e.getSource();
+            gameController.handleResetLayout(eventSource, controlPanelText);
+        });
+        saveLayout.addActionListener(e -> {
+            Object eventSource = e.getSource();
+            gameController.handleSaveLayout(eventSource, controlPanelText);
+        });
 
         int buttonSize = Math.min(50, 200 / size); // Adjust the button size based on dimension
         JPanel designGrid = new JPanel(new GridLayout(size * 2, size * 2));
@@ -1009,27 +1084,39 @@ public class GameView extends JFrame implements ActionListener {
         // Only loop through instance of Buttons from GameModel to assign action listener
         for (JButton[] row : userButtons) {
             for (JButton button : row) {
-                button.addActionListener(this);
+                button.addActionListener(e -> {
+                    Object eventSource = e.getSource();
+                    gameController.handleJButtonClicks(eventSource, controlPanelText);
+                });
                 button.setPreferredSize(new Dimension(buttonSize, buttonSize));
                 designGrid.add(button);
             }
         }
-
         boatSizeSelector = new JComboBox<>(comboBoxModel);
-        boatHorizontal = new JRadioButton();
         boatVertical = new JRadioButton();
+        boatHorizontal = new JRadioButton();
+
         // ButtonGroup where only one can be selected at a time (horizontal vertical)
         ButtonGroup orientationGroup = new ButtonGroup();
 
-        boatSizeSelector.addActionListener(this);
         boatSizeSelector.setSelectedIndex(0);
-
-        boatHorizontal.addActionListener(this);
+        setBoatSizeSelectorValue((int) boatSizeSelector.getSelectedItem());
         boatHorizontal.setActionCommand("false");
-
         boatVertical.setSelected(true);
-        boatVertical.addActionListener(this);
         boatVertical.setActionCommand("true");
+
+        boatSizeSelector.addActionListener(e -> {
+            Object eventSource = e.getSource();
+            gameController.handleBoatSizeSelector(eventSource, controlPanelText);
+        });
+        boatVertical.addActionListener(e -> {
+            Object eventSource = e.getSource();
+            gameController.handleJRadioOrientation(eventSource, controlPanelText);
+        });
+        boatHorizontal.addActionListener(e -> {
+            Object eventSource = e.getSource();
+            gameController.handleJRadioOrientation(eventSource, controlPanelText);
+        });
 
         orientationGroup.add(boatVertical);
         orientationGroup.add(boatHorizontal);
@@ -1053,10 +1140,17 @@ public class GameView extends JFrame implements ActionListener {
         this.remainingBoats = gameController.getRemainingBoats();
     }
 
-    private void updateRemainingBoats() {
+    protected void updateRemainingBoats() {
         setRemainingBoats();
         remainingBoat.setText("Remaining: " + remainingBoats);
+    }
 
+    protected JFrame getDesignWindow() {
+        return designWindow;
+    }
+
+    protected void setDesignWindow(JFrame setter) {
+        this.designWindow = setter;
     }
 
     /**
@@ -1168,153 +1262,6 @@ public class GameView extends JFrame implements ActionListener {
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-        /* Initialize GameController (Goal is to pass input to controller, then controller passes to Model) */
-        Object eventSource = e.getSource();
-        Clip clickClip = createAudioClip();
-        int selectedDimension = (int) dimensionComboBox.getSelectedItem();
 
-        /* If else tree, checking eventSource and if matches execute correct action */
-        if (eventSource == languageButton) {
-            clickClip.start();
-            gameController.historyLog(eventSource, controlPanelText);
-            languageChanger();
-            // Check designWindow if vertical or horizontal selected
-        } else if (eventSource == boatVertical || eventSource == boatHorizontal) {
-            clickClip.start();
-            gameController.historyLog(eventSource, controlPanelText);
-            gameController.checkOrientation(eventSource);
-            // If eventSource is Design button
-        } else if (eventSource == designBoatPlacement) {
-            clickClip.start();
-            gameController.historyLog(eventSource, controlPanelText);
-            // Open design window
-            designWindow = new JFrame();
-            designBoatWindow();
-            gameController.openDesignBoat();
-            languageChanger();
-            // JComboBox for designWindow
-        } else if (eventSource == boatSizeSelector) {
-            clickClip.start();
-            //modify this to make it dynamic - use get and set to access size of boat
-            boatSizeSelectorValue = (int) boatSizeSelector.getSelectedItem(); // Set the default boat size to the first value
-            gameController.historyLog(eventSource, controlPanelText);
-            // Randomize Button event source
-        } else if (eventSource == randBoatPlacement) {
-            //TODO fix actionListener currently double created resulting in double print
-            //clickClip.start();
-            gameController.historyLog(eventSource, controlPanelText);
-            gameController.updateModelViewBoard(selectedDimension, userPanel, opponentPanel);
-
-            // Need to see if GameModel Buttons are updated with Boat
-            gameController.randomBoatPlacement(false);
-            gameController.randomBoatPlacement(true);
-
-            createPanelView(selectedDimension, userPanel, true, progressPlayer1Panel);
-            createPanelView(selectedDimension, opponentPanel, false, progressPlayer2Panel);
-
-            gameController.configurationString(true, userButtons);
-            gameController.configurationString(false, opponentButtons);
-
-            randomizedClick = true;
-            // Change dimension event Object
-        } else if (eventSource == dimensionComboBox) {
-            clickClip.start();
-            // updateModelViewBoard was changeDimensions
-            // resizeBoard and change dimension were essentially the same in previous iteration
-            gameController.historyLog(eventSource, controlPanelText);
-            gameController.updateModelViewBoard(selectedDimension, userPanel, opponentPanel);
-
-            // Remove actionListeners and Update Panels
-            createPanelView(selectedDimension, userPanel, true, progressPlayer1Panel);
-
-            // Instant create new Boats for Machine
-            gameController.randomBoatPlacement(false);
-            // Remove actionListeners and Update Panels
-            createPanelView(selectedDimension, opponentPanel, false, progressPlayer2Panel);
-            gameController.configurationString(false, opponentButtons);
-            gameController.disableUserButtons(true);
-            updateProgressBar();
-            // Reset action
-        } else if (eventSource == reset) {
-            clickClip.start();
-            gameController.historyLog(eventSource, controlPanelText);
-            resetGame(selectedDimension);
-            enableControlPanelButtons();
-        } else if (eventSource == play) {
-            clickClip.start();
-            gameController.historyLog(eventSource, controlPanelText);
-            if (randomizedClick || designSaved) {
-                gameController.startGame();
-                playClicked = true;
-                disableControlPanelButtons();
-            } else {
-                JOptionPane.showMessageDialog(null, "Place ships with Design button or use Randomize to start the game.", "Warning", JOptionPane.WARNING_MESSAGE);
-                playClicked = false;
-            }
-            // Reset Layout in DesignWindow
-        } else if (eventSource == resetLayout) {
-            gameController.resetRemainingBoat();
-            gameController.resetDesignBoatArrayList();
-            updateRemainingBoats();
-            // Save Layout in DesignWindow
-        } else if (eventSource == saveLayout) {
-            // Defensive programming check if all ships are placed
-            if (remainingBoats == 0) {
-                userButtons = gameController.getButtons(true);
-                gameController.transferDesignToUserPanel(selectedDimension, userButtons, userPanel, opponentPanel);
-                gameController.resetRemainingBoat();
-                gameController.configurationString(true, userButtons);
-                designWindow.dispose();
-                designWindow = null;
-                createPanelView(selectedDimension, userPanel, true, progressPlayer1Panel);
-                gameController.disableUserButtons(true);
-                designSaved = true;
-                // Prompt showMessageDialog if all boats aren't placed
-            } else if (remainingBoats != 0) {
-                JOptionPane.showMessageDialog(null, "Place remaining boats in order to save", "Warning", JOptionPane.WARNING_MESSAGE);
-            }
-        } else {
-            if (playClicked) {
-                clickClip.start();
-                // User play - can only click opponent board.
-                do {
-                    gameController.boardButtonEvent(opponentButtons, eventSource, controlPanelText, designWindow, true);
-                } while (gameController.isValid((JButton) eventSource));
-                //computer selects a square
-                JButton selectedButton = gameController.randomSelection(selectedDimension * 2);
-                if (selectedButton != null) {
-                    gameController.disableUserButtons(false);
-                    gameController.boardButtonEvent(userButtons, selectedButton, controlPanelText, designWindow, false);
-                    gameController.disableUserButtons(true);
-                }
-                //ADD METHOD HERE TO CHECK BOTH PROGRESS BARS THAT SOLOMON IS DOING   if progress bar = 0 . Display win or loss
-                if (player1Progress.getValue() == 0) {
-                    Splash s = new Splash();
-                    s.show(2);
-                    System.out.println("Loss");
-
-                    resetGame(selectedDimension);
-                } else if (player2Progress.getValue() == 0) {
-                    Splash s = new Splash();
-                    s.show(1);
-                    resetGame(selectedDimension);
-
-
-                }
-                if (designWindow != null) {
-                    gameController.boardButtonEvent(userButtons, eventSource, controlPanelText, designWindow, true);
-                    updateRemainingBoats();
-                    userButtons = gameController.getButtons(true);
-                    designWindow.repaint();
-                    designWindow.revalidate();
-                }
-//            else {
-//                clickClip.start();
-//                gameController.boardButtonEvent(userButtons, eventSource, controlPanelText, designWindow);
-//                gameController.boardButtonEvent(opponentButtons, eventSource, controlPanelText, designWindow);
-//            }
-
-            }
-        }
     }
 }
