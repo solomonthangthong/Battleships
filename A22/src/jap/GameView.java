@@ -215,7 +215,7 @@ public class GameView extends JFrame implements ActionListener {
             window.setLocationRelativeTo(null);
             window.setVisible(true);
             window.setAlwaysOnTop(true);
-            int delay = 2500;
+            int delay = 1500;
             Timer timer = new Timer(delay, c -> {
                 window.setVisible(false);
                 window.dispose();
@@ -371,6 +371,10 @@ public class GameView extends JFrame implements ActionListener {
         private final JButton saveColour;
         private final JButton cancelColour;
         private final JButton resetColour;
+        private Color unselectedColorValue;
+        private Color waterColorValue;
+        private Color shipColorValue;
+        private Color selectedColor;
 
         /**
          * Constructor for ColorChooser Class
@@ -387,15 +391,16 @@ public class GameView extends JFrame implements ActionListener {
             cancelColour = new JButton();
             resetColour = new JButton();
 
+
             // Panels
             unselectedColour = new JPanel();
             waterColour = new JPanel();
             boatColour = new JPanel();
 
             // Setting Background Colour
-            unselectedColour.setBackground(Color.lightGray);
-            waterColour.setBackground(Color.CYAN);
-            boatColour.setBackground(Color.pink);
+            unselectedColour.setBackground(Color.decode("#f56a4d"));
+            waterColour.setBackground(Color.decode("#008fa2"));
+            boatColour.setBackground(Color.decode("#db9c59"));
 
             // Setting border
             unselectedColour.setBorder(lineBorder);
@@ -496,7 +501,7 @@ public class GameView extends JFrame implements ActionListener {
                 int selectedDimension = (int) dimensionComboBox.getSelectedItem();
 
                 userButtons = gameController.getButtons(true);
-                gameController.setBoatColor(globalColour);
+                gameController.setColorVariables(unselectedColorValue, waterColorValue, shipColorValue);
                 gameController.changeBoatColor(userButtons, userPanel, true);
                 gameController.changeBoatColor(opponentButtons, opponentPanel, false);
 
@@ -513,22 +518,28 @@ public class GameView extends JFrame implements ActionListener {
                 }
             } else if (source == resetColour) {
                 //TODO reset selection?
+                unselectedColour.setBackground(Color.decode("#f56a4d"));
+                waterColour.setBackground(Color.decode("#008fa2"));
+                boatColour.setBackground(Color.decode("#db9c59"));
+                tcc.setColor(Color.decode("#f56a4d"));
+                gameController.setColorVariables(unselectedColour.getBackground(), waterColour.getBackground(), boatColour.getBackground());
             }
         }
 
         @Override
         public void stateChanged(ChangeEvent e) {
             // Update the color of the selected panel
-            Color selectedColor = tcc.getSelectionModel().getSelectedColor();
+            selectedColor = tcc.getSelectionModel().getSelectedColor();
 
             if (lastClickedButton == unselectedColourButton) {
                 unselectedColour.setBackground(selectedColor);
+                unselectedColorValue = selectedColor;
             } else if (lastClickedButton == waterColourButton) {
                 waterColour.setBackground(selectedColor);
-                //TODO other colours variables for miss and unselected?
+                waterColorValue = selectedColor;
             } else if (lastClickedButton == boatColourButton) {
                 boatColour.setBackground(selectedColor);
-                globalColour = selectedColor;
+                shipColorValue = selectedColor;
             }
         }
     }
@@ -1074,6 +1085,7 @@ public class GameView extends JFrame implements ActionListener {
 
         int buttonSize = Math.min(50, 200 / size); // Adjust the button size based on dimension
         JPanel designGrid = new JPanel(new GridLayout(size * 2, size * 2));
+
 
         // Only loop through instance of Buttons from GameModel to assign action listener
         for (JButton[] row : userButtons) {

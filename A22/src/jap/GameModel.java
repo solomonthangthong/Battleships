@@ -38,7 +38,6 @@ public class GameModel {
 
     private Border whiteBorder;
     private Color selectedColour;
-
     private Color waterColour;
     private Color hitBoatColor;
 
@@ -260,11 +259,15 @@ public class GameModel {
     }
 
     /**
-     * SelectedColour??? Setter method
-     * @param color - Figure this one out
+     *
+     * @param unselected
+     * @param water
+     * @param hitBoat
      */
-    protected void setSelectedColour(Color color) {
-        this.selectedColour = color;
+    protected void setSelectedColour(Color unselected, Color water, Color hitBoat) {
+        this.selectedColour = unselected;
+        this.waterColour = water;
+        this.hitBoatColor = hitBoat;
     }
 
     /**
@@ -545,7 +548,6 @@ public class GameModel {
         }
     }
 
-
     /**
      * Place boat on 2D array
      *
@@ -603,12 +605,11 @@ public class GameModel {
                                 boat.setPlaced(true);
                                 boat.setBoatPosition(boatPosition);
                                 numberOfBoatsForDesign--;
-                                System.out.println("Boat placed successfully!");
                             } else {
-                                System.out.println("Boat overlaps with another boat!");
+                                JOptionPane.showMessageDialog(null, "Ship overlaps with another boat.\nPlease try again.", "Warning", JOptionPane.WARNING_MESSAGE);
                             }
                         } else {
-                            System.out.println("Boat does not fit within the board dimensions!");
+                            JOptionPane.showMessageDialog(null, "Ship does not fit within the board dimensions.\nPlease try again.", "Warning", JOptionPane.WARNING_MESSAGE);
                         }
                     } else {
                         if (clickedCol + boatSizeSearch <= userButtons[clickedRow].length) {
@@ -633,12 +634,11 @@ public class GameModel {
                                 boat.setPlaced(true);
                                 boat.setBoatPosition(boatPosition);
                                 numberOfBoatsForDesign--;
-                                System.out.println("Boat placed successfully!");
                             } else {
-                                System.out.println("Boat overlaps with another boat!");
+                                JOptionPane.showMessageDialog(null, "Ship overlaps with another boat.\nPlease try again.", "Warning", JOptionPane.WARNING_MESSAGE);
                             }
                         } else {
-                            System.out.println("Boat does not fit within the board dimensions!");
+                            JOptionPane.showMessageDialog(null, "Ship does not fit within the board dimensions.\nPlease try again.", "Warning", JOptionPane.WARNING_MESSAGE);
                         }
                     }
                 }
@@ -734,7 +734,8 @@ public class GameModel {
                     if (button.getName().equals("Convert")) {
                         button.setText("0");
                         button.setForeground(Color.black);
-                        button.setBackground(Color.lightGray);
+                        button.setBackground(Color.decode("#f56a4d"));
+                        button.setUI(new HiddenTextButtonUI());
                     }
                 }
             }

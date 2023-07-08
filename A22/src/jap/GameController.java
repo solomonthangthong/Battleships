@@ -203,20 +203,17 @@ public class GameController implements ActionListener {
             if (gameView.getPlayer1Progress().getValue() == 0) {
                 GameView.Splash s = new GameView.Splash();
                 s.show(2);
-                System.out.println("Loss");
                 gameView.resetGame(selectedDimension);
 
             } else if (gameView.getPlayer2Progress().getValue() == 0) {
                 GameView.Splash s = new GameView.Splash();
                 s.show(1);
                 gameView.resetGame(selectedDimension);
-
             }
-
         } else if (gameView.getDesignWindow() != null) {
             boardButtonEvent(gameView.getUserButtons(), eventSource, gameView.getControlPanelText(), gameView.getDesignWindow(), true);
             gameView.updateRemainingBoats();
-            gameView.setBoardButtons(true, getButtons(true));
+            //gameView.setBoardButtons(true, getButtons(true));
             gameView.getDesignWindow().revalidate();
             gameView.getDesignWindow().repaint();
         }
@@ -367,10 +364,10 @@ public class GameController implements ActionListener {
         for (int i = 0; i < squareBoard; i++) {
             for (int j = 0; j < squareBoard; j++) {
                 if (buttons[i][j] instanceof Boat) {
-                    Boat boat = (Boat) buttons[i][j];
-                    buttons[i][j] = gameModel.updateButtonState(null, boat, true);
+                    buttons[i][j] = new JButton();
+                    buttons[i][j] = gameModel.updateButtonState(buttons[i][j], null, true);
                     buttons[i][j].setName((i + 1) + "," + (j + 1));
-                    boat.setUI(new HiddenTextButtonUI());
+                    buttons[i][j].setUI(new HiddenTextButtonUI());
                 }
                 buttons[i][j] = gameModel.updateButtonState(buttons[i][j], null, true);
                 buttons[i][j].setBackground(Color.decode("#f56a4d"));
@@ -391,8 +388,8 @@ public class GameController implements ActionListener {
     /**
      * @param color
      */
-    protected void setBoatColor(Color color) {
-        gameModel.setSelectedColour(color);
+    protected void setColorVariables(Color unselected, Color water, Color hitBoat) {
+        gameModel.setSelectedColour(unselected, water, hitBoat);
     }
 
     /**
@@ -416,7 +413,6 @@ public class GameController implements ActionListener {
         for (int i = 0; i < buttons.length; i++) {
             for (int j = 0; j < buttons[i].length; j++) {
                 if (eventSource == buttons[i][j] && designWindow != null) {
-                    System.out.print("rowIndex = " + i + "\ncolumnIndex = " + j + "\n");
                     gameModel.placeSelectedBoat(eventSource);
                 } else if (eventSource == buttons[i][j] && buttons[i][j].isEnabled()) {
                     performHitMissLogic(buttons[i][j], controlPanelText, who);
@@ -480,7 +476,6 @@ public class GameController implements ActionListener {
     private void performHitMissLogic(JButton button, JLabel controlPanelText, Boolean who) {
         if (button instanceof Boat) {
             // Button is a boat, it's a hit
-            System.out.print("Hit");
             historyLog(button, controlPanelText);
             gameModel.updateButtonState(null, (Boat) button, false);
             JProgressBar progress;
@@ -501,7 +496,6 @@ public class GameController implements ActionListener {
             }
         } else {
             // Button is empty, it's a miss
-            System.out.print("Miss");
             historyLog(button, controlPanelText);
             gameModel.updateButtonState(button, null, false);
         }
