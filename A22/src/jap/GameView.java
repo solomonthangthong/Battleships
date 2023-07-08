@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Class Name: GameView
@@ -63,11 +64,14 @@ public class GameView extends JFrame implements ActionListener {
      * Button to randomize both actor ship placement.
      */
     private JButton randBoatPlacement;
+
     /**
      * Label for controlPanel history box.
      */
     protected JLabel controlPanelText;
     private int remainingBoats;
+    private int count;
+    private Timer timer;
     JLabel remainingBoat;
     /**
      * Button to start the game.
@@ -645,6 +649,25 @@ public class GameView extends JFrame implements ActionListener {
         }
     }
 
+    private void startTimer(JLabel timeDisplay) {
+        count = 0; // Initialize count to zero
+        Timer timer = new Timer(1000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                count++;
+                timeDisplay.setText(String.valueOf(count));
+            }
+        });
+        timer.start();
+    }
+    private void resetTimer() {
+        count = 0;
+        if (timer != null) {
+            timer.stop();
+            timer.restart();
+        }
+    }
+
     /**
      * Method Name: createPanels
      * Purpose: This method creates and configure panels for user interface and called internally for initialization.
@@ -753,19 +776,9 @@ public class GameView extends JFrame implements ActionListener {
         timeContainer.setAlignmentX(Component.CENTER_ALIGNMENT);
         timeContainer.setBackground(Color.decode("#feefec"));
         selectionPanel.add(timeContainer);
+//start timer
 
-        //display timer
-        Timer timer = new Timer(1000, new ActionListener() {
-            int count = 0;
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                count++;
-                timeDisplay.setText(String.valueOf(count));
-            }
-        });
-        //start timer
-        timer.start();
+        startTimer(timeDisplay);
 
         /* Creates reset button */
         reset = new JButton();
@@ -773,6 +786,11 @@ public class GameView extends JFrame implements ActionListener {
         reset.addActionListener(e -> {
             Object eventSource = e.getSource();
             gameController.handleResetButton(eventSource, controlPanelText);
+            //reset clock
+        resetTimer();
+
+
+
         });
         reset.setBackground(Color.white);
         selectionPanel.add(reset);
