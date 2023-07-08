@@ -7,7 +7,21 @@ import javax.swing.plaf.basic.BasicButtonUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.Serializable;
 
+/**
+ * Class Name: GameController
+ * Method List:
+ * Constants List:
+ * View model, following MVC design pattern. Updates the view to user
+ *
+ * @author Andrew Lorimer, Solomon Thangthong
+ * @version 2.0
+ * @see JFrame
+ * @see ActionListener
+ * @see Serializable
+ * @since 11.0.19
+ */
 public class GameController implements ActionListener {
     private final GameModel gameModel;
     private final GameView gameView;
@@ -34,6 +48,10 @@ public class GameController implements ActionListener {
     }
 
     /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
      * @param eventSource
      * @param controlPanelText
      */
@@ -43,6 +61,10 @@ public class GameController implements ActionListener {
     }
 
     /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
      * @param eventSource
      * @param controlPanelText
      */
@@ -66,6 +88,10 @@ public class GameController implements ActionListener {
     }
 
     /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
      * @param eventSource
      * @param controlPanelText
      */
@@ -79,6 +105,10 @@ public class GameController implements ActionListener {
     }
 
     /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
      * @param eventSource
      * @param controlPanelText
      */
@@ -103,6 +133,10 @@ public class GameController implements ActionListener {
     }
 
     /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
      * @param eventSource
      * @param controlPanelText
      */
@@ -120,6 +154,10 @@ public class GameController implements ActionListener {
     }
 
     /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
      * @param eventSource
      * @param controlPanelText
      */
@@ -130,7 +168,9 @@ public class GameController implements ActionListener {
     }
 
     /**
-     * DesignWindow JComboBox Boat Size Select
+     * Method Name:
+     * Purpose:
+     * Algorithm:
      *
      * @param eventSource
      * @param controlPanelText
@@ -142,6 +182,10 @@ public class GameController implements ActionListener {
     }
 
     /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
      * @param eventSource
      * @param controlPanelText
      */
@@ -151,6 +195,10 @@ public class GameController implements ActionListener {
     }
 
     /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
      * @param eventSource
      * @param controlPanelText
      */
@@ -162,6 +210,10 @@ public class GameController implements ActionListener {
     }
 
     /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
      * @param eventSource
      * @param controlPanelText
      */
@@ -182,6 +234,14 @@ public class GameController implements ActionListener {
         }
     }
 
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
+     * @param eventSource
+     * @param controlPanelText
+     */
     protected void handleJButtonClicks(Object eventSource, JLabel controlPanelText) {
 
         int selectedDimension = (int) gameView.getDimensionComboBox().getSelectedItem();
@@ -220,7 +280,9 @@ public class GameController implements ActionListener {
     }
 
     /**
-     * Purpose: Calls Model and updates string, call view and refresh
+     * Method Name:
+     * Purpose:
+     * Algorithm:
      *
      * @param eventSource      - Instances of any event
      * @param controlPanelText - String of history actions from player
@@ -250,6 +312,14 @@ public class GameController implements ActionListener {
         gameView.updateBoard(gameModel.getOpponentButtons(), gameModel.getOpponentBoardPanel());
     }
 
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
+     * @param whichActor
+     * @param actorBoard
+     */
     protected void configurationString(Boolean whichActor, JButton[][] actorBoard) {
         String hello;
         if (whichActor) {
@@ -261,6 +331,16 @@ public class GameController implements ActionListener {
         }
     }
 
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
+     * @param buttons
+     * @param actorPanel
+     * @param actor
+     * @param unselected
+     */
     protected void changeBoatColor(JButton[][] buttons, JPanel actorPanel, Boolean actor, Color unselected) {
 
         for (JButton[] buttonRow : buttons) {
@@ -288,6 +368,16 @@ public class GameController implements ActionListener {
 
     }
 
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
+     * @param selectedDimension
+     * @param replace
+     * @param userBoardPanel
+     * @param opponentBoardPanel
+     */
     protected void transferDesignToUserPanel(Integer selectedDimension, JButton[][] replace, JPanel userBoardPanel, JPanel opponentBoardPanel) {
         gameModel.convertDesignJButtonsToBoat(true);
         gameModel.setBoardSize(selectedDimension);
@@ -297,7 +387,9 @@ public class GameController implements ActionListener {
     }
 
     /**
-     * Get instance of 2D array buttons from Game Model and return to View
+     * Method Name:
+     * Purpose:
+     * Algorithm:
      *
      * @param actor - Player or Machine
      * @return - 2D board for each player
@@ -310,10 +402,22 @@ public class GameController implements ActionListener {
         }
     }
 
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
+     * @return
+     */
     protected static int getBoatSize() {
         return GameView.boatSizeSelectorValue;
     }
 
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     */
     protected void openDesignBoat() {
         //gameView.designBoatWindow();
 
@@ -328,18 +432,32 @@ public class GameController implements ActionListener {
         gameView.designBoatPlacement(gameModel.getBoardSize());
     }
 
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     */
     protected void resetDesignBoatArrayList() {
         gameModel.clearDesignBoatList();
         gameModel.convertDesignJButtonsToBoat(false);
         gameModel.populateDesignBoat();
     }
 
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
+     * @param eventSource
+     */
     protected void checkOrientation(Object eventSource) {
         gameModel.setBoatOrientation(eventSource);
     }
 
     /**
+     * Method Name:
      * Purpose: sets gameModel user/opponent 2D array button grid to have random boats
+     * Algorithm:
      *
      * @param actor - Player/Machine
      */
@@ -351,19 +469,45 @@ public class GameController implements ActionListener {
         }
     }
 
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
+     * @return
+     */
     protected Integer getRemainingBoats() {
         return gameModel.getNumberOfBoatsForDesign();
     }
 
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     */
     protected void resetRemainingBoat() {
         int reset = 0;
         gameModel.setNumberOfBoatsForDesign(reset);
     }
 
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     */
     protected void startGame() {
         gameView.playClicked = true;
     }
 
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
+     * @param actor
+     * @param userBoardPanel
+     * @param opponentBoardPanel
+     */
     protected void resetGame(Boolean actor, JPanel userBoardPanel, JPanel opponentBoardPanel) {
         JButton[][] buttons;
         Border whiteBorder = BorderFactory.createLineBorder(Color.white);
@@ -400,14 +544,22 @@ public class GameController implements ActionListener {
     }
 
     /**
-     * @param color
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
+     * @param unselected
+     * @param water
+     * @param hitBoat
      */
     protected void setColorVariables(Color unselected, Color water, Color hitBoat) {
         gameModel.setSelectedColour(unselected, water, hitBoat);
     }
 
     /**
-     * For Solution method to reveal Opponent boat, and where the boats are placed
+     * Method Name:
+     * Purpose: For Solution method to reveal Opponent boat, and where the boats are placed
+     * Algorithm:
      */
     protected void setBoatVisible() {
         gameModel.setBoatVisible();
@@ -436,6 +588,10 @@ public class GameController implements ActionListener {
     }
 
     /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
      * @param didMachinePlay - Did the machine play True or False
      */
     protected void disableUserButtons(Boolean didMachinePlay) {
@@ -467,6 +623,10 @@ public class GameController implements ActionListener {
     }
 
     /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
      * @param selectedButton
      * @return
      */
@@ -475,6 +635,10 @@ public class GameController implements ActionListener {
     }
 
     /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
      * @param boardSize
      * @return
      */
@@ -483,6 +647,10 @@ public class GameController implements ActionListener {
     }
 
     /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
      * @param button
      * @param controlPanelText
      * @param who
@@ -516,6 +684,10 @@ public class GameController implements ActionListener {
     }
 
     /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
      * Custom ButtonUI implementation that hides the grayed-out text of a disabled JButton.
      */
     private static class HiddenTextButtonUI extends BasicButtonUI {
@@ -525,6 +697,13 @@ public class GameController implements ActionListener {
         }
     }
 
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
+     * @param e the event to be processed
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
 

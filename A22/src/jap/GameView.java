@@ -29,15 +29,17 @@ import java.util.concurrent.atomic.AtomicInteger;
  * View model, following MVC design pattern. Updates the view to user
  *
  * @author Andrew Lorimer, Solomon Thangthong
- * @version 1.1
+ * @version 2.0
  * @see JFrame
  * @see ActionListener
  * @see Serializable
  * @since 11.0.19
  */
 public class GameView extends JFrame implements ActionListener {
+    private static final long serialVersionUID = 1L;
     private GameController gameController;
     private final Menu menuBar;
+    //TODO MATCH BATTESHIP BUTTON TO THE ABOUT
     private JButton battleshipAbout;
     /**
      * Combobox to change GUI language.
@@ -129,7 +131,6 @@ public class GameView extends JFrame implements ActionListener {
     private JLabel boatLabel;
     private JLabel directionLabel;
 
-    private Color globalColour;
     private ColorChooser colorPanel;
     protected boolean playClicked;
 
@@ -148,8 +149,8 @@ public class GameView extends JFrame implements ActionListener {
 
 
         //play background music
-        //String musicFile = "resources/backgroundMusic.wav";
-        //playBackgroundMusic(musicFile);
+        String musicFile = "resources/backgroundMusic.wav";
+        playBackgroundMusic(musicFile);
     }
 
     /**
@@ -163,27 +164,24 @@ public class GameView extends JFrame implements ActionListener {
         setSize(1280, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-
     }
 
+    /**
+     * Method Name: registerGameController
+     * Purpose: Set Instance of GameController to Global variable
+     * Algorithm: this variable = passed variable
+     *
+     * @param controller - Instance GameController
+     */
     protected void registerGameController(GameController controller) {
         this.gameController = controller;
     }
 
-    protected void resetGame(int selectedDimension) {
-        // reset user actor
-        gameController.resetGame(true, userPanel, opponentPanel);
-        // reset user opponent
-        gameController.resetGame(false, userPanel, opponentPanel);
-        // Autofill Machine boats after new state
-        gameController.randomBoatPlacement(false);
-        createPanelView(selectedDimension, userPanel, true, progressPlayer1Panel);
-        createPanelView(selectedDimension, opponentPanel, false, progressPlayer2Panel);
-        gameController.disableUserButtons(true);
-        updateProgressBar();
-    }
-
+    /**
+     * Method Name: showAboutDialog
+     * Purpose: Load JFrame with content and photo about
+     * Algorithm: Declare information and display
+     */
     private void showAboutDialog() {
         String description =
                 "Battleship is a strategic warfare game played on a grid-based board.\n\n"
@@ -191,15 +189,17 @@ public class GameView extends JFrame implements ActionListener {
                         + "The player and Robot take turns guessing the coordinates to target and sink their opponent's ships.\n\n"
                         + "The goal of battleship is to destroy all of the opponent's ships before they destroy yours.\n\n"
                         + "Have fun";
-//add image from images folder
+        //add image from images folder
         ImageIcon icon = new ImageIcon("images/game_about.jpg");
-//display message and icon
+        //display message and icon
         JOptionPane.showMessageDialog(this, description, "About Battleship", JOptionPane.INFORMATION_MESSAGE, icon);
     }
 
 
     /**
-     *
+     * Class Name: Splash
+     * Purpose: Handle various splashes. Game launch, win or lose.
+     * Algorithm: Pass boolean, determine which splash to play, set timer for how long is displayed
      */
     protected static class Splash {
         public void show(int flag) {
@@ -232,13 +232,19 @@ public class GameView extends JFrame implements ActionListener {
     }
 
     /**
-     *
+     * Class Name: Menu
+     * Purpose: Menu extends JFrame and implements ActionListener and MenuListener
+     * Provides GameView with Menu options for users
+     * Algorithm: Constructor builds the JMenu and handles the actionListeners
      */
     protected class Menu extends JFrame implements ActionListener, MenuListener {
+        private static final long serialVersionUID = 1L;
         private final JMenuBar menu;
 
         /**
-         *
+         * Method Name: InitializeFrame
+         * Purpose: Method to set up parameters for GUI window
+         * Algorithm: Set title, size, location, default close operation
          */
         public Menu() {
             menu = new JMenuBar();
@@ -257,7 +263,9 @@ public class GameView extends JFrame implements ActionListener {
         }
 
         /**
-         * Creates a menu with menu items.
+         * Method Name: BuildMenu
+         * Purpose: Generic Method to take Object and their eventHandler create Menu Items
+         * Algorithm: If else tree to determine how passed objects are handled
          *
          * @param parent       - if the parent is an instance of JMenu it adds items to the menu. if the parent is a string it creates the menu and then adds items to the menu.
          * @param items        - list of references to menu items names (strings). If the references null, a separator is added.
@@ -285,8 +293,9 @@ public class GameView extends JFrame implements ActionListener {
         }
 
         /**
-         * Creates a menu item.
-         * handler. if the parent is a string it creates the menu and then adds an event handler.
+         * Method Name: buildMenuItem
+         * Purpose: Takes object item and its event handler, processes the item and create JMenuItem
+         * Algorithm: If else tree to determine how object will be handled
          *
          * @param item         - Object from Menu bar
          * @param eventHandler - event handler for the menu items. Must be of type ActionListener
@@ -309,11 +318,24 @@ public class GameView extends JFrame implements ActionListener {
             return r;
         }
 
+        /**
+         * Method Name: getTheMenuBar()
+         * Purpose: Getter method
+         * Algorithm: Return menu variable
+         *
+         * @return - Return JMenuBar
+         */
         public JMenuBar getTheMenuBar() {
             return menu;
         }
 
-
+        /**
+         * Method Name: actionPerformed
+         * Purpose: Handle Object events performed in JMenu
+         * Algorithm: Switch case for JMenu Items "New", "Solution" "Colours" "About"
+         *
+         * @param e the event to be processed
+         */
         @Override
         public void actionPerformed(ActionEvent e) {
             String arg = e.getActionCommand();
@@ -361,9 +383,12 @@ public class GameView extends JFrame implements ActionListener {
     }
 
     /**
-     * ColorChooser Class
+     * Class Name: ColorChooser
+     * Purpose: JPanel to allow Users to select colours for grid button, water(miss), and ship hit
+     * Algorithm: Create constructor, monitor changes, be able to save or reset any changes
      */
     protected class ColorChooser extends JPanel implements ActionListener, ChangeListener {
+        private static final long serialVersionUID = 1L;
         private JFrame frame;
         private final JColorChooser tcc;
         protected JButton unselectedColourButton;
@@ -382,7 +407,9 @@ public class GameView extends JFrame implements ActionListener {
         private Color selectedColor;
 
         /**
-         * Constructor for ColorChooser Class
+         * Method Name: ColorChooser
+         * Purpose: Constructor to initialize class
+         * Algorithm: Declare all variables
          */
         protected ColorChooser() {
             super(new BorderLayout());
@@ -464,7 +491,9 @@ public class GameView extends JFrame implements ActionListener {
         }
 
         /**
-         * Generic method to setText for JButton/JLabels from language.properties
+         * Method Name: setTextForComponent
+         * Purpose: Generic method to process JButtons to different language
+         * Algorithm: Call component.setText method
          *
          * @param component - Control Panel JButtons or Labels
          * @param name      - Setting Name in English or French
@@ -473,6 +502,11 @@ public class GameView extends JFrame implements ActionListener {
             component.setText(name);
         }
 
+        /**
+         * Method Name: colorGUI
+         * Purpose: Create new JFrame for the class and be able to make selections
+         * Algorithm: Declare JFrame variables and set its properties
+         */
         protected void colorGUI() {
             //Create and set up the window.
             frame = new JFrame("Choose Colour");
@@ -488,6 +522,12 @@ public class GameView extends JFrame implements ActionListener {
             frame.setVisible(true);
         }
 
+        /**
+         * Method Name: actionPerformed
+         * Purpose: Handle Object events performed in JMenu
+         * Algorithm: If else tree, if source equals 3 variables, keep going until new button is click. ELSE save, resetlayout, or cancel
+         * @param e the event to be processed
+         */
         @Override
         public void actionPerformed(ActionEvent e) {
             JButton source = (JButton) e.getSource();
@@ -505,7 +545,7 @@ public class GameView extends JFrame implements ActionListener {
             } else if (source == saveColour) {
                 int selectedDimension = (int) dimensionComboBox.getSelectedItem();
 
-                if (unselectedColorValue != null && waterColorValue != null && shipColorValue != null){
+                if (unselectedColorValue != null && waterColorValue != null && shipColorValue != null) {
                     userButtons = gameController.getButtons(true);
                     gameController.setColorVariables(unselectedColorValue, waterColorValue, shipColorValue);
                     gameController.changeBoatColor(userButtons, userPanel, true, unselectedColorValue);
@@ -535,6 +575,13 @@ public class GameView extends JFrame implements ActionListener {
             }
         }
 
+        /**
+         * Method Name: stateChanged
+         * Purpose: if selectedColour changes for lastClickedButton change that colour and set global variable to be passed to GameController/Model
+         * Algorithm: If else tree determine if lastClickButton is same then process
+         *
+         * @param e  a ChangeEvent object
+         */
         @Override
         public void stateChanged(ChangeEvent e) {
             // Update the color of the selected panel
@@ -553,47 +600,125 @@ public class GameView extends JFrame implements ActionListener {
         }
     }
 
+    /**
+     * Method Name: getControlPanelText
+     * Purpose: Getter Method
+     * Algorithm: Return variable
+     *
+     * @return - controlPanelText (String concatenation of user clicks)
+     */
     protected JLabel getControlPanelText() {
         return controlPanelText;
     }
 
+    /**
+     * Method Name: getPlayer1Progress
+     * Purpose: Getter Method
+     * Algorithm: Return the variable
+     *
+     * @return - JProgressBar
+     */
     protected JProgressBar getPlayer1Progress() {
         return player1Progress;
     }
 
+    /**
+     * Method Name: getPlayer2Progress
+     * Purpose: Getter Method
+     * Algorithm: Return the variable
+     *
+     * @return - JProgressBar
+     */
     protected JProgressBar getPlayer2Progress() {
         return player2Progress;
     }
 
-    protected JComboBox getDimensionComboBox() {
+    /**
+     * Method Name: getDimensionComboBox
+     * Purpose: Getter method
+     * Algorithm: Return variable
+     *
+     * @return - JComboBox for Board Dimensions
+     */
+    protected JComboBox<Integer> getDimensionComboBox() {
         return dimensionComboBox;
     }
 
+    /**
+     * Method Name: getRandomizedClick
+     * Purpose: Getter method
+     * Algorithm: Return variable
+     *
+     * @return - Boolean true or false if Randomized button was clicked
+     */
     protected Boolean getRandomizedClick() {
         return randomizedClick;
     }
 
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
+     * @return -
+     */
     protected Boolean getDesignSaved() {
         return designSaved;
     }
 
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
+     * @param saved -
+     */
     protected void setDesignSaved(Boolean saved) {
         this.designSaved = saved;
     }
 
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
+     * @return -
+     */
     protected Boolean getPlayClicked() {
         return playClicked;
     }
 
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
+     * @param play
+     */
     protected void setPlayClicked(Boolean play) {
         this.playClicked = play;
     }
 
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
+     * @param random -
+     */
     protected void setRandomizedClick(Boolean random) {
         this.randomizedClick = random;
     }
 
-
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
+     * @param play -
+     * @param randomize -
+     * @param design -
+     */
     protected void setPlayRandomDesignBooleans(Boolean play, Boolean randomize, Boolean design) {
         this.playClicked = play;
         this.randomizedClick = randomize;
@@ -601,7 +726,9 @@ public class GameView extends JFrame implements ActionListener {
     }
 
     /**
-     * Pass GameModel passes and set this grid instances to GameModel
+     * Method Name:
+     * Purpose:
+     * Algorithm:
      *
      * @param actor - User player if true, Machine if false
      * @param board - 2D array JButton grid
@@ -614,39 +741,102 @@ public class GameView extends JFrame implements ActionListener {
         }
     }
 
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
+     * @return -
+     */
     protected JPanel getUserPanel() {
         return userPanel;
     }
 
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
+     * @return -
+     */
     protected JPanel getOpponentPanel() {
         return opponentPanel;
     }
 
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
+     * @return -
+     */
     protected JPanel getProgressPlayer1Panel() {
         return progressPlayer1Panel;
     }
 
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
+     * @return -
+     */
     protected JPanel getProgressPlayer2Panel() {
         return progressPlayer2Panel;
     }
 
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
+     * @return -
+     */
     protected JButton[][] getOpponentButtons() {
         return opponentButtons;
     }
 
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
+     * @return -
+     */
     protected JButton[][] getUserButtons() {
         return userButtons;
     }
 
-    protected JComboBox getBoatSizeSelector() {
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
+     * @return -
+     */
+    protected JComboBox<Integer> getBoatSizeSelector() {
         return boatSizeSelector;
     }
 
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
+     * @param selected -
+     */
     protected void setBoatSizeSelectorValue(Integer selected) {
-        this.boatSizeSelectorValue = selected;
+        GameView.boatSizeSelectorValue = selected;
     }
 
-
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
+     * @param actor -
+     * @return -
+     */
     protected JProgressBar getProgressBar(Boolean actor) {
         if (actor) {
             return player1Progress;
@@ -655,6 +845,55 @@ public class GameView extends JFrame implements ActionListener {
         }
     }
 
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     */
+    protected void setRemainingBoats() {
+        this.remainingBoats = gameController.getRemainingBoats();
+    }
+
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
+     * @return -
+     */
+    protected JFrame getDesignWindow() {
+        return designWindow;
+    }
+
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
+     * @param setter -
+     */
+    protected void setDesignWindow(JFrame setter) {
+        this.designWindow = setter;
+    }
+
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
+     * @param designBoatList - ArrayList of User Player board
+     */
+    protected void setDesignBoatList(List<List<Boat>> designBoatList) {
+        this.designBoatList = designBoatList;
+    }
+
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
+     * @param timeDisplay
+     */
     private void startTimer(JLabel timeDisplay) {
         count = 0; // Initialize count to zero
         Timer timer = new Timer(1000, new ActionListener() {
@@ -667,6 +906,11 @@ public class GameView extends JFrame implements ActionListener {
         timer.start();
     }
 
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     */
     private void resetTimer() {
         count = 0;
         if (timer != null) {
@@ -676,9 +920,9 @@ public class GameView extends JFrame implements ActionListener {
     }
 
     /**
-     * Method Name: createPanels
-     * Purpose: This method creates and configure panels for user interface and called internally for initialization.
-     * Algorithm: Create selectionPanel, all control panel buttons, create both actor panel, and health bars.
+     * Method Name:
+     * Purpose:
+     * Algorithm:
      */
     protected void createPanels() {
 
@@ -735,7 +979,7 @@ public class GameView extends JFrame implements ActionListener {
 
         // Dimensions dropdown
         Integer[] dimensions = {4, 5, 6, 7, 8, 9, 10};
-        dimensionComboBox = new JComboBox(dimensions);
+        dimensionComboBox = new JComboBox<>(dimensions);
         dimensionComboBox.setSelectedItem(0);
         dimensionComboBox.addActionListener(e -> {
             Object eventSource = e.getSource();
@@ -783,10 +1027,8 @@ public class GameView extends JFrame implements ActionListener {
         timeContainer.setAlignmentX(Component.CENTER_ALIGNMENT);
         timeContainer.setBackground(Color.decode("#feefec"));
         selectionPanel.add(timeContainer);
-//start timer
-
+        //start timer
         startTimer(timeDisplay);
-
         /* Creates reset button */
         reset = new JButton();
         reset.setName("Reset");
@@ -795,7 +1037,6 @@ public class GameView extends JFrame implements ActionListener {
             gameController.handleResetButton(eventSource, controlPanelText);
             //reset clock
             resetTimer();
-
 
         });
         reset.setBackground(Color.white);
@@ -850,22 +1091,29 @@ public class GameView extends JFrame implements ActionListener {
     }
 
     /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     *
      * @param locale - Property file for environment variables
      */
     private void updateLanguage(Locale locale) {
         // Try to load .properties file
         try {
-            resourceBundle = ResourceBundle.getBundle("jap.language", locale);
+            resourceBundle = ResourceBundle.getBundle("language", locale);
         } catch (MissingResourceException e) {
             // Fallback to the default locale (e.g., English)
-            resourceBundle = ResourceBundle.getBundle("jap.language", Locale.ENGLISH);
+            resourceBundle = ResourceBundle.getBundle("language", Locale.ENGLISH);
+            e.printStackTrace();
         }
         // Call method to set text for buttons
         updateText();
     }
 
     /**
-     * Set text for JLabels and Buttons for language change
+     * Method Name:
+     * Purpose:
+     * Algorithm:
      */
     protected void updateText() {
 
@@ -905,6 +1153,11 @@ public class GameView extends JFrame implements ActionListener {
 
     }
 
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     */
     protected void updateProgressBar() {
         int selectedDimensions = (int) dimensionComboBox.getSelectedItem();
 
@@ -1056,6 +1309,9 @@ public class GameView extends JFrame implements ActionListener {
 
     /**
      * Purpose popup window method for design boat
+     * Method Name: InitializeFrame
+     * Purpose: Method to set up parameters for GUI window
+     * Algorithm: Set title, size, location, default close operation
      */
     protected void designBoatWindow() {
         /* New JFrame for pop-up window to design board */
@@ -1080,6 +1336,9 @@ public class GameView extends JFrame implements ActionListener {
 
     /**
      * Create JFrame and panels hosting items
+     * Method Name: InitializeFrame
+     * Purpose: Method to set up parameters for GUI window
+     * Algorithm: Set title, size, location, default close operation
      *
      * @param size - Boat size
      */
@@ -1166,34 +1425,21 @@ public class GameView extends JFrame implements ActionListener {
         designWindow.add(bottomPanel, BorderLayout.SOUTH);
     }
 
-    protected void setRemainingBoats() {
-        this.remainingBoats = gameController.getRemainingBoats();
-    }
-
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     */
     protected void updateRemainingBoats() {
         setRemainingBoats();
         remainingBoat.setText("Remaining: " + remainingBoats);
     }
 
-    protected JFrame getDesignWindow() {
-        return designWindow;
-    }
-
-    protected void setDesignWindow(JFrame setter) {
-        this.designWindow = setter;
-    }
 
     /**
-     * Set list of Boat Objects from GameModel
-     *
-     * @param designBoatList - ArrayList of User Player board
-     */
-    protected void setDesignBoatList(List<List<Boat>> designBoatList) {
-        this.designBoatList = designBoatList;
-    }
-
-    /**
-     * Extract the boat size and put it into the ComboBoxModel
+     * Method Name: extractDesignBoatList
+     * Purpose: Extract the boat size and put it into the ComboBoxModel
+     * Algorithm: For loop and add Boat instance to ComboBox element
      */
     protected void extractDesignBoatList() {
         comboBoxModel = new DefaultComboBoxModel<>();
@@ -1205,7 +1451,9 @@ public class GameView extends JFrame implements ActionListener {
     }
 
     /**
-     * Set the updated String for control panel log
+     * Method Name: updateControlPanelText
+     * Purpose: Set the updated String for control panel log
+     * Algorithm:
      *
      * @param text - Control panel Concat string
      */
@@ -1257,6 +1505,11 @@ public class GameView extends JFrame implements ActionListener {
         }
     }
 
+    /**
+     * Method Name: languageChanger
+     * Purpose: Determine which language chosen and update JButtons
+     * Algorithm: If else tree, call updateLanguage method
+     */
     protected void languageChanger() {
         String selectedLanguage = (String) languageButton.getSelectedItem();
         Locale locale;
@@ -1269,6 +1522,11 @@ public class GameView extends JFrame implements ActionListener {
         updateLanguage(locale);
     }
 
+    /**
+     * Method Name: disableControlPanelButtons
+     * Purpose: Disable all buttons during Game Play
+     * Algorithm: Declare variables to false
+     */
     protected void disableControlPanelButtons() {
         randBoatPlacement.setEnabled(false);
         designBoatPlacement.setEnabled(false);
@@ -1276,11 +1534,36 @@ public class GameView extends JFrame implements ActionListener {
         dimensionComboBox.setEnabled(false);
     }
 
+    /**
+     * Method Name: enableControlPanelButtons
+     * Purpose: Enable all buttons during Game Play
+     * Algorithm: Declare variables to true
+     */
     protected void enableControlPanelButtons() {
         randBoatPlacement.setEnabled(true);
         designBoatPlacement.setEnabled(true);
         play.setEnabled(true);
         dimensionComboBox.setEnabled(true);
+    }
+
+    /**
+     * Method Name: ResetGame
+     * Purpose: Reset JButtons, JPanels, Timer, JProgressBar, for new game
+     * Algorithm:
+     *
+     * @param selectedDimension
+     */
+    protected void resetGame(int selectedDimension) {
+        // reset user actor
+        gameController.resetGame(true, userPanel, opponentPanel);
+        // reset user opponent
+        gameController.resetGame(false, userPanel, opponentPanel);
+        // Autofill Machine boats after new state
+        gameController.randomBoatPlacement(false);
+        createPanelView(selectedDimension, userPanel, true, progressPlayer1Panel);
+        createPanelView(selectedDimension, opponentPanel, false, progressPlayer2Panel);
+        gameController.disableUserButtons(true);
+        updateProgressBar();
     }
 
     /**

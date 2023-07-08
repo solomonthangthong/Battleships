@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Boat extends JButton {
+    private static final long serialVersionUID = 1L;
+
     // Array to hold # of tiles in the boat
     private int boatLength;
     // true vertical, false horizontal
