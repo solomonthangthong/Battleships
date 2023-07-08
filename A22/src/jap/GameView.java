@@ -167,7 +167,7 @@ public class GameView extends JFrame implements ActionListener {
 
     }
 
-    protected void resetGame(int selectedDimension){
+    protected void resetGame(int selectedDimension) {
         // reset user actor
         gameController.resetGame(true, userPanel, opponentPanel);
         // reset user opponent
@@ -179,20 +179,35 @@ public class GameView extends JFrame implements ActionListener {
         gameController.disableUserButtons(true);
         updateProgressBar();
     }
+
+    private void showAboutDialog() {
+        String description =
+                "Battleship is a strategic warfare game played on a grid-based board.\n\n"
+                        + "The player can randomize ships or manually place them before starting the game.\n\n"
+                        + "The player and Robot take turns guessing the coordinates to target and sink their opponent's ships.\n\n"
+                        + "The goal of battleship is to destroy all of the opponent's ships before they destroy yours.\n\n"
+                        + "Have fun";
+//add image from images folder
+        ImageIcon icon = new ImageIcon("images/game_about.jpg");
+//display message and icon
+        JOptionPane.showMessageDialog(this, description, "About Battleship", JOptionPane.INFORMATION_MESSAGE, icon);
+    }
+
     /**
      *
      */
     protected static class Splash {
         public void show(int flag) {
             JWindow window = new JWindow();
-            if( flag == 0){
-            window.getContentPane().add(new JLabel("", new ImageIcon("images/game_about.jpg"), SwingConstants.CENTER));}
+            if (flag == 0) {
+                window.getContentPane().add(new JLabel("", new ImageIcon("images/game_about.jpg"), SwingConstants.CENTER));
+            }
             //win splash image
-            if (flag ==1 ){
+            if (flag == 1) {
                 window.getContentPane().add(new JLabel("", new ImageIcon("images/game_winner.jpg"), SwingConstants.CENTER));
             }
             //lose splash image
-            if(flag ==2){
+            if (flag == 2) {
                 window.getContentPane().add(new JLabel("", new ImageIcon("images/game_lost.jpg"), SwingConstants.CENTER));
             }
 
@@ -209,7 +224,7 @@ public class GameView extends JFrame implements ActionListener {
             timer.setRepeats(false);
             timer.start();
         }
-        }
+    }
 
     /**
      *
@@ -317,7 +332,9 @@ public class GameView extends JFrame implements ActionListener {
                     languageChanger();
                     break;
                 case "About":
-                    //TODO complete implmentation
+                    gameController.historyLog(eventSource, controlPanelText);
+                    showAboutDialog();
+                    //the call is just  in action performed above menus
                     break;
             }
         }
@@ -443,8 +460,9 @@ public class GameView extends JFrame implements ActionListener {
 
         /**
          * Generic method to setText for JButton/JLabels from language.properties
+         *
          * @param component - Control Panel JButtons or Labels
-         * @param name - Setting Name in English or French
+         * @param name      - Setting Name in English or French
          */
         protected void setTextForComponent(AbstractButton component, String name) {
             component.setText(name);
@@ -522,19 +540,22 @@ public class GameView extends JFrame implements ActionListener {
 
     /**
      * Setter method for GameController
+     *
      * @param controller - GameController instance
      */
     protected void setGameController(GameController controller) {
         this.gameController = controller;
     }
 
-    protected void setPlayRandomDesignBooleans(Boolean play, Boolean randomize, Boolean design){
+    protected void setPlayRandomDesignBooleans(Boolean play, Boolean randomize, Boolean design) {
         this.playClicked = play;
         this.randomizedClick = randomize;
         this.designSaved = design;
     }
+
     /**
      * Pass GameModel passes and set this grid instances to GameModel
+     *
      * @param actor - User player if true, Machine if false
      * @param board - 2D array JButton grid
      */
@@ -562,8 +583,8 @@ public class GameView extends JFrame implements ActionListener {
         return progressPlayer2Panel;
     }
 
-    protected JProgressBar getProgressBar(Boolean actor){
-        if (actor){
+    protected JProgressBar getProgressBar(Boolean actor) {
+        if (actor) {
             return player1Progress;
         } else {
             return player2Progress;
@@ -790,7 +811,7 @@ public class GameView extends JFrame implements ActionListener {
 
     }
 
-    protected void updateProgressBar(){
+    protected void updateProgressBar() {
         int selectedDimensions = (int) dimensionComboBox.getSelectedItem();
 
         // (D*(D+1)*(D+2))/6 Formula
@@ -909,7 +930,7 @@ public class GameView extends JFrame implements ActionListener {
      * Purpose: Is called in GameController, When dimension JComboBox is changed, this method clears both actor board panels, and creates new board based on the size of the dimension selected.
      * Algorithm: remove both actor panels, create new board, revalidate, repaint
      *
-     * @param buttons - 2D array JButton grid
+     * @param buttons         - 2D array JButton grid
      * @param actorBoardPanel - User Panel or Opponent Panel
      */
     protected void updateBoard(JButton[][] buttons, JPanel actorBoardPanel) {
@@ -1123,13 +1144,15 @@ public class GameView extends JFrame implements ActionListener {
         }
         updateLanguage(locale);
     }
-    protected void disableControlPanelButtons(){
+
+    protected void disableControlPanelButtons() {
         randBoatPlacement.setEnabled(false);
         designBoatPlacement.setEnabled(false);
         play.setEnabled(false);
         dimensionComboBox.setEnabled(false);
     }
-    protected void enableControlPanelButtons(){
+
+    protected void enableControlPanelButtons() {
         randBoatPlacement.setEnabled(true);
         designBoatPlacement.setEnabled(true);
         play.setEnabled(true);
@@ -1220,7 +1243,7 @@ public class GameView extends JFrame implements ActionListener {
         } else if (eventSource == play) {
             clickClip.start();
             gameController.historyLog(eventSource, controlPanelText);
-            if (randomizedClick || designSaved){
+            if (randomizedClick || designSaved) {
                 gameController.startGame();
                 playClicked = true;
                 disableControlPanelButtons();
@@ -1243,7 +1266,7 @@ public class GameView extends JFrame implements ActionListener {
                 gameController.configurationString(true, userButtons);
                 designWindow.dispose();
                 designWindow = null;
-                createPanelView(selectedDimension,userPanel,true,progressPlayer1Panel);
+                createPanelView(selectedDimension, userPanel, true, progressPlayer1Panel);
                 gameController.disableUserButtons(true);
                 designSaved = true;
                 // Prompt showMessageDialog if all boats aren't placed
@@ -1273,24 +1296,25 @@ public class GameView extends JFrame implements ActionListener {
                     resetGame(selectedDimension);
                 } else if (player2Progress.getValue() == 0) {
                     Splash s = new Splash();
-                  s.show(1);
+                    s.show(1);
                     resetGame(selectedDimension);
 
 
-            }
-            if (designWindow != null) {
-                gameController.boardButtonEvent(userButtons, eventSource, controlPanelText, designWindow, true);
-                updateRemainingBoats();
-                userButtons = gameController.getButtons(true);
-                designWindow.repaint();
-                designWindow.revalidate();
-            }
+                }
+                if (designWindow != null) {
+                    gameController.boardButtonEvent(userButtons, eventSource, controlPanelText, designWindow, true);
+                    updateRemainingBoats();
+                    userButtons = gameController.getButtons(true);
+                    designWindow.repaint();
+                    designWindow.revalidate();
+                }
 //            else {
 //                clickClip.start();
 //                gameController.boardButtonEvent(userButtons, eventSource, controlPanelText, designWindow);
 //                gameController.boardButtonEvent(opponentButtons, eventSource, controlPanelText, designWindow);
 //            }
 
+            }
         }
     }
-}}
+}
