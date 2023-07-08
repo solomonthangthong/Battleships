@@ -617,11 +617,10 @@ public class GameModel {
                                 boat.setPlaced(true);
                                 boat.setBoatPosition(boatPosition);
                                 numberOfBoatsForDesign--;
-                                break;
                             } else {
                                 JOptionPane.showMessageDialog(null, "Ship overlaps with another boat.\nPlease try again.", "Warning", JOptionPane.WARNING_MESSAGE);
-                                break;
                             }
+                            break;
                         } else {
                             JOptionPane.showMessageDialog(null, "Ship does not fit within the board dimensions.\nPlease try again.", "Warning", JOptionPane.WARNING_MESSAGE);
                             break;
@@ -649,11 +648,10 @@ public class GameModel {
                                 boat.setPlaced(true);
                                 boat.setBoatPosition(boatPosition);
                                 numberOfBoatsForDesign--;
-                                break;
                             } else {
                                 JOptionPane.showMessageDialog(null, "Ship overlaps with another boat.\nPlease try again.", "Warning", JOptionPane.WARNING_MESSAGE);
-                                break;
                             }
+                            break;
                         } else {
                             JOptionPane.showMessageDialog(null, "Ship does not fit within the board dimensions.\nPlease try again.", "Warning", JOptionPane.WARNING_MESSAGE);
                             break;
