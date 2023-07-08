@@ -4,6 +4,7 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.plaf.basic.BasicButtonUI;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.util.*;
 import java.util.List;
 
@@ -548,6 +549,17 @@ public class GameModel {
         }
     }
 
+    protected void clearUserButtonListeners(){
+        for (JButton[] row : userButtons){
+            for (JButton button: row){
+                ActionListener[] actionListeners = button.getActionListeners();
+                for (ActionListener listener : actionListeners){
+                    button.removeActionListener((listener));
+                }
+            }
+        }
+    }
+
     /**
      * Place boat on 2D array
      *
@@ -605,11 +617,14 @@ public class GameModel {
                                 boat.setPlaced(true);
                                 boat.setBoatPosition(boatPosition);
                                 numberOfBoatsForDesign--;
+                                break;
                             } else {
                                 JOptionPane.showMessageDialog(null, "Ship overlaps with another boat.\nPlease try again.", "Warning", JOptionPane.WARNING_MESSAGE);
+                                break;
                             }
                         } else {
                             JOptionPane.showMessageDialog(null, "Ship does not fit within the board dimensions.\nPlease try again.", "Warning", JOptionPane.WARNING_MESSAGE);
+                            break;
                         }
                     } else {
                         if (clickedCol + boatSizeSearch <= userButtons[clickedRow].length) {
@@ -634,11 +649,14 @@ public class GameModel {
                                 boat.setPlaced(true);
                                 boat.setBoatPosition(boatPosition);
                                 numberOfBoatsForDesign--;
+                                break;
                             } else {
                                 JOptionPane.showMessageDialog(null, "Ship overlaps with another boat.\nPlease try again.", "Warning", JOptionPane.WARNING_MESSAGE);
+                                break;
                             }
                         } else {
                             JOptionPane.showMessageDialog(null, "Ship does not fit within the board dimensions.\nPlease try again.", "Warning", JOptionPane.WARNING_MESSAGE);
+                            break;
                         }
                     }
                 }

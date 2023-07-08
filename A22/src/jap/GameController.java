@@ -316,6 +316,8 @@ public class GameController implements ActionListener {
 
     protected void openDesignBoat() {
         //gameView.designBoatWindow();
+
+        gameModel.clearUserButtonListeners();
         //TODO add logic to check if randomize has been used
         gameModel.setUserPlayerButtons(gameModel.createButtonBoard(gameModel.getPlayer(true)));
         // Logic for loop to get # of boats, orientation, etc
