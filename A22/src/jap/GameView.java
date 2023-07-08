@@ -43,7 +43,7 @@ public class GameView extends JFrame implements ActionListener {
      */
     private JComboBox<String> languageButton;
     private JLabel languageLabel;
-    private String selectedLanguage;
+
     private ResourceBundle resourceBundle;
 
     /**
@@ -106,12 +106,11 @@ public class GameView extends JFrame implements ActionListener {
      */
     private JPanel opponentPanel;
 
-    private JPanel designPanel;
     private Boolean designSaved;
     private Boolean randomizedClick;
     // Stores the items
-    private DefaultComboBoxModel comboBoxModel;
-    private JComboBox boatSizeSelector;
+    private DefaultComboBoxModel<Integer> comboBoxModel;
+    private JComboBox<Integer> boatSizeSelector;
     // List to hold boats, inner list # of JButtons per size
     private List<List<Boat>> designBoatList;
 
@@ -316,7 +315,7 @@ public class GameView extends JFrame implements ActionListener {
                     // reset user opponent
                     gameController.resetGame(false, userPanel, opponentPanel);
                     // Autofill Machine boats after new state
-                    gameController.randomBoatPlacement(opponentPanel, false);
+                    gameController.randomBoatPlacement(false);
                     createPanelView(selectedDimension, userPanel, true, progressPlayer1Panel);
                     createPanelView(selectedDimension, opponentPanel, false, progressPlayer2Panel);
                     gameController.disableUserButtons(true);
@@ -461,8 +460,8 @@ public class GameView extends JFrame implements ActionListener {
 
         /**
          * Generic method to setText for JButton/JLabels from language.properties
-         * @param component
-         * @param name
+         * @param component - Control Panel JButtons or Labels
+         * @param name - Setting Name in English or French
          */
         protected void setTextForComponent(AbstractButton component, String name) {
             component.setText(name);
@@ -496,6 +495,7 @@ public class GameView extends JFrame implements ActionListener {
                     return;
                 }
                 lastClickedButton = clickedButton;
+
             } else if (source == saveColour) {
                 int selectedDimension = (int) dimensionComboBox.getSelectedItem();
 
@@ -516,7 +516,7 @@ public class GameView extends JFrame implements ActionListener {
                     frame.dispose();
                 }
             } else if (source == resetColour) {
-
+                //TODO reset selection?
             }
         }
 
@@ -539,7 +539,7 @@ public class GameView extends JFrame implements ActionListener {
 
     /**
      * Setter method for GameController
-     * @param controller
+     * @param controller - GameController instance
      */
     protected void setGameController(GameController controller) {
         this.gameController = controller;
@@ -552,8 +552,8 @@ public class GameView extends JFrame implements ActionListener {
     }
     /**
      * Pass GameModel passes and set this grid instances to GameModel
-     * @param actor
-     * @param board
+     * @param actor - User player if true, Machine if false
+     * @param board - 2D array JButton grid
      */
     protected void setBoardButtons(Boolean actor, JButton[][] board) {
         if (actor) {
@@ -873,7 +873,7 @@ public class GameView extends JFrame implements ActionListener {
         for (int k = 0; k < numCols; k++) {
             //make  new label for each col
             JLabel columnLabels = new JLabel(String.valueOf(k + 1));
-            ;
+
             //set same dimensions as selection box
             columnLabels.setPreferredSize(new Dimension(labelSize, labelSize));
             columnLabels.setHorizontalAlignment(SwingConstants.CENTER);
@@ -926,17 +926,16 @@ public class GameView extends JFrame implements ActionListener {
      * Purpose: Is called in GameController, When dimension JComboBox is changed, this method clears both actor board panels, and creates new board based on the size of the dimension selected.
      * Algorithm: remove both actor panels, create new board, revalidate, repaint
      *
-     * @param buttons
-     * @param actorBoardPanel
+     * @param buttons - 2D array JButton grid
+     * @param actorBoardPanel - User Panel or Opponent Panel
      */
     protected void updateBoard(JButton[][] buttons, JPanel actorBoardPanel) {
 
         actorBoardPanel.removeAll();
 
         // Clear previous actionListeners
-        for (int i = 0; i < buttons.length; i++) {
-            for (int j = 0; j < buttons[i].length; j++) {
-                JButton button = buttons[i][j];
+        for (JButton[] buttonRow : buttons) {
+            for (JButton button : buttonRow) {
                 ActionListener[] listeners = button.getActionListeners();
                 for (ActionListener listener : listeners) {
                     button.removeActionListener(listener);
@@ -983,7 +982,7 @@ public class GameView extends JFrame implements ActionListener {
      * @param size - Boat size
      */
     protected void designBoatPlacement(Integer size) {
-        designPanel = new JPanel(new BorderLayout());
+        JPanel designPanel = new JPanel(new BorderLayout());
         JPanel bottomPanel = new JPanel();
         userButtons = gameController.getButtons(true);
         boatLabel = new JLabel();
@@ -1061,7 +1060,7 @@ public class GameView extends JFrame implements ActionListener {
      *
      * @param designBoatList - ArrayList of User Player board
      */
-    protected void setDesignBoatList(List designBoatList) {
+    protected void setDesignBoatList(List<List<Boat>> designBoatList) {
         this.designBoatList = designBoatList;
     }
 
@@ -1131,7 +1130,7 @@ public class GameView extends JFrame implements ActionListener {
     }
 
     protected void languageChanger() {
-        selectedLanguage = (String) languageButton.getSelectedItem();
+        String selectedLanguage = (String) languageButton.getSelectedItem();
         Locale locale;
 
         if (selectedLanguage.equals("English")) {
@@ -1201,8 +1200,8 @@ public class GameView extends JFrame implements ActionListener {
             gameController.updateModelViewBoard(selectedDimension, userPanel, opponentPanel);
 
             // Need to see if GameModel Buttons are updated with Boat
-            gameController.randomBoatPlacement(opponentPanel, false);
-            gameController.randomBoatPlacement(userPanel, true);
+            gameController.randomBoatPlacement(false);
+            gameController.randomBoatPlacement(true);
 
             createPanelView(selectedDimension, userPanel, true, progressPlayer1Panel);
             createPanelView(selectedDimension, opponentPanel, false, progressPlayer2Panel);
@@ -1223,7 +1222,7 @@ public class GameView extends JFrame implements ActionListener {
             createPanelView(selectedDimension, userPanel, true, progressPlayer1Panel);
 
             // Instant create new Boats for Machine
-            gameController.randomBoatPlacement(opponentPanel, false);
+            gameController.randomBoatPlacement(false);
             // Remove actionListeners and Update Panels
             createPanelView(selectedDimension, opponentPanel, false, progressPlayer2Panel);
             gameController.configurationString(false, opponentButtons);

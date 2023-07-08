@@ -4,12 +4,10 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.plaf.basic.BasicButtonUI;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.util.Random;
 
 public class GameController {
-    private GameModel gameModel;
-    private GameView gameView;
+    private final GameModel gameModel;
+    private final GameView gameView;
 
     public GameController(GameModel model, GameView view) {
         this.gameModel = model;
@@ -19,7 +17,7 @@ public class GameController {
         view.setBoardButtons(true, getButtons(true));
         view.setBoardButtons(false, getButtons(false));
         view.createPanelView(gameModel.getBoardSize(), view.getUserPanel(), true, view.getProgressPlayer1Panel());
-        randomBoatPlacement(view.getOpponentPanel(), false);
+        randomBoatPlacement(false);
         view.createPanelView(gameModel.getBoardSize(), view.getOpponentPanel(), false, view.getProgressPlayer2Panel());
         configurationString(false, gameModel.getOpponentButtons());
         disableUserButtons(true);
@@ -37,10 +35,6 @@ public class GameController {
         gameModel.historyLog(eventSource, controlPanelText);
         String updatedLog = gameModel.getCurrentGameLog();
         gameView.updateControlPanelText(updatedLog);
-    }
-
-    protected void aboutMenu() {
-
     }
 
     /**
@@ -125,10 +119,6 @@ public class GameController {
         gameView.designBoatPlacement(gameModel.getBoardSize());
     }
 
-    protected void getDesignBoatList(){
-        gameView.setDesignBoatList(gameModel.getDesignBoatList());
-    }
-
     protected void resetDesignBoatArrayList() {
         gameModel.clearDesignBoatList();
         gameModel.convertDesignJButtonsToBoat(false);
@@ -142,10 +132,9 @@ public class GameController {
     /**
      * Purpose: sets gameModel user/opponent 2D array button grid to have random boats
      *
-     * @param actorPanel - Player/Machine JPanel
      * @param actor      - Player/Machine
      */
-    protected void randomBoatPlacement(JPanel actorPanel, Boolean actor) {
+    protected void randomBoatPlacement(Boolean actor) {
         if (actor) {
             gameModel.setUserPlayerButtons(gameModel.generateBoatSize(true));
         } else {
@@ -154,8 +143,7 @@ public class GameController {
     }
 
     protected Integer getRemainingBoats() {
-        int remainder = gameModel.getNumberOfBoatsForDesign();
-        return remainder;
+        return gameModel.getNumberOfBoatsForDesign();
     }
 
     protected void resetRemainingBoat() {
@@ -238,7 +226,7 @@ public class GameController {
 
     /**
      *
-     * @param didMachinePlay
+     * @param didMachinePlay - Did the machine play True or False
      */
     protected void disableUserButtons(Boolean didMachinePlay) {
         JButton[][] buttons;

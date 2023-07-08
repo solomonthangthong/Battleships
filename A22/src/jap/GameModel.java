@@ -25,26 +25,17 @@ public class GameModel {
     private final Player[] players;
     private String player1Config;
     private String player2Config;
-    private boolean userTurn;
-    private int timer;
-
-    private JComboBox<String> language;
 
     private int boardSize;
 
     // controlPanelText.getText(); for historyLog method
     private String currentAction;
 
-    private int player1Points;
-
-    private int player2Points;
-
     // Nested list, inner list represent size of boat
     private List<List<Boat>> designBoatList;
     private Integer boatSizeSearch;
     private Integer numberOfBoatsForDesign;
 
-    private Integer numberOfBoatForHealthBar;
     private Border whiteBorder;
     private Color selectedColour;
 
@@ -65,8 +56,6 @@ public class GameModel {
         opponentButtons = createButtonBoard(players[1]);
 
         numberOfBoatsForDesign = 0;
-        numberOfBoatForHealthBar = 0;
-
 
         waterColour = Color.decode("#008fa2");
         hitBoatColor = Color.decode("#db9c59");
@@ -75,8 +64,8 @@ public class GameModel {
 
     /**
      * Getter method for which player is being played
-     * @param actor
-     * @return
+     * @param actor - User Player or Machine
+     * @return - Player instance
      */
     protected Player getPlayer(Boolean actor) {
         if (actor) {
@@ -176,7 +165,7 @@ public class GameModel {
 
     /**
      * Getter method for Board Size
-     * @return
+     * @return - Board size
      */
     protected Integer getBoardSize() {
         return boardSize;
@@ -184,7 +173,7 @@ public class GameModel {
 
     /**
      * Setter for Board Size
-     * @param size
+     * @param size - Board Size
      */
     protected void setBoardSize(Integer size) {
         this.boardSize = size;
@@ -192,7 +181,7 @@ public class GameModel {
 
     /**
      * Getter method for user Buttons
-     * @return
+     * @return - User Button grid
      */
     protected JButton[][] getUserPlayerButtons() {
         return userButtons;
@@ -200,7 +189,7 @@ public class GameModel {
 
     /**
      * Setter for User Buttons
-     * @param userPlayerButtons
+     * @param userPlayerButtons - User Button grid
      */
     protected void setUserPlayerButtons(JButton[][] userPlayerButtons) {
         this.userButtons = userPlayerButtons;
@@ -208,7 +197,7 @@ public class GameModel {
 
     /**
      * Setter method for Opponent Buttons
-     * @param opponentPlayerButtons
+     * @param opponentPlayerButtons - Opponent Button grid
      */
     protected void setOpponentButtons(JButton[][] opponentPlayerButtons) {
         this.opponentButtons = opponentPlayerButtons;
@@ -216,7 +205,7 @@ public class GameModel {
 
     /**
      * Getter method for Opponent Buttons
-     * @return
+     * @return - Opponent Button grid
      */
     protected JButton[][] getOpponentButtons() {
         return opponentButtons;
@@ -224,7 +213,7 @@ public class GameModel {
 
     /**
      * Setter method for UserBoard Panel
-     * @param actorPanel
+     * @param actorPanel - User JPanel
      */
     protected void setUserBoardPanel(JPanel actorPanel) {
         this.userBoardPanel = actorPanel;
@@ -232,7 +221,7 @@ public class GameModel {
 
     /**
      * Getter method for UserBoard Panel
-     * @return
+     * @return - User JPanel
      */
     protected JPanel getUserBoardPanel() {
         return userBoardPanel;
@@ -240,7 +229,7 @@ public class GameModel {
 
     /**
      * Setter method for Opponent Board Panel
-     * @param actorPanel
+     * @param actorPanel - Opponent JPanel
      */
     protected void setOpponentBoardPanel(JPanel actorPanel) {
         this.opponentBoardPanel = actorPanel;
@@ -248,7 +237,7 @@ public class GameModel {
 
     /**
      * Getter method for Opponent Board Panel
-     * @return
+     * @return - Opponent JPanel
      */
     protected JPanel getOpponentBoardPanel() {
         return opponentBoardPanel;
@@ -256,7 +245,7 @@ public class GameModel {
 
     /**
      * Getter method for number of boats (remaining boat count)
-     * @return
+     * @return - Int for RemainingBoats variable
      */
     protected Integer getNumberOfBoatsForDesign() {
         return numberOfBoatsForDesign;
@@ -264,7 +253,7 @@ public class GameModel {
 
     /**
      * Setter number of boats for Design (remaining boat count)
-     * @param reset
+     * @param reset - Reset numberOfBoatsForDesign to 0
      */
     protected void setNumberOfBoatsForDesign(Integer reset){
         this.numberOfBoatsForDesign = reset;
@@ -272,7 +261,7 @@ public class GameModel {
 
     /**
      * SelectedColour??? Setter method
-     * @param color
+     * @param color - Figure this one out
      */
     protected void setSelectedColour(Color color) {
         this.selectedColour = color;
@@ -280,7 +269,7 @@ public class GameModel {
 
     /**
      * set Player1 board layout in String representation
-     * @param config
+     * @param config - Player board arrangement string presentation
      */
     protected void setPlayer1Config(String config) {
         this.player1Config = config;
@@ -289,7 +278,7 @@ public class GameModel {
 
     /**
      * set Player2 board layout in String representation
-     * @param config
+     * @param config - Player board arrangement string presentation
      */
     protected void setPlayer2Config(String config) {
         this.player2Config = config;
@@ -300,7 +289,7 @@ public class GameModel {
      * @param button - Passed JButton from board
      * @param boat   - Passed Boat from board
      */
-    protected <T> JButton updateButtonState(JButton button, Boat boat, Boolean reset) {
+    protected JButton updateButtonState(JButton button, Boat boat, Boolean reset) {
         // Init ButtonState
         ButtonState state;
         //TODO complete integration of evaluating boats for HIT/MISS
@@ -323,6 +312,7 @@ public class GameModel {
                 button.setBackground(waterColour);
                 button.setForeground(Color.decode("#999999"));
                 button.updateUI();
+                button.setEnabled(false);
             }
             // if Boat is passed, and state is NOT HIT, state becomes hit
         } else if (boat != null && reset) {
@@ -398,13 +388,13 @@ public class GameModel {
 
     /**
      * String configuration for board layout
-     * @param actor
-     * @param actorButtons
-     * @return
+     * @param actor - Player or Machine
+     * @param actorButtons - Player or Machine 2D array JButton grid
+     * @return - String representation of grid
      */
     protected String configurationString(Boolean actor, JButton[][] actorButtons){
         JButton[][] buttons;
-        String configString = "";
+
         if (actor){
             userButtons = actorButtons;
             buttons = userButtons;
@@ -414,17 +404,19 @@ public class GameModel {
             buttons = opponentButtons;
         }
 
-        for (int i = 0; i < buttons.length; i++){
-            for (int j = 0; j < buttons.length; j++){
-                if (buttons[i][j] instanceof Boat){
-                    Boat boat = (Boat) buttons[i][j];
-                    configString = configString + String.valueOf(boat.getBoatLength());
-                } else if (buttons[i][j] != null){
-                    configString = configString + buttons[i][j].getText();
+        StringBuilder configStringBuilder = new StringBuilder();
+
+        for (JButton[] buttonRow : buttons) {
+            for (JButton button : buttonRow) {
+                if (button instanceof Boat) {
+                    Boat boat = (Boat) button;
+                    configStringBuilder.append(boat.getBoatLength());
+                } else if (button != null) {
+                    configStringBuilder.append(button.getText());
                 }
             }
         }
-        return configString;
+        return configStringBuilder.toString();
     }
 
     /**
@@ -484,15 +476,14 @@ public class GameModel {
 
     /**
      * Machine method to select user grid with random variable
-     * @param boardSize
-     * @return
+     * @param boardSize - 2D grid size
+     * @return - Selected JButton
      */
     protected JButton randomSelection(int boardSize) {
         Random random = new Random();
         int row;
         int column;
         JButton selectedButton;
-        ButtonState state = null;
 
         do {
             row = random.nextInt(boardSize);
@@ -500,18 +491,18 @@ public class GameModel {
             selectedButton = userButtons[row][column];
 
 
-        } while(selectedButton.getText()=="HIT" || selectedButton.getText()=="MISS");
+        } while(selectedButton.getText().equals("HIT") || selectedButton.getText().equals("MISS"));
 
         return selectedButton;
     }
 
     /**
-     * Check if selection if valid
-     * @param selectedButton
+     * Check if selection is valid
+     * @param selectedButton - Passed JButton that was clicked by Player or Machine
      * @return - Boolean value
      */
     protected boolean isValidSelection(JButton selectedButton){
-        if (selectedButton.getText()=="HIT" || selectedButton.getText()=="MISS"){
+        if (selectedButton.getText().equals("HIT") || selectedButton.getText().equals("MISS")){
             return false;
         }
         else{
@@ -528,7 +519,7 @@ public class GameModel {
 
     /**
      * Getter method for DesignBoatList array
-     * @return
+     * @return - return Nested List of Boats
      */
     protected List<List<Boat>> getDesignBoatList() {
         return designBoatList;
@@ -657,13 +648,13 @@ public class GameModel {
 
     /**
      * Maybe I can remove this later
-     * @param buttons
+     * @param buttons - JButton grid
      */
     protected void changeBoatColor(JButton[][] buttons) {
-        for (int row = 0; row < buttons.length; row++) {
-            for (int col = 0; col < buttons.length; col++) {
-                if (buttons[row][col] instanceof Boat){
-                    buttons[row][col].setBackground(selectedColour);
+        for (JButton[] buttonRow : buttons) {
+            for (JButton button : buttonRow) {
+                if (button instanceof Boat) {
+                    button.setBackground(selectedColour);
                 }
             }
         }
@@ -676,20 +667,18 @@ public class GameModel {
         Map<Integer, Color> sizeColorMap = new HashMap<>();
         Random random = new Random();
 
-        for (int row = 0; row < opponentButtons.length; row++){
-            for (int col = 0; col < opponentButtons.length; col++){
-                if (opponentButtons[row][col] instanceof Boat){
-                    Boat boat = (Boat) opponentButtons[row][col];
-
-                    if (!sizeColorMap.containsKey(boat.getBoatLength())){
+        for (JButton[] boatRow : opponentButtons) {
+            for (JButton button : boatRow) {
+                if (button instanceof Boat) {
+                    Boat boat = (Boat) button;
+                    if (!sizeColorMap.containsKey(boat.getBoatLength())) {
                         Color randomColour = new Color(random.nextInt(256), random.nextInt(256), random.nextInt(256));
                         sizeColorMap.put(boat.getBoatLength(), randomColour);
                     }
-                    if (sizeColorMap.containsKey(boat.getBoatLength()) && boat.getVisibility() == false){
+                    if (sizeColorMap.containsKey(boat.getBoatLength()) && !boat.getVisibility()) {
                         boat.setVisibility(true);
                         boat.setBackground(sizeColorMap.get(boat.getBoatLength()));
                     }
-
                 }
             }
         }
@@ -697,7 +686,7 @@ public class GameModel {
 
     /**
      * Convert JButtons from Design mode into boats and place into user grid
-     * @param update
+     * @param update - Boolean if NOT true reset JButton for DesignWindow
      */
     protected void convertDesignJButtonsToBoat(Boolean update) {
         Map<Integer, Color> sizeColorMap = new HashMap<>();
@@ -723,7 +712,7 @@ public class GameModel {
                         }
 
                         // Determine Orientation
-                        if (button.getBackground() == Color.BLUE) {
+                        if (button.getBackground().equals(Color.BLUE)) {
                             orientation = true;
                         } else {
                             orientation = false;
@@ -742,7 +731,7 @@ public class GameModel {
                         userButtons[row][col] = boat;
                     }
                 }else {
-                    if (button.getName() == "Convert") {
+                    if (button.getName().equals("Convert")) {
                         button.setText("0");
                         button.setForeground(Color.black);
                         button.setBackground(Color.lightGray);
