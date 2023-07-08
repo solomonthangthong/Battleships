@@ -646,19 +646,6 @@ public class GameModel {
         }
     }
 
-    /**
-     * Maybe I can remove this later
-     * @param buttons - JButton grid
-     */
-    protected void changeBoatColor(JButton[][] buttons) {
-        for (JButton[] buttonRow : buttons) {
-            for (JButton button : buttonRow) {
-                if (button instanceof Boat) {
-                    button.setBackground(selectedColour);
-                }
-            }
-        }
-    }
 
     /**
      * For Solution method to reveal Opponent boat, and where the boats are placed

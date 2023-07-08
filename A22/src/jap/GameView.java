@@ -505,17 +505,23 @@ public class GameView extends JFrame implements ActionListener {
             } else if (source == saveColour) {
                 int selectedDimension = (int) dimensionComboBox.getSelectedItem();
 
-                userButtons = gameController.getButtons(true);
-                gameController.setColorVariables(unselectedColorValue, waterColorValue, shipColorValue);
-                gameController.changeBoatColor(userButtons, userPanel, true);
-                gameController.changeBoatColor(opponentButtons, opponentPanel, false);
+                if (unselectedColorValue != null && waterColorValue != null && shipColorValue != null){
+                    userButtons = gameController.getButtons(true);
+                    gameController.setColorVariables(unselectedColorValue, waterColorValue, shipColorValue);
+                    gameController.changeBoatColor(userButtons, userPanel, true, unselectedColorValue);
+                    gameController.changeBoatColor(opponentButtons, opponentPanel, false, unselectedColorValue);
 
-                createPanelView(selectedDimension, userPanel, true, progressPlayer1Panel);
-                createPanelView(selectedDimension, opponentPanel, false, progressPlayer2Panel);
+                    createPanelView(selectedDimension, userPanel, true, progressPlayer1Panel);
+                    createPanelView(selectedDimension, opponentPanel, false, progressPlayer2Panel);
 
-                if (frame != null) {
-                    frame.dispose();
+                    if (frame != null) {
+                        frame.dispose();
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Please select all three options before saving.", "Warning", JOptionPane.WARNING_MESSAGE);
                 }
+
+
 
             } else if (source == cancelColour) {
                 if (frame != null) {

@@ -261,8 +261,20 @@ public class GameController implements ActionListener {
         }
     }
 
-    protected void changeBoatColor(JButton[][] buttons, JPanel actorPanel, Boolean actor) {
-        gameModel.changeBoatColor(buttons);
+    protected void changeBoatColor(JButton[][] buttons, JPanel actorPanel, Boolean actor, Color unselected) {
+
+        for (JButton[] buttonRow : buttons) {
+            for (JButton button : buttonRow) {
+
+                if (button instanceof Boat) {
+                    if (!actor){
+                        button.setBackground(unselected);
+                    }
+                } else {
+                    button.setBackground(unselected);
+                }
+            }
+        }
 
         if (actor) {
             gameModel.setUserBoardPanel(actorPanel);
