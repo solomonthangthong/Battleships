@@ -130,7 +130,7 @@ public class GameView extends JFrame implements ActionListener {
 
     public GameView() {
         Splash s = new Splash();
-        //s.show();
+        s.show(0);
         menuBar = new Menu();
 
         UIManager.put("ProgressBar.foreground", Color.decode("#9de47c"));
@@ -158,27 +158,59 @@ public class GameView extends JFrame implements ActionListener {
         setSize(1280, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+
     }
 
+
+
+    public void resetGame(int selectedDimension){
+
+        // reset user actor
+        gameController.resetGame(true, userPanel, opponentPanel);
+        // reset user opponent
+        gameController.resetGame(false, userPanel, opponentPanel);
+        // Autofill Machine boats after new state
+        gameController.randomBoatPlacement(opponentPanel, false);
+        createPanelView(selectedDimension, userPanel, true, progressPlayer1Panel);
+        createPanelView(selectedDimension, opponentPanel, false, progressPlayer2Panel);
+        gameController.disableUserButtons(true);
+        updateProgressBar();
+
+    }
     /**
      *
      */
     protected static class Splash {
-        public void show() {
+        public void show(int flag) {
             JWindow window = new JWindow();
-            window.getContentPane().add(new JLabel("", new ImageIcon("images/game_about.jpg"), SwingConstants.CENTER));
+            if( flag == 0){
+            window.getContentPane().add(new JLabel("", new ImageIcon("images/game_about.jpg"), SwingConstants.CENTER));}
+            //win splash image
+            if (flag ==1 ){
+                window.getContentPane().add(new JLabel("", new ImageIcon("images/game_winner.jpg"), SwingConstants.CENTER));
+            }
+            //lose splash image
+            if(flag ==2){
+                window.getContentPane().add(new JLabel("", new ImageIcon("images/game_lost.jpg"), SwingConstants.CENTER));
+            }
+
+
             window.setBounds(500, 150, 300, 200);
             window.setLocationRelativeTo(null);
             window.setVisible(true);
-            try {
-                Thread.sleep(5000);
-            } catch (Exception e) {
-
-            }
-            window.setVisible(false);
-            window.dispose();
+            window.setAlwaysOnTop(true);
+            int delay = 4000;
+            Timer timer = new Timer(delay, c -> {
+                window.setVisible(false);
+                window.dispose();
+                System.out.println("here");
+            });
+            timer.setRepeats(false);
+            timer.start();
         }
-    }
+        }
+
 
     /**
      *
@@ -262,6 +294,7 @@ public class GameView extends JFrame implements ActionListener {
             return menu;
         }
 
+
         @Override
         public void actionPerformed(ActionEvent e) {
             String arg = e.getActionCommand();
@@ -270,6 +303,7 @@ public class GameView extends JFrame implements ActionListener {
 
             switch (arg) {
                 case "New":
+
                     gameController.historyLog(eventSource, controlPanelText);
                     // reset user actor
                     gameController.resetGame(true, userPanel, opponentPanel);
@@ -1151,6 +1185,7 @@ public class GameView extends JFrame implements ActionListener {
         } else if (eventSource == reset) {
             clickClip.start();
             gameController.historyLog(eventSource, controlPanelText);
+            resetGame(selectedDimension);
         } else if (eventSource == play) {
             clickClip.start();
             gameController.historyLog(eventSource, controlPanelText);
@@ -1188,11 +1223,18 @@ public class GameView extends JFrame implements ActionListener {
                     gameController.disableUserButtons(true);
                 }
                 //ADD METHOD HERE TO CHECK BOTH PROGRESS BARS THAT SOLOMON IS DOING   if progress bar = 0 . Display win or loss
-                if (player1Progress.getValue() == 0){
+                if (player1Progress.getValue() == 0) {
+                    Splash s = new Splash();
+                    s.show(2);
+                    System.out.println("Loss");
 
-                } else if (player2Progress.getValue() == 0){
+                    resetGame(selectedDimension);
+                } else if (player2Progress.getValue() == 0) {
+                    Splash s = new Splash();
+                  s.show(1);
+                    resetGame(selectedDimension);
 
-                }
+
             }
             if (designWindow != null) {
                 gameController.boardButtonEvent(userButtons, eventSource, controlPanelText, designWindow, true);
@@ -1210,4 +1252,4 @@ public class GameView extends JFrame implements ActionListener {
 
         }
     }
-}
+}}
