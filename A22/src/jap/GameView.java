@@ -521,18 +521,16 @@ public class GameView extends JFrame implements ActionListener {
                     JOptionPane.showMessageDialog(null, "Please select all three options before saving.", "Warning", JOptionPane.WARNING_MESSAGE);
                 }
 
-
-
             } else if (source == cancelColour) {
                 if (frame != null) {
                     frame.dispose();
                 }
             } else if (source == resetColour) {
-                //TODO reset selection?
+                // Set Buttons back to default configuration
                 unselectedColour.setBackground(Color.decode("#f56a4d"));
                 waterColour.setBackground(Color.decode("#008fa2"));
                 boatColour.setBackground(Color.decode("#db9c59"));
-                tcc.setColor(Color.decode("#f56a4d"));
+                // Set Grid back to default colour configuration
                 gameController.setColorVariables(unselectedColour.getBackground(), waterColour.getBackground(), boatColour.getBackground());
             }
         }
