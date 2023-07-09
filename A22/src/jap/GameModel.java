@@ -1,25 +1,30 @@
 package jap;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.plaf.basic.BasicButtonUI;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.Serializable;
 import java.util.*;
 import java.util.List;
+
 /**
  * Class Name: GameModel
- *
+ * <p>
  * Method List: getPlayer, historyLog, setCurrentAction, getCurrentGameLog, getBoardSize, setBoardSize, getUserPlayerButtons, setUserPlayerButtons,
  * setOpponentButtons, getOpponentButtons, setUserBoardPanel, getUserBoardPanel, setOpponentBoardPanel, getOpponentBoardPanel, getNumberOfBoatsForDesign,
  * setNumberOfBoatsForDesign, setSelectedColour, setPlayer1Config, setPlayer2Config, updateButtonState, CreateButtonBoard, HiddenTextButtonUI,
  * configurationString, generateBoatSize, populateDesignBoat, randomSelection, isValidSelection, clearDesignLight, getDesignBoatList, setBoatOrientation,
  * clearUserButtonListeners, placeSelectedBoat, setBoatVisible, convertDesignJButtonToBoat, createRandomBoat, isOccupiedOnBoard
- *
+ * <p>
  * Constants List: userButtons, opponentButtons, opponentBoardPanel, players, player1Config, player2Config, boardSize, currentAction, designBoatList, boatSizeSearch, numberOfBoatsForDesign
  * whiteBorder, selectedColour, waterColor, hitBoatColor
- *
+ * <p>
  * Model model, following MVC design pattern, to store data from Controller
  *
  * @author Andrew Lorimer, Solomon Thangthong
@@ -319,7 +324,7 @@ public class GameModel {
      *
      * @param reset - Reset numberOfBoatsForDesign to 0
      */
-    protected void setNumberOfBoatsForDesign(Integer reset){
+    protected void setNumberOfBoatsForDesign(Integer reset) {
         this.numberOfBoatsForDesign = reset;
     }
 
@@ -329,8 +334,8 @@ public class GameModel {
      * Algorithm: Set variables
      *
      * @param unselected - Grid Button Color
-     * @param water - When User/Machine misses
-     * @param hitBoat - When ship/boat is hit
+     * @param water      - When User/Machine misses
+     * @param hitBoat    - When ship/boat is hit
      */
     protected void setSelectedColour(Color unselected, Color water, Color hitBoat) {
         this.selectedColour = unselected;
@@ -371,11 +376,11 @@ public class GameModel {
      * @param button - Passed JButton from board
      * @param boat   - Passed Boat from board
      */
-    protected JButton updateButtonState(JButton button, Boat boat, Boolean reset) {
+    protected JButton updateButtonState(JButton button, Boat boat, Boolean reset, Boolean who) {
         // Init ButtonState
         ButtonState state;
-        //TODO complete integration of evaluating boats for HIT/MISS
-        // Check if Button passed
+        Clip hitMissSound;
+
         if (button != null) {
             state = new ButtonState(button);
         } else {
@@ -395,6 +400,10 @@ public class GameModel {
                 button.setForeground(Color.decode("#999999"));
                 button.updateUI();
                 button.setEnabled(false);
+                hitMissSound = boardClipPlay(false);
+                if (who) {
+                    hitMissSound.start();
+                }
             }
             // if Boat is passed, and state is NOT HIT, state becomes hit
         } else if (boat != null && reset) {
@@ -405,12 +414,17 @@ public class GameModel {
             replaceButton.setForeground(Color.black);
 
             return replaceButton;
-        }else if (boat != null) {
+        } else if (boat != null) {
             state.setState(State.HIT);
             boat.setBackground(hitBoatColor);
             boat.setForeground(Color.decode("#999999"));
             boat.updateUI();
             boat.setEnabled(false);
+            hitMissSound = boardClipPlay(true);
+            if (who) {
+                hitMissSound.start();
+            }
+
         }
 
         return button;
@@ -478,18 +492,18 @@ public class GameModel {
      * Algorithm: if else statement to determine whose buttons, StringBuilder and concatenate
      * the Text from JButton for configuration
      *
-     * @param actor - Player or Machine
+     * @param actor        - Player or Machine
      * @param actorButtons - Player or Machine 2D array JButton grid
      * @return - String representation of grid
      */
-    protected String configurationString(Boolean actor, JButton[][] actorButtons){
+    protected String configurationString(Boolean actor, JButton[][] actorButtons) {
         JButton[][] buttons;
 
-        if (actor){
+        if (actor) {
             userButtons = actorButtons;
             buttons = userButtons;
 
-        }else {
+        } else {
             opponentButtons = actorButtons;
             buttons = opponentButtons;
         }
@@ -582,7 +596,7 @@ public class GameModel {
             row = random.nextInt(boardSize);
             column = random.nextInt(boardSize);
             selectedButton = userButtons[row][column];
-        } while(selectedButton.getText().equals("HIT") || selectedButton.getText().equals("MISS"));
+        } while (selectedButton.getText().equals("HIT") || selectedButton.getText().equals("MISS"));
 
         return selectedButton;
     }
@@ -595,11 +609,10 @@ public class GameModel {
      * @param selectedButton - Passed JButton that was clicked by Player or Machine
      * @return - Boolean value
      */
-    protected boolean isValidSelection(JButton selectedButton){
-        if (selectedButton.getText().equals("HIT") || selectedButton.getText().equals("MISS")){
+    protected boolean isValidSelection(JButton selectedButton) {
+        if (selectedButton.getText().equals("HIT") || selectedButton.getText().equals("MISS")) {
             return false;
-        }
-        else{
+        } else {
             return true;
         }
     }
@@ -609,7 +622,7 @@ public class GameModel {
      * Purpose: Clear the list when reset game/ or new state
      * Algorithm: clear() List
      */
-    protected void clearDesignBoatList(){
+    protected void clearDesignBoatList() {
         designBoatList.clear();
     }
 
@@ -652,11 +665,11 @@ public class GameModel {
      * from Main JFrame to Design Window
      * Algorithm: Enhanced For loop to clear each listener from JButton
      */
-    protected void clearUserButtonListeners(){
-        for (JButton[] row : userButtons){
-            for (JButton button: row){
+    protected void clearUserButtonListeners() {
+        for (JButton[] row : userButtons) {
+            for (JButton button : row) {
                 ActionListener[] actionListeners = button.getActionListeners();
-                for (ActionListener listener : actionListeners){
+                for (ActionListener listener : actionListeners) {
                     button.removeActionListener((listener));
                 }
             }
@@ -774,7 +787,7 @@ public class GameModel {
      * Purpose: For Solution method to reveal Opponent boat, and where the boats are placed
      * Algorithm: Enhanced For loop, and if instance of Boatm setVisibility to true, change boat Color
      */
-    protected void setBoatVisible(){
+    protected void setBoatVisible() {
         Map<Integer, Color> sizeColorMap = new HashMap<>();
         Random random = new Random();
 
@@ -815,13 +828,13 @@ public class GameModel {
                 String name = button.getName();
 
                 // If update is not true, reset JButton for DesignWindow
-                if (update){
+                if (update) {
 
                     Boolean orientation;
                     // Check if button name contains "Convert"
                     if (name != null && name.contains("Convert")) {
                         // Generate random colour for each unique size
-                        if (!sizeColorMap.containsKey(size)){
+                        if (!sizeColorMap.containsKey(size)) {
                             Color randomColour = new Color(random.nextInt(256), random.nextInt(256), random.nextInt(256));
                             sizeColorMap.put(size, randomColour);
                         }
@@ -836,7 +849,7 @@ public class GameModel {
                         Boat boat = new Boat(size, orientation);
 
                         // If size is found in map use the same colour
-                        if (sizeColorMap.containsKey(size)){
+                        if (sizeColorMap.containsKey(size)) {
                             boat.setBackground(sizeColorMap.get(size));
                         }
                         boat.setForeground(Color.white);
@@ -845,7 +858,7 @@ public class GameModel {
                         boat.setUI(new HiddenTextButtonUI());
                         userButtons[row][col] = boat;
                     }
-                }else {
+                } else {
                     if (button.getName().equals("Convert")) {
                         button.setText("0");
                         button.setForeground(Color.black);
@@ -982,5 +995,33 @@ public class GameModel {
             }
         }
         return false;
+    }
+
+    /**
+     * Method Name: boardClipPlay
+     * Purpose: Enables button click sound effects
+     * Algorithm: try catch new wav file, create new audio stream, return sound
+     *
+     * @return - If file is found, return click sound effect, else return null
+     */
+    private Clip boardClipPlay(Boolean hit) {
+        AudioInputStream audioInputStream;
+        try {
+            // Create 2nd audio input stream so 2 sounds can occur at same time
+            if (hit) {
+                audioInputStream = AudioSystem.getAudioInputStream(new File("resources/hit.wav").getAbsoluteFile());
+            } else {
+                audioInputStream = AudioSystem.getAudioInputStream(new File("resources/miss.wav").getAbsoluteFile());
+            }
+
+            // Get clip from audio file and open it
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            // Return audio file to be executed
+            return clip;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

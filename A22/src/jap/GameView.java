@@ -1491,28 +1491,6 @@ public class GameView extends JFrame implements ActionListener {
     }
 
     /**
-     * Method Name: createAudioClip
-     * Purpose: Enables button click sound effects
-     * Algorithm: try catch new wav file, create new audio stream, return sound
-     *
-     * @return - If file is found, return click sound effect, else return null
-     */
-    private Clip createAudioClip() {
-        try {
-            // Create 2nd audio input stream so 2 sounds can occur at same time
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("resources/click.wav").getAbsoluteFile());
-            // Get clip from audio file and open it
-            Clip clip = AudioSystem.getClip();
-            clip.open(audioInputStream);
-            // Return audio file to be executed
-            return clip;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    /**
      * Method Name: playBackgroundMusic
      * Purpose: Enables the background music to be played when the jar file is opened.
      * Algorithm: Try catch, locate new wav File, open audio stream, loop

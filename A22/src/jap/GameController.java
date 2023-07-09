@@ -1,5 +1,7 @@
 package jap;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -7,6 +9,7 @@ import javax.swing.plaf.basic.BasicButtonUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.Serializable;
 
 /**
@@ -56,7 +59,6 @@ public class GameController implements ActionListener {
         view.createPanelView(gameModel.getBoardSize(), view.getOpponentPanel(), false, view.getProgressPlayer2Panel());
         configurationString(false, gameModel.getOpponentButtons());
         disableUserButtons(true);
-
     }
 
     /**
@@ -142,6 +144,7 @@ public class GameController implements ActionListener {
 
         // Set Boolean that checks if randomize happened to true
         gameView.setRandomizedClick(true);
+
     }
 
     /**
@@ -153,7 +156,6 @@ public class GameController implements ActionListener {
      * @param controlPanelText
      */
     protected void handlePlayButton(Object eventSource, JLabel controlPanelText) {
-
         historyLog(eventSource, controlPanelText);
         if (gameView.getRandomizedClick() || gameView.getDesignSaved()) {
             startGame();
@@ -177,6 +179,7 @@ public class GameController implements ActionListener {
         historyLog(eventSource, controlPanelText);
         gameView.resetGame(gameModel.getBoardSize());
         gameView.enableControlPanelButtons();
+
     }
 
     /**
@@ -359,7 +362,7 @@ public class GameController implements ActionListener {
             for (JButton button : buttonRow) {
 
                 if (button instanceof Boat) {
-                    if (!actor){
+                    if (!actor) {
                         button.setBackground(unselected);
                     }
                 } else {
@@ -535,11 +538,11 @@ public class GameController implements ActionListener {
             for (int j = 0; j < squareBoard; j++) {
                 if (buttons[i][j] instanceof Boat) {
                     buttons[i][j] = new JButton();
-                    buttons[i][j] = gameModel.updateButtonState(buttons[i][j], null, true);
+                    buttons[i][j] = gameModel.updateButtonState(buttons[i][j], null, true, false);
                     buttons[i][j].setName((i + 1) + "," + (j + 1));
                     buttons[i][j].setUI(new HiddenTextButtonUI());
                 }
-                buttons[i][j] = gameModel.updateButtonState(buttons[i][j], null, true);
+                buttons[i][j] = gameModel.updateButtonState(buttons[i][j], null, true, false);
                 buttons[i][j].setBackground(Color.decode("#f56a4d"));
                 buttons[i][j].setForeground(Color.white);
                 buttons[i][j].setBorderPainted(true);
@@ -671,7 +674,7 @@ public class GameController implements ActionListener {
         if (button instanceof Boat) {
             // Button is a boat, it's a hit
             historyLog(button, controlPanelText);
-            gameModel.updateButtonState(null, (Boat) button, false);
+            gameModel.updateButtonState(null, (Boat) button, false, who);
             JProgressBar progress;
             if (who) {
                 // False is opponent ProgressBar
@@ -691,7 +694,7 @@ public class GameController implements ActionListener {
         } else {
             // Button is empty, it's a miss
             historyLog(button, controlPanelText);
-            gameModel.updateButtonState(button, null, false);
+            gameModel.updateButtonState(button, null, false, who);
         }
     }
 
@@ -699,7 +702,7 @@ public class GameController implements ActionListener {
      * Method Name:HiddenTextButton
      * Purpose:
      * Algorithm:
-     *
+     * <p>
      * Custom ButtonUI implementation that hides the grayed-out text of a disabled JButton.
      */
     private static class HiddenTextButtonUI extends BasicButtonUI {
