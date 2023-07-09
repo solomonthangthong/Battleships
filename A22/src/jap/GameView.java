@@ -1141,7 +1141,7 @@ public class GameView extends JFrame implements ActionListener {
 
     /**
      * Method Name:updateText
-     * Purpose:updates the text for all labels in the application
+     * Purpose:updates the text for all label in the application
      * Algorithm:save all the labels as a string array, iterate thru each index and modify the text associated with that label
      */
     protected void updateText() {
