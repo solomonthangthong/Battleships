@@ -11,9 +11,14 @@ import java.io.Serializable;
 
 /**
  * Class Name: GameController
- * Method List:
+ * Method List: handleLanguageButton, handleDimensionComboBox, handleDesignBoatPlacement, handleRandBoatPlacement, handlePlayButton,
+ * handleResetButton, handleBoatSizeSelector, HandleJRadioOrientation, handleResetLayout, handleSaveLayout, handleJButtonClicks,
+ * historyLog, updateModelViewBoard, configurationString, changeBoatColor, transferDesignToUserPanel, getButtons, getBoatSize, openDesignBoat,
+ * resetDesignBoatArrayList, checkOrientation, randomBoatPlacement, getRemainingBoats, resetRemainingBoat, startGame, resetGame, setColorVariables,
+ * setBoatVisible, boardButtonEvent, disableUserButtons, isValid, randomSelection, performHitMissLogic, HiddenTextButtonUI, actionPerformed
+ *
  * Constants List:
- * View model, following MVC design pattern. Updates the view to user
+ * Controller model, following MVC design pattern, to handle User actions from View
  *
  * @author Andrew Lorimer, Solomon Thangthong
  * @version 2.0

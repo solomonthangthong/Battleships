@@ -10,9 +10,17 @@ import java.util.*;
 import java.util.List;
 /**
  * Class Name: GameModel
- * Method List:
- * Constants List:
- * View model, following MVC design pattern. Updates the view to user
+ *
+ * Method List: getPlayer, historyLog, setCurrentAction, getCurrentGameLog, getBoardSize, setBoardSize, getUserPlayerButtons, setUserPlayerButtons,
+ * setOpponentButtons, getOpponentButtons, setUserBoardPanel, getUserBoardPanel, setOpponentBoardPanel, getOpponentBoardPanel, getNumberOfBoatsForDesign,
+ * setNumberOfBoatsForDesign, setSelectedColour, setPlayer1Config, setPlayer2Config, updateButtonState, CreateButtonBoard, HiddenTextButtonUI,
+ * configurationString, generateBoatSize, populateDesignBoat, randomSelection, isValidSelection, clearDesignLight, getDesignBoatList, setBoatOrientation,
+ * clearUserButtonListeners, placeSelectedBoat, setBoatVisible, convertDesignJButtonToBoat, createRandomBoat, isOccupiedOnBoard
+ *
+ * Constants List: userButtons, opponentButtons, opponentBoardPanel, players, player1Config, player2Config, boardSize, currentAction, designBoatList, boatSizeSearch, numberOfBoatsForDesign
+ * whiteBorder, selectedColour, waterColor, hitBoatColor
+ *
+ * Model model, following MVC design pattern, to store data from Controller
  *
  * @author Andrew Lorimer, Solomon Thangthong
  * @version 2.0
@@ -76,9 +84,9 @@ public class GameModel {
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name: getPlayer
+     * Purpose: Get player from List
+     * Algorithm: If else statement, return player
      *
      * @param actor - User Player or Machine
      * @return - Player instance
@@ -162,9 +170,9 @@ public class GameModel {
     }
 
     /**
-     * Method Name:
-     * Purpose: Purpose: set currentAction String
-     * Algorithm:
+     * Method Name: setCurrentAction
+     * Purpose: set currentAction String
+     * Algorithm: set global variable to passed argument
      *
      * @param actionEvent - Updated action string
      */
@@ -173,7 +181,9 @@ public class GameModel {
     }
 
     /**
+     * Method Name: getCurrentGameLog
      * Purpose: get currentAction string for historyLog in GameController
+     * Algorithm: return currentAction
      *
      * @return - Control panel concatenate string
      */
@@ -182,30 +192,31 @@ public class GameModel {
     }
 
     /**
-     * Method Name:
+     * Method Name: getBoardSize
      * Purpose: Getter method for Board Size
-     * Algorithm:
-     * @return - Board size
+     * Algorithm: return variable
+     *
+     * @return - int Board size
      */
     protected Integer getBoardSize() {
         return boardSize;
     }
 
     /**
-     * Method Name:
+     * Method Name: setBoardSize
      * Purpose: Setter for Board Size
-     * Algorithm:
+     * Algorithm: Set global variable to passed argument
      *
-     * @param size - Board Size
+     * @param size - Passed board Size from Controller
      */
     protected void setBoardSize(Integer size) {
         this.boardSize = size;
     }
 
     /**
-     * Method Name:
+     * Method Name: getUserPlayerButtons
      * Purpose: Getter method for user Buttons
-     * Algorithm:
+     * Algorithm: return userButtons
      *
      * @return - User Button grid
      */
@@ -214,31 +225,31 @@ public class GameModel {
     }
 
     /**
-     * Method Name:
+     * Method Name: setUserPlayerButtons
      * Purpose: Setter for User Buttons
-     * Algorithm:
+     * Algorithm: Set global variable for userButtons to passed argument
      *
-     * @param userPlayerButtons - User Button grid
+     * @param userPlayerButtons - User Button grid from controller
      */
     protected void setUserPlayerButtons(JButton[][] userPlayerButtons) {
         this.userButtons = userPlayerButtons;
     }
 
     /**
-     * Method Name:
+     * Method Name: setOpponentButtons
      * Purpose: Setter method for Opponent Buttons
-     * Algorithm:
+     * Algorithm: Set global variable to passed argument
      *
-     * @param opponentPlayerButtons - Opponent Button grid
+     * @param opponentPlayerButtons - Opponent Button grid from Controller
      */
     protected void setOpponentButtons(JButton[][] opponentPlayerButtons) {
         this.opponentButtons = opponentPlayerButtons;
     }
 
     /**
-     * Method Name:
+     * Method Name: getOpponentButtons
      * Purpose: Getter method for Opponent Buttons
-     * Algorithm:
+     * Algorithm: return variable
      *
      * @return - Opponent Button grid
      */
@@ -247,20 +258,20 @@ public class GameModel {
     }
 
     /**
-     * Method Name:
+     * Method Name: setUserBoardPanel
      * Purpose: Setter method for UserBoard Panel
-     * Algorithm:
+     * Algorithm: Set global variable to passed argument
      *
-     * @param actorPanel - User JPanel
+     * @param actorPanel - User JPanel from Controller
      */
     protected void setUserBoardPanel(JPanel actorPanel) {
         this.userBoardPanel = actorPanel;
     }
 
     /**
-     * Method Name:
+     * Method Name: getUserBoardPanel
      * Purpose: Getter method for UserBoard Panel
-     * Algorithm:
+     * Algorithm: return variable
      *
      * @return - User JPanel
      */
@@ -269,9 +280,9 @@ public class GameModel {
     }
 
     /**
-     * Method Name:
+     * Method Name: setOpponentBoardPanel
      * Purpose: Setter method for Opponent Board Panel
-     * Algorithm:
+     * Algorithm: Set global variable to passed argument
      *
      * @param actorPanel - Opponent JPanel
      */
@@ -280,9 +291,9 @@ public class GameModel {
     }
 
     /**
-     * Method Name:
+     * Method Name: getOpponentBoardPanel
      * Purpose: Getter method for Opponent Board Panel
-     * Algorithm:
+     * Algorithm: return variable
      *
      * @return - Opponent JPanel
      */
@@ -291,9 +302,9 @@ public class GameModel {
     }
 
     /**
-     * Method Name:
+     * Method Name: getNumberOfBoatsForDesign
      * Purpose: Getter method for number of boats (remaining boat count)
-     * Algorithm:
+     * Algorithm: return variable
      *
      * @return - Int for RemainingBoats variable
      */
@@ -302,9 +313,9 @@ public class GameModel {
     }
 
     /**
-     * Method Name:
+     * Method Name: setNumberOfBoatsForDesign
      * Purpose: Setter number of boats for Design (remaining boat count)
-     * Algorithm:
+     * Algorithm: Set global variable to passed argument
      *
      * @param reset - Reset numberOfBoatsForDesign to 0
      */
@@ -313,13 +324,13 @@ public class GameModel {
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name: setSelectedColour
+     * Purpose: Take color values from selection and set to global variables here
+     * Algorithm: Set variables
      *
-     * @param unselected
-     * @param water
-     * @param hitBoat
+     * @param unselected - Grid Button Color
+     * @param water - When User/Machine misses
+     * @param hitBoat - When ship/boat is hit
      */
     protected void setSelectedColour(Color unselected, Color water, Color hitBoat) {
         this.selectedColour = unselected;
@@ -328,9 +339,9 @@ public class GameModel {
     }
 
     /**
-     * Method Name:
+     * Method Name: setPlayer1Config
      * Purpose: set Player1 board layout in String representation
-     * Algorithm:
+     * Algorithm: Set global variable to passed argument
      *
      * @param config - Player board arrangement string presentation
      */
@@ -340,9 +351,9 @@ public class GameModel {
     }
 
     /**
-     * Method Name:
+     * Method Name: setPlayer2Config
      * Purpose: set Player2 board layout in String representation
-     * Algorithm:
+     * Algorithm: Set global variable to passed argument
      *
      * @param config - Player board arrangement string presentation
      */
@@ -352,9 +363,10 @@ public class GameModel {
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name: updateButtonState
+     * Purpose: When User/Machine select respective grid, update the State of JButton (Hit, Miss)
+     * Algorithm: Check if button is null, if not null and is RESET, restore original JButton state.
+     * If not reset determine if actor has hit ship or not, update state
      *
      * @param button - Passed JButton from board
      * @param boat   - Passed Boat from board
@@ -405,9 +417,9 @@ public class GameModel {
     }
 
     /**
-     * Method Name:
+     * Method Name: createButtonBoard
      * Purpose: Creates initial 2D array for Buttons (Used in Controller updateModelViewBoard)
-     * Algorithm:
+     * Algorithm: Nested for loop to JButtons. Pass player object to determine who the buttons belong to
      *
      * @param player - actor
      * @return - 2D array of JButtons
@@ -449,9 +461,9 @@ public class GameModel {
     }
 
     /**
-     * Method Name:
+     * Method Name: HiddenTextButtonUI
      * Purpose: Custom ButtonUI implementation that hides the grayed-out text of a disabled JButton.
-     * Algorithm:
+     * Algorithm: Override the method to not show grey text when disabled
      */
     private static class HiddenTextButtonUI extends BasicButtonUI {
         @Override
@@ -461,9 +473,10 @@ public class GameModel {
     }
 
     /**
-     * Method Name:
+     * Method Name: configurationString
      * Purpose: String configuration for board layout
-     * Algorithm:
+     * Algorithm: if else statement to determine whose buttons, StringBuilder and concatenate
+     * the Text from JButton for configuration
      *
      * @param actor - Player or Machine
      * @param actorButtons - Player or Machine 2D array JButton grid
@@ -552,9 +565,9 @@ public class GameModel {
     }
 
     /**
-     * Method Name:
+     * Method Name: randomSelection
      * Purpose: Machine method to select user grid with random variable
-     * Algorithm:
+     * Algorithm: Do while loop until Machine selects JButton that equals to hit or miss
      *
      * @param boardSize - 2D grid size
      * @return - Selected JButton
@@ -569,17 +582,15 @@ public class GameModel {
             row = random.nextInt(boardSize);
             column = random.nextInt(boardSize);
             selectedButton = userButtons[row][column];
-
-
         } while(selectedButton.getText().equals("HIT") || selectedButton.getText().equals("MISS"));
 
         return selectedButton;
     }
 
     /**
-     * Method Name:
+     * Method Name: isValidSelection
      * Purpose: Check if selection is valid
-     * Algorithm:
+     * Algorithm: If else tree, if equals to HIT or MISS return boolean
      *
      * @param selectedButton - Passed JButton that was clicked by Player or Machine
      * @return - Boolean value
@@ -594,18 +605,18 @@ public class GameModel {
     }
 
     /**
-     * Method Name:
+     * Method Name: clearDesignBoatList
      * Purpose: Clear the list when reset game/ or new state
-     * Algorithm:
+     * Algorithm: clear() List
      */
     protected void clearDesignBoatList(){
         designBoatList.clear();
     }
 
     /**
-     * Method Name:
+     * Method Name: getDesignBoatList
      * Purpose: Getter method for DesignBoatList array
-     * Algorithm:
+     * Algorithm: return designBoatList
      *
      * @return - return Nested List of Boats
      */
@@ -614,9 +625,9 @@ public class GameModel {
     }
 
     /**
-     * Method Name:
+     * Method Name: setBoatOrientation
      * Purpose: set Boat Object Orientation
-     * Algorithm:
+     * Algorithm: Enhanced for loop and set the boat Orientation
      *
      * @param eventSource - JRadioButton H or V
      */
@@ -636,9 +647,10 @@ public class GameModel {
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name: clearUserButtonListeners
+     * Purpose: Clear actionListeners to avoid overlapping JButtons when transferring
+     * from Main JFrame to Design Window
+     * Algorithm: Enhanced For loop to clear each listener from JButton
      */
     protected void clearUserButtonListeners(){
         for (JButton[] row : userButtons){
@@ -652,9 +664,10 @@ public class GameModel {
     }
 
     /**
-     * Method Name:
+     * Method Name: placeSelectedBoat
      * Purpose: Place boat on 2D array
-     * Algorithm:
+     * Algorithm: Enhanced For Loop, check condition to see if boat is NOT NULL AND equals selected Boat size AND not placed
+     * Determine array location of user selection, if overlaps break, if not create boat within nested loop
      *
      * @param eventSource - JButton selection from Board
      */
@@ -757,9 +770,9 @@ public class GameModel {
 
 
     /**
-     * Method Name:
+     * Method Name: setBoatVisible
      * Purpose: For Solution method to reveal Opponent boat, and where the boats are placed
-     * Algorithm:
+     * Algorithm: Enhanced For loop, and if instance of Boatm setVisibility to true, change boat Color
      */
     protected void setBoatVisible(){
         Map<Integer, Color> sizeColorMap = new HashMap<>();
@@ -783,9 +796,10 @@ public class GameModel {
     }
 
     /**
-     * Method Name:
+     * Method Name: convertDesignJButtonsToBoat
      * Purpose: Convert JButtons from Design mode into boats and place into user grid
-     * Algorithm:
+     * Algorithm: Nested For loop, if JButton contains "Convert" store size and new color in Map.
+     * If matches are found during For loop iteration, ensure same size boat are same colour.
      *
      * @param update - Boolean if NOT true reset JButton for DesignWindow
      */

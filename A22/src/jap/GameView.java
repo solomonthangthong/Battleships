@@ -24,7 +24,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Class Name: GameView
- * Method List:
+ * Method List: initializeFrame, registerGameController, showAboutDialog, Splash, Menu, buildMenu, buildMenuItem, getTheMenuBar, actionPerformed,
+ * ColorChooser, setTextForComponent, colorGUI, getControlPanelText, getPlayer1Progress, getPlayer2Progress, getDimensionsComboBox, getRandomizedClick,
+ * getDesignSaved, setDesignSaved, getPlayClicked, setPlayClicked, setRandomizedClick, setPlayRandomDesignBooleans, setBoardButton, getUserPanel,
+ * getOpponentPanel, getProgressPlayer1Panel, getProgressPLayer2Panel, getOpponentButtons, getUserButtons, getBoatSizeSelector, setBoatSizeSelectorValue,
+ * getProgressBar, setRemainingBoats, getDesignWindow, setDesignWindow, setDesignBoatList, startTimer, resetTimer, createPanels, updateLanguage, updateText,
+ * updateProgressBar, createPanelView, addPanelsToMainFrame, updateBoard, designBoatWindow, designBoatPlacement, updateRemainingBoats, extractDesignBoatList,
+ * updateControlPanelText, playBackgroundMusic, languageChanger, disableControlPanelButtons, enableControlPanelButtons, resetGame
+ *
  * Constants List:
  * View model, following MVC design pattern. Updates the view to user
  *
