@@ -78,9 +78,21 @@ public class GameView extends JFrame implements ActionListener {
      * Label for controlPanel history box.
      */
     protected JLabel controlPanelText;
+    /**
+     * the amount of remaining Boats
+     */
     private int remainingBoats;
+    /**
+     * the timer count
+     */
     private int count;
+    /**
+     * Instance of timer class, to be user in Timer method
+     */
     private Timer timer;
+    /**
+     * Label for the remaining boat
+     */
     JLabel remainingBoat;
     /**
      * Button to start the game.
@@ -140,6 +152,7 @@ public class GameView extends JFrame implements ActionListener {
 
     private ColorChooser colorPanel;
     protected boolean playClicked;
+
 
     public GameView() {
         Splash s = new Splash();
@@ -373,6 +386,13 @@ public class GameView extends JFrame implements ActionListener {
             }
         }
 
+        /**
+         Method Name:menuSelected
+         Purpose:
+         Algorithm:
+         *      *
+         * @param e  a MenuEvent object
+         */
         @Override
         public void menuSelected(MenuEvent e) {
             // Empty implementation
@@ -663,62 +683,62 @@ public class GameView extends JFrame implements ActionListener {
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:getDesignSaved
+     * Purpose:get the design the user created
+     * Algorithm: return the design saved
      *
-     * @return -
+     * @return - the design saved
      */
     protected Boolean getDesignSaved() {
         return designSaved;
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:setDesignSaved
+     * Purpose: set a flag for determining if the design has been saved
+     * Algorithm: check if design is saved and set designSaved value
      *
-     * @param saved -
+     * @param saved - a boolean flag for if the design has been saved
      */
     protected void setDesignSaved(Boolean saved) {
         this.designSaved = saved;
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:getPlayClicked
+     * Purpose: getter for flag determining if play button has been clicked
+     * Algorithm: return a boolean flag to determine if play has been clicked
      *
-     * @return -
+     * @return - boolean true or false if play has been clicked
      */
     protected Boolean getPlayClicked() {
         return playClicked;
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:setPlayClicked
+     * Purpose: setter for changing the values of playclicked var
+     * Algorithm: set this play cliked to play (true)
      *
-     * @param play
+     * @param play - boolean var used to determine if play has been activated
      */
     protected void setPlayClicked(Boolean play) {
         this.playClicked = play;
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:setRandomizedClick
+     * Purpose: set randomized click to true if bot is taking turn
+     * Algorithm: set randomized click to value of random
      *
-     * @param random -
+     * @param random - a boolean used to determine if a random click is being made
      */
     protected void setRandomizedClick(Boolean random) {
         this.randomizedClick = random;
     }
 
     /**
-     * Method Name:
+     * Method Name:setPlayDesignBooleans
      * Purpose:
      * Algorithm:
      *
@@ -733,9 +753,9 @@ public class GameView extends JFrame implements ActionListener {
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:setBoardButtons
+     * Purpose:set the user and opponent buttons
+     * Algorithm:determine if the actor is a user or opponenet, and set their buttons to their respective array of buttons
      *
      * @param actor - User player if true, Machine if false
      * @param board - 2D array JButton grid
@@ -749,100 +769,100 @@ public class GameView extends JFrame implements ActionListener {
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:getUserPanel
+     * Purpose:Get the users panel
+     * Algorithm:return the users JPanel
      *
-     * @return -
+     * @return -the Users JPanel
      */
     protected JPanel getUserPanel() {
         return userPanel;
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:getOpponentPanel
+     * Purpose:return the opponents panel
+     * Algorithm:Return a JPanel for the opponents side
      *
-     * @return -
+     * @return -the JPanel representing the opponents panel
      */
     protected JPanel getOpponentPanel() {
         return opponentPanel;
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:getProgressPlayer1Panel
+     * Purpose: get the progress panel from the user
+     * Algorithm:return the JPanel representing the progress for the user
      *
-     * @return -
+     * @return - a Jpanel presenting the progress
      */
     protected JPanel getProgressPlayer1Panel() {
         return progressPlayer1Panel;
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:getProgressPlayer2Panel
+     * Purpose: get the progress panel from the opponent
+     * Algorithm:return the JPanel representing the progress for the opponent
      *
-     * @return -
+     * @return - a Jpanel presenting the progress for the opponenet
      */
     protected JPanel getProgressPlayer2Panel() {
         return progressPlayer2Panel;
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:getOpponentButtons
+     * Purpose: get the array of JButtons representing the opponents board
+     * Algorithm:return an array of JButtons
      *
-     * @return -
+     * @return - an array of JButtons representing the opponents side of the board
      */
     protected JButton[][] getOpponentButtons() {
         return opponentButtons;
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:getUsersButtons
+     * Purpose:return an array of JButtons representing the users board
+     * Algorithm:return an array of JButtons
      *
-     * @return -
+     * @return -an array of Jbuttons
      */
     protected JButton[][] getUserButtons() {
         return userButtons;
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:getBoatSizeSelector
+     * Purpose: get the current boat size selected in the design mode
+     * Algorithm: return a JComboBox of type integer representing the current integer representing the boat size
      *
-     * @return -
+     * @return - an integer representing the value of the boat size selector
      */
     protected JComboBox<Integer> getBoatSizeSelector() {
         return boatSizeSelector;
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:setBoatSizeSelectorValue
+     * Purpose:set the boat size in the design mode
+     * Algorithm: set the boat size selector to the integer passed
      *
-     * @param selected -
+     * @param selected - the integer for the boat size selected
      */
     protected void setBoatSizeSelectorValue(Integer selected) {
         GameView.boatSizeSelectorValue = selected;
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:getProgressBar
+     * Purpose: Get the progress bar for either the user or the opponent
+     * Algorithm: deterime if we are getting user or opponent progress bar with actor variable, then return the progress bar
      *
-     * @param actor -
-     * @return -
+     * @param actor - either the user or opponent
+     * @return - the JProgressBar
      */
     protected JProgressBar getProgressBar(Boolean actor) {
         if (actor) {
@@ -853,40 +873,40 @@ public class GameView extends JFrame implements ActionListener {
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:setRemainingBoats
+     * Purpose: set the remaining boats on the board
+     * Algorithm:set the remaining boats on the board after getting the remaining boats from gameController
      */
     protected void setRemainingBoats() {
         this.remainingBoats = gameController.getRemainingBoats();
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:getDesignWindow
+     * Purpose: get the design window for placing boats on user panel
+     * Algorithm: get the designWindow JFrame
      *
-     * @return -
+     * @return - A JFrame containing the design window
      */
     protected JFrame getDesignWindow() {
         return designWindow;
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name: setDesignWindow
+     * Purpose: set the design window JFrame
+     * Algorithm: set the design window to this setter
      *
-     * @param setter -
+     * @param setter - the design window
      */
     protected void setDesignWindow(JFrame setter) {
         this.designWindow = setter;
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:setDesignBoatList
+     * Purpose: set the list of boats in the design panel
+     * Algorithm:take design boat list as input and set the value
      *
      * @param designBoatList - ArrayList of User Player board
      */
@@ -895,11 +915,11 @@ public class GameView extends JFrame implements ActionListener {
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:timeDisplay
+     * Purpose:display the time on the selection panel for the user to see the amount of time elapsed
+     * Algorithm: create new timer instance, and start the timer.
      *
-     * @param timeDisplay
+     * @param timeDisplay -  A JLabel containing the output of the timer
      */
     private void startTimer(JLabel timeDisplay) {
         count = 0; // Initialize count to zero
@@ -914,9 +934,9 @@ public class GameView extends JFrame implements ActionListener {
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:resetTimer
+     * Purpose: resets the timer instance so that the clock counts back from zero
+     * Algorithm:stop the timer and restart it
      */
     private void resetTimer() {
         count = 0;
@@ -927,9 +947,9 @@ public class GameView extends JFrame implements ActionListener {
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:createPanels
+     * Purpose:create the user, opponent and selection panels containing most of the buttons for the application
+     * Algorithm:create multiple JPanels representing each division of the application, including all the buttons the user can press, the progress bar and both user and oppponent panels
      */
     protected void createPanels() {
 
@@ -1098,9 +1118,9 @@ public class GameView extends JFrame implements ActionListener {
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:updateLanguage
+     * Purpose:method for updating the language to the current selected language
+     * Algorithm: Get the resource bundle for the locale parameter which was input, options are english and french. Then update the text to reflect this selected language
      *
      * @param locale - Property file for environment variables
      */
@@ -1120,9 +1140,9 @@ public class GameView extends JFrame implements ActionListener {
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:updateText
+     * Purpose:updates the text for all labels in the application
+     * Algorithm:save all the labels as a string array, iterate thru each index and modify the text associated with that label
      */
     protected void updateText() {
 
@@ -1163,9 +1183,9 @@ public class GameView extends JFrame implements ActionListener {
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name: updateProgressBar
+     * Purpose:Updates the progress bar for both the user and the opponent
+     * Algorithm:set values for both user and opponent progress bar, repaint and revalidate to display changes.
      */
     protected void updateProgressBar() {
         int selectedDimensions = (int) dimensionComboBox.getSelectedItem();

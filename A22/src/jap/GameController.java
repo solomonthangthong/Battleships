@@ -17,7 +17,7 @@ import java.io.Serializable;
  * resetDesignBoatArrayList, checkOrientation, randomBoatPlacement, getRemainingBoats, resetRemainingBoat, startGame, resetGame, setColorVariables,
  * setBoatVisible, boardButtonEvent, disableUserButtons, isValid, randomSelection, performHitMissLogic, HiddenTextButtonUI, actionPerformed
  *
- * Constants List:
+ * Constants List: gameModel, gameView
  * Controller model, following MVC design pattern, to handle User actions from View
  *
  * @author Andrew Lorimer, Solomon Thangthong
@@ -31,6 +31,13 @@ public class GameController implements ActionListener {
     private final GameModel gameModel;
     private final GameView gameView;
 
+    /**
+     * Method Name: GameController
+     * Purpose:Public constructor for GameController
+     *
+     * @param model contains the game logic
+     * @param view contains the game display
+     */
     public GameController(GameModel model, GameView view) {
         this.gameModel = model;
         this.gameView = view;
@@ -53,12 +60,12 @@ public class GameController implements ActionListener {
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:handleLanguageButton
+     * Purpose: Activate language Changer and log action in history log
+     * Algorithm: call history log and language changer in GameView
      *
-     * @param eventSource
-     * @param controlPanelText
+     * @param eventSource the language button
+     * @param controlPanelText the text to be displayed in history log
      */
     protected void handleLanguageButton(Object eventSource, JLabel controlPanelText) {
         historyLog(eventSource, controlPanelText);
@@ -66,12 +73,12 @@ public class GameController implements ActionListener {
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name: handleDimensionComboBox
+     * Purpose: Take input from user to change board dimensions
+     * Algorithm: Call history log, setBoardSize in the gameModel. Create Panels and update progressBar.
      *
      * @param eventSource
-     * @param controlPanelText
+     * @param controlPanelText the message to be displayed
      */
     protected void handleDimensionComboBox(Object eventSource, JLabel controlPanelText) {
         // updateModelViewBoard was changeDimensions
@@ -93,9 +100,9 @@ public class GameController implements ActionListener {
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:handleDesignBoatPlacement
+     * Purpose: open the design window to allow user to make changes to their board.
+     * Algorithm: Make new JFrame and use gameView methods to alter the view
      *
      * @param eventSource
      * @param controlPanelText
@@ -110,9 +117,9 @@ public class GameController implements ActionListener {
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:handleRandBoatPlacement
+     * Purpose:get user and opponent panels and randomly populate boats on both boards.
+     * Algorithm: using both user and opponent panels, update the model view board and call randBoatPLacement.
      *
      * @param eventSource
      * @param controlPanelText
@@ -138,9 +145,9 @@ public class GameController implements ActionListener {
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:handlePlayButton
+     * Purpose:handle click event on the play button, disable all other buttons except reset.
+     * Algorithm: if else logic for getting the method for board set up, then calling startGame()
      *
      * @param eventSource
      * @param controlPanelText
@@ -159,9 +166,9 @@ public class GameController implements ActionListener {
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:handleResetButton
+     * Purpose: handle user click on reset button to reset the game boards and timer.
+     * Algorithm: call reset gme method in game model and re enable the control panel buttons
      *
      * @param eventSource
      * @param controlPanelText
@@ -173,9 +180,9 @@ public class GameController implements ActionListener {
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:handleBoardSizeSelector
+     * Purpose: Action method for chaging the size of a boat when in design mode
+     * Algorithm:call method in gameview to update the boat size selected.
      *
      * @param eventSource
      * @param controlPanelText
@@ -187,9 +194,9 @@ public class GameController implements ActionListener {
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:handleJRadioOrientation
+     * Purpose: Handles when radiobutoons on board are clicked, checking their orientation on the board
+     * Algorithm: update history log and check the orientation of the boat represented by radio buttons
      *
      * @param eventSource
      * @param controlPanelText
@@ -200,9 +207,9 @@ public class GameController implements ActionListener {
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:handleResetLayout
+     * Purpose: handle when the user presses reset button in design mode
+     * Algorithm: call reset on the boats and remove all boats from the design mode instance
      *
      * @param eventSource
      * @param controlPanelText
@@ -215,9 +222,9 @@ public class GameController implements ActionListener {
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:handleSaveLayout
+     * Purpose: handle when the user presses save in the design mode
+     * Algorithm: using if -else logic to ensure all boats are placed before saving, after that, set the buttons on the design board to the ones on the main board
      *
      * @param eventSource
      * @param controlPanelText
@@ -240,9 +247,9 @@ public class GameController implements ActionListener {
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:handleJButtonClicks
+     * Purpose: handle button clicks in main window, contains logic for handlling clicks in design mode and logic for when play button has been clicked
+     * Algorithm: check if play button has been clicked, detect when user or robot has clicked all of the boats
      *
      * @param eventSource
      * @param controlPanelText
@@ -285,9 +292,9 @@ public class GameController implements ActionListener {
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:historyLog
+     * Purpose:Handle all calls to history log and update the game log in the control panel
+     * Algorithm: update the history log in game model and update the view for the user to see actions
      *
      * @param eventSource      - Instances of any event
      * @param controlPanelText - String of history actions from player
@@ -318,7 +325,7 @@ public class GameController implements ActionListener {
     }
 
     /**
-     * Method Name:
+     * Method Name:configurationString
      * Purpose:
      * Algorithm:
      *
@@ -337,9 +344,9 @@ public class GameController implements ActionListener {
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:changeBoatColor
+     * Purpose: method for changing the color of the boats and tiles on both boards
+     * Algorithm: use if else logic to check if a button on the board is a boat or default tile, use parameters from color changing gui to update these
      *
      * @param buttons
      * @param actorPanel
@@ -374,9 +381,9 @@ public class GameController implements ActionListener {
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:transferDesignToUserPanel
+     * Purpose: transfers the board made in design mode to the user panel for play
+     * Algorithm: in the game model convert the Jbuttons to boats and set both panels. call game view to update the game boards
      *
      * @param selectedDimension
      * @param replace
@@ -392,9 +399,9 @@ public class GameController implements ActionListener {
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:getButtons
+     * Purpose: get the user and opponent buttons on the board
+     * Algorithm: using if else logic, determine if we are getting the user or opponent buttons and retrieve them from gameModel
      *
      * @param actor - Player or Machine
      * @return - 2D board for each player
@@ -408,20 +415,20 @@ public class GameController implements ActionListener {
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:getBoatSize
+     * Purpose: get the boat size from the game view
+     * Algorithm: call boatSizeSelectorValue from game view to retrive boat size
      *
-     * @return
+     * @return the current boat size
      */
     protected static int getBoatSize() {
         return GameView.boatSizeSelectorValue;
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name: openDesignBoat
+     * Purpose:Opens the window for design mode - manually selection positions to place boats.
+     * Algorithm:clear the current user buttons if they exist, create new button board to place new boats and save them in design boat list
      */
     protected void openDesignBoat() {
         //gameView.designBoatWindow();
@@ -438,9 +445,9 @@ public class GameController implements ActionListener {
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:resetDesignBoatArrayList
+     * Purpose: clear the design boats that are saved in an arraylist
+     * Algorithm: clear the boat list in game model. repopulate the design boats so they can be re -placed
      */
     protected void resetDesignBoatArrayList() {
         gameModel.clearDesignBoatList();
@@ -449,20 +456,20 @@ public class GameController implements ActionListener {
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:checkOrientation
+     * Purpose:checks the current orientation of a boat
+     * Algorithm:call game model to set the boat orientation according to current orientation
      *
-     * @param eventSource
+     * @param eventSource a Boat
      */
     protected void checkOrientation(Object eventSource) {
         gameModel.setBoatOrientation(eventSource);
     }
 
     /**
-     * Method Name:
+     * Method Name:randomBoatPlacement
      * Purpose: sets gameModel user/opponent 2D array button grid to have random boats
-     * Algorithm:
+     * Algorithm:check if user or opponent and set the buttons in gameModel to place the randomly generated boat
      *
      * @param actor - Player/Machine
      */
@@ -475,20 +482,20 @@ public class GameController implements ActionListener {
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:getRemainingBoats
+     * Purpose: Used for counting down the amount of boats left to place in design mode
+     * Algorithm: check the number of boats present in game model
      *
-     * @return
+     * @return the amount of boats remaining
      */
     protected Integer getRemainingBoats() {
         return gameModel.getNumberOfBoatsForDesign();
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:resetRemainingBoat
+     * Purpose:when reset is clicked, the amount of boats to be placed must also be reset
+     * Algorithm: set the number of boats for design to zero so remaining boats is reset
      */
     protected void resetRemainingBoat() {
         int reset = 0;
@@ -496,18 +503,18 @@ public class GameController implements ActionListener {
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:startGame
+     * Purpose: set a flag so that the game is in play mode, and users can only select the opponent board
+     * Algorithm:set flag in gameview
      */
     protected void startGame() {
         gameView.playClicked = true;
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:resetGame
+     * Purpose:resets the user and opponent panels after reset is clicked. reset all boats in both panels
+     * Algorithm:using if else logic, determine if we are acting on user board or opponent board, loop thru entire board array and reset all buttons
      *
      * @param actor
      * @param userBoardPanel
@@ -549,22 +556,22 @@ public class GameController implements ActionListener {
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:setColorVariables
+     * Purpose:set the user selected colors to the board contents - water, hitboat and unselected.
+     * Algorithm: update the color of each property in the game model
      *
-     * @param unselected
-     * @param water
-     * @param hitBoat
+     * @param unselected - a color for a button that does not have a boat or water
+     * @param water - a color representing the water
+     * @param hitBoat - a color property representing a hitBoat
      */
     protected void setColorVariables(Color unselected, Color water, Color hitBoat) {
         gameModel.setSelectedColour(unselected, water, hitBoat);
     }
 
     /**
-     * Method Name:
+     * Method Name:setBoatVisible
      * Purpose: For Solution method to reveal Opponent boat, and where the boats are placed
-     * Algorithm:
+     * Algorithm: set boat visibility in game model to true
      */
     protected void setBoatVisible() {
         gameModel.setBoatVisible();
@@ -593,9 +600,9 @@ public class GameController implements ActionListener {
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:disableUserButtons
+     * Purpose: method to prevent the user from clicking on their on board when play is clicked.
+     * Algorithm: check if opponent has played and disable all buttons for the user so that turn taking can occur
      *
      * @param didMachinePlay - Did the machine play True or False
      */
@@ -628,37 +635,37 @@ public class GameController implements ActionListener {
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:isValid
+     * Purpose:check if selected button is a valid button to click
+     * Algorithm: return a boolean variable to determine if the selected button is valid in gamemodel
      *
-     * @param selectedButton
-     * @return
+     * @param selectedButton the button pressed by the user
+     * @return true if it is a valid selection, else return false
      */
     protected boolean isValid(JButton selectedButton) {
         return gameModel.isValidSelection(selectedButton);
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:randomSelection
+     * Purpose: method used for randomly picking a spot on the board for the computer to take turns firing
+     * Algorithm:pass the board size to gameModel and randomly select a sqaure on the board given that board size
      *
-     * @param boardSize
-     * @return
+     * @param boardSize the size of board
+     * @return the randomly selected button
      */
     protected JButton randomSelection(int boardSize) {
         return gameModel.randomSelection(boardSize);
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name:performHitMissLogic
+     * Purpose: Method is used to determine if a randomly selected sqaure or user selected sqaure contains a boat, resulting in either a hit or miss
+     * Algorithm:check if selected button is a boat, check who selected the button (user or opponent) and update the button state given that selection
      *
-     * @param button
-     * @param controlPanelText
-     * @param who
+     * @param button the selected button by the user or opponent
+     * @param controlPanelText Message for the history log
+     * @param who - the actor who selected a button
      */
     private void performHitMissLogic(JButton button, JLabel controlPanelText, Boolean who) {
         if (button instanceof Boat) {
@@ -689,7 +696,7 @@ public class GameController implements ActionListener {
     }
 
     /**
-     * Method Name:
+     * Method Name:HiddenTextButton
      * Purpose:
      * Algorithm:
      *
@@ -703,7 +710,7 @@ public class GameController implements ActionListener {
     }
 
     /**
-     * Method Name:
+     * Method Name:actionPerformed
      * Purpose:
      * Algorithm:
      *
