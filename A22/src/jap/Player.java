@@ -28,10 +28,10 @@ public class Player {
     /**
      * Method Name:
      * Purpose: Constructor for Player
-     * Algorithm:
+     * Algorithm: Initialize variables
      *
-     * @param name
-     * @param actor
+     * @param name - Future implementation if User types name
+     * @param actor - Boolean true = user, false = machine
      */
     public Player(String name, Boolean actor){
         this.playerName = name;
@@ -42,22 +42,22 @@ public class Player {
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name: getActor
+     * Purpose: Getter method
+     * Algorithm: return variable
      *
-     * @return
+     * @return Boolean actor
      */
     protected boolean getActor(){
         return actor;
     }
 
     /**
-     * Method Name:
+     * Method Name: addBoat
      * Purpose: Add instance of Boat object to Players boat List.
-     * Algorithm:
+     * Algorithm: add Boat instance to List
      *
-     * @param boatInstance
+     * @param boatInstance  boat Object
      */
     protected void addBoat(Boat boatInstance){
         boats.add(boatInstance);

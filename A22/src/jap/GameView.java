@@ -387,10 +387,9 @@ public class GameView extends JFrame implements ActionListener {
         }
 
         /**
-         Method Name:menuSelected
-         Purpose:
-         Algorithm:
-         *      *
+         * Method Name: menuSelected
+         * Purpose: An implementation of the MenuListener interface with empty method implementations.
+         *
          * @param e  a MenuEvent object
          */
         @Override
@@ -398,11 +397,21 @@ public class GameView extends JFrame implements ActionListener {
             // Empty implementation
         }
 
+        /**
+         * Method Name: menuDeselected
+         * Purpose: An implementation of the MenuListener interface with empty method implementations.
+         * @param e  a MenuEvent object
+         */
         @Override
         public void menuDeselected(MenuEvent e) {
             // Empty implementation
         }
 
+        /**
+         * Method Name: menuCanceled
+         * Purpose: An implementation of the MenuListener interface with empty method implementations.
+         * @param e  a MenuEvent object
+         */
         @Override
         public void menuCanceled(MenuEvent e) {
             // Empty implementation
@@ -739,12 +748,12 @@ public class GameView extends JFrame implements ActionListener {
 
     /**
      * Method Name:setPlayDesignBooleans
-     * Purpose:
-     * Algorithm:
+     * Purpose: Setter method
+     * Algorithm: This global variable to passed arguments
      *
-     * @param play -
-     * @param randomize -
-     * @param design -
+     * @param play - Boolean if play is clicked
+     * @param randomize - boolean if randomized is clicked
+     * @param design - boolean if design is clicked
      */
     protected void setPlayRandomDesignBooleans(Boolean play, Boolean randomize, Boolean design) {
         this.playClicked = play;
@@ -1217,6 +1226,7 @@ public class GameView extends JFrame implements ActionListener {
      * @param dimension  - Board dimension size, default is 4
      * @param actorPanel - User or Opponent JPanel
      * @param whichActor - True = user actor, false = machine actor
+     * @param lifeStatus - JPanel for JProgressBar
      */
     protected void createPanelView(int dimension, JPanel actorPanel, Boolean whichActor, JPanel lifeStatus) {
         int buttonSize = Math.min(50, 200 / dimension); // Adjust the button size based on dimension
@@ -1556,9 +1566,9 @@ public class GameView extends JFrame implements ActionListener {
     /**
      * Method Name: ResetGame
      * Purpose: Reset JButtons, JPanels, Timer, JProgressBar, for new game
-     * Algorithm:
+     * Algorithm: Call respective methods to fresh view
      *
-     * @param selectedDimension
+     * @param selectedDimension - boat size
      */
     protected void resetGame(int selectedDimension) {
         // reset user actor

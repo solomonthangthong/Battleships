@@ -375,6 +375,9 @@ public class GameModel {
      *
      * @param button - Passed JButton from board
      * @param boat   - Passed Boat from board
+     * @param reset  - Boolean If reset button click
+     * @param who    - Boolean for actor
+     * @return button - Return JButton instance
      */
     protected JButton updateButtonState(JButton button, Boat boat, Boolean reset, Boolean who) {
         // Init ButtonState
@@ -528,6 +531,7 @@ public class GameModel {
      * Purpose: Nested loop to create boat size, and number of boats
      * Algorithm: Decrement outer and inner loop, call createRandomBoat and pass variables
      *
+     * @param actor - True = user, false = machine
      * @return - 2D array of JButtons
      */
     protected JButton[][] generateBoatSize(Boolean actor) {
@@ -879,6 +883,7 @@ public class GameModel {
      * @param boatSize  - Outer nested loop index - boatSize from generateBoatSize
      * @param dimension - selected dimension size
      * @param random    - instance of random
+     * @param player    - Player object instance
      */
     protected void createRandomBoat(JButton[][] board, int boatSize, int dimension, Random random, Player player) {
         boolean boatPlaced = false;

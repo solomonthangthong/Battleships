@@ -21,11 +21,11 @@ public class ButtonState {
     private State state;
 
     /**
-     * Method Name:
+     * Method Name: ButtonState
      * Purpose: Constructor for JButton Object
-     * Algorithm:
+     * Algorithm: Initialize variables
      *
-     * @param button
+     * @param button - Passed JButton from User/Machine grid
      */
     public ButtonState(JButton button) {
         this.button = button;
@@ -35,11 +35,11 @@ public class ButtonState {
     }
 
     /**
-     * Method Name:
+     * Method Name: ButtonState
      * Purpose: Constructor for Boat Object
-     * Algorithm:
+     * Algorithm: Initialize variables
      *
-     * @param boat
+     * @param boat - Passed Boat Object from User/Machine grid
      */
     public ButtonState(Boat boat) {
         this.button = null;
@@ -49,11 +49,11 @@ public class ButtonState {
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name: setState
+     * Purpose: Set the state of the JButton/Boat
+     * Algorithm: Set global variable to passed state and call method to handle
      *
-     * @param state
+     * @param state - Hit, Miss, Default
      */
     protected void setState(State state) {
         this.state = state;
@@ -61,17 +61,21 @@ public class ButtonState {
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name: getState
+     * Purpose: Getter method for state
+     * Algorithm: return variable
      *
-     * @return
+     * @return - JButton state
      */
     protected State getState() {
         return state;
     }
 
-    //TODO figure out how to do this or remove implementation
+    /**
+     * Method Name: handleButtonState
+     * Purpose: Based on user action update the state of JButton
+     * Algorithm: Switch case and handle according to current JButton state
+     */
     private void handleButtonState() {
         switch (state) {
             // Set state to 0
@@ -86,9 +90,6 @@ public class ButtonState {
                 break;
             default:
                 break;
-        }
-        if (boat != null) {
-            boat.setText(state == State.HIT ? "HIT" : "MISS");
         }
     }
 }

@@ -37,8 +37,8 @@ public class Boat extends JButton {
     /**
      * Constructor for Boat Object
      *
-     * @param boatSize
-     * @param orientation
+     * @param boatSize - Size of Boat
+     * @param orientation - Orientation boat is facing
      */
     public Boat(int boatSize, boolean orientation) {
         boatLength = boatSize;
@@ -49,9 +49,9 @@ public class Boat extends JButton {
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name: setBackground
+     * Purpose: set color for JButton
+     * Algorithm: super class setBackground
      *
      * @param color the desired background <code>Color</code>
      */
@@ -60,77 +60,77 @@ public class Boat extends JButton {
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name: setText
+     * Purpose: setText for boat
+     * Algorithm: super class setText
      *
-     * @param size
+     * @param size - Size of boat
      */
     public void setText(Integer size) {
         super.setText(String.valueOf(size));
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name: getBoatLength
+     * Purpose: return Length
+     * Algorithm: return variable
      *
-     * @return
+     * @return - boatLength
      */
     protected Integer getBoatLength() {
         return boatLength;
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name: setBoatLength
+     * Purpose: set global variable with passed argument
+     * Algorithm: this variable =
      *
-     * @param size
+     * @param size - boat size
      */
     protected void setBoatLength(Integer size) {
         this.boatLength = size;
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name: getPlaced
+     * Purpose: get Boolean if boat is placed
+     * Algorithm: return
      *
-     * @return
+     * @return - boolean if it is placed or not
      */
     protected Boolean getPlaced() {
         return isPlaced;
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name: setPlaced
+     * Purpose: This global variable with passed argument
+     * Algorithm: this variable = passed argument
      *
-     * @param placed
+     * @param placed - boolean true or false
      */
     protected void setPlaced(Boolean placed) {
         this.isPlaced = placed;
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name: getBoatOrientation
+     * Purpose: Getter method for boat orientation
+     * Algorithm: return variable
      *
-     * @return
+     * @return - boatOrientation
      */
     protected Boolean getBoatOrientation() {
         return boatOrientation;
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name: setBoatOrientation
+     * Purpose: Setter method
+     * Algorithm: set global variable to passed argument
      *
-     * @param orientation
+     * @param orientation - true or false boolean for Vertical or Horizontal
      */
     protected void setBoatOrientation(Boolean orientation) {
 
@@ -138,33 +138,33 @@ public class Boat extends JButton {
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name: setBoatPosition
+     * Purpose: Save the position of JButton
+     * Algorithm: This variable = passed argument
      *
-     * @param position
+     * @param position - JButton Position
      */
     protected void setBoatPosition(JButton[][] position) {
         this.position = position;
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name: getVisibility
+     * Purpose: Getter method to determine visibility
+     * Algorithm: return variable
      *
-     * @return
+     * @return boolean if visible or not
      */
     protected Boolean getVisibility(){
         return isVisible;
     }
 
     /**
-     * Method Name:
-     * Purpose:
-     * Algorithm:
+     * Method Name: setVisibility
+     * Purpose: Setter method
+     * Algorithm: set global variable to passed argument
      *
-     * @param visible
+     * @param visible - Boolean if visible or not
      */
     protected void setVisibility(Boolean visible){
         this.isVisible = visible;
