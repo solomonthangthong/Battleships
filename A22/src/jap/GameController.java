@@ -45,6 +45,10 @@ public class GameController implements ActionListener {
         this.gameModel = model;
         this.gameView = view;
         view.registerGameController(this);
+        model.setGameController(this);
+
+        model.setUserPlayerButtons(model.createButtonBoard(model.getPlayer(true)));
+        model.setOpponentButtons(model.createButtonBoard(model.getPlayer(false)));
 
         view.setBoardButtons(true, getButtons(true));
         view.setBoardButtons(false, getButtons(false));
@@ -543,7 +547,7 @@ public class GameController implements ActionListener {
                     buttons[i][j].setUI(new HiddenTextButtonUI());
                 }
                 buttons[i][j] = gameModel.updateButtonState(buttons[i][j], null, true, false);
-                buttons[i][j].setBackground(Color.decode("#f56a4d"));
+                buttons[i][j].setBackground(gameModel.getSelectedColour());
                 buttons[i][j].setForeground(Color.white);
                 buttons[i][j].setBorderPainted(true);
                 buttons[i][j].setBorder(whiteBorder);

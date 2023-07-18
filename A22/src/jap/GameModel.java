@@ -36,6 +36,7 @@ import java.util.List;
  */
 public class GameModel {
 
+    GameController gameController;
     /**
      * Array of clickable buttons on user actor board.
      */
@@ -68,6 +69,10 @@ public class GameModel {
     private Color waterColour;
     private Color hitBoatColor;
 
+    private HiddenTextButtonUI hiddenText;
+
+    private SetDisableJButtonWhiteText setDisabledWhite;
+
     /**
      * Constructor for GameModel class
      */
@@ -78,16 +83,21 @@ public class GameModel {
         players[0] = new Player("Player 1", true);
         players[1] = new Player("Player 2", false);
 
-        userButtons = createButtonBoard(players[0]);
-        opponentButtons = createButtonBoard(players[1]);
-
-        numberOfBoatsForDesign = 0;
-
+        selectedColour = Color.decode("#f56a4d");
         waterColour = Color.decode("#008fa2");
         hitBoatColor = Color.decode("#db9c59");
 
-    }
+/*        userButtons = createButtonBoard(players[0]);
+        opponentButtons = createButtonBoard(players[1]);*/
 
+        numberOfBoatsForDesign = 0;
+        hiddenText = new HiddenTextButtonUI();
+        setDisabledWhite = new SetDisableJButtonWhiteText();
+
+    }
+    protected void setGameController(GameController controller){
+        this.gameController = controller;
+    }
     /**
      * Method Name: getPlayer
      * Purpose: Get player from List
@@ -328,6 +338,9 @@ public class GameModel {
         this.numberOfBoatsForDesign = reset;
     }
 
+    protected Color getSelectedColour(){
+        return selectedColour;
+    }
     /**
      * Method Name: setSelectedColour
      * Purpose: Take color values from selection and set to global variables here
@@ -400,9 +413,9 @@ public class GameModel {
             if (state.getState() == State.DEFAULT) {
                 state.setState(State.MISS);
                 button.setBackground(waterColour);
-                button.setForeground(Color.decode("#999999"));
-                button.updateUI();
+                button.setForeground(Color.white);
                 button.setEnabled(false);
+                button.setUI(setDisabledWhite);
                 hitMissSound = boardClipPlay(false);
                 if (who) {
                     hitMissSound.start();
@@ -420,9 +433,9 @@ public class GameModel {
         } else if (boat != null) {
             state.setState(State.HIT);
             boat.setBackground(hitBoatColor);
-            boat.setForeground(Color.decode("#999999"));
-            boat.updateUI();
+            boat.setForeground(Color.white);
             boat.setEnabled(false);
+            boat.setUI(setDisabledWhite);
             hitMissSound = boardClipPlay(true);
             if (who) {
                 hitMissSound.start();
@@ -445,8 +458,6 @@ public class GameModel {
         // Multiply dimensions by two. Intended result is if board is size 4 make it 8 by 8 grid
         whiteBorder = BorderFactory.createLineBorder(Color.white);
         int dimensions = boardSize * 2;
-        String actor1 = "Pos ";
-        String actor2 = "Opp Pos ";
 
         // Initialize 2D array for buttons
         JButton[][] buttons = new JButton[dimensions][dimensions];
@@ -455,21 +466,19 @@ public class GameModel {
             for (int j = 0; j < dimensions; j++) {
                 /* Create a new button for the board */
                 JButton userButton = new JButton();
+                userButton.setBackground(selectedColour);
                 if (player.getActor()) {
-                    userButton.setName(actor1 + (i + 1) + "," + (j + 1));
+                    userButton.setName("[" + (i + 1) + "] [" +  (j + 1) + "]");
                 } else {
-                    userButton.setName(actor2 + (i + 1) + "," + (j + 1));
+                    userButton.setName("[" + (i + 1)  + "]" + "[" + (j + 1)+ "]");
                 }
-
-                userButton.setBackground(Color.decode("#f56a4d"));
-
                 // Set Default to 0
                 ButtonState state = new ButtonState(userButton);
                 userButton.setForeground(Color.white);
                 userButton.setBorderPainted(true);
                 userButton.setBorder(whiteBorder);
                 state.setState(State.DEFAULT);
-                userButton.setUI(new HiddenTextButtonUI());
+                userButton.setUI(hiddenText);
                 //assign the button in the array
                 buttons[i][j] = userButton;
             }
@@ -859,7 +868,7 @@ public class GameModel {
                         boat.setForeground(Color.white);
                         boat.setBoatLength(size);
                         boat.setText(size);
-                        boat.setUI(new HiddenTextButtonUI());
+                        boat.setUI(hiddenText);
                         userButtons[row][col] = boat;
                     }
                 } else {
@@ -867,7 +876,7 @@ public class GameModel {
                         button.setText("0");
                         button.setForeground(Color.black);
                         button.setBackground(Color.decode("#f56a4d"));
-                        button.setUI(new HiddenTextButtonUI());
+                        button.setUI(hiddenText);
                     }
                 }
             }
@@ -917,7 +926,7 @@ public class GameModel {
                         boat.setBackground(backgroundColor);
                         boat.setBorder(whiteBorder);
                     } else {
-                        boat.setBackground(Color.decode("#f56a4d"));
+                        boat.setBackground(selectedColour);
                         boat.setForeground(Color.white);
                         boat.setBorder(whiteBorder);
                     }
@@ -925,7 +934,7 @@ public class GameModel {
                     //Can be removed later, only here to visually see if adhering to numerical representation
                     boat.setText(boatSize);
                     //boat.setForeground(Color.WHITE);
-                    boat.setUI(new HiddenTextButtonUI());
+                    boat.setUI(hiddenText);
                     player.addBoat(boat);
                     boatSizeList.add(boat);
                 }
@@ -942,7 +951,7 @@ public class GameModel {
                         boat.setBackground(backgroundColor);
                         boat.setBorder(whiteBorder);
                     } else {
-                        boat.setBackground(Color.decode("#f56a4d"));
+                        boat.setBackground(selectedColour);
                         boat.setForeground(Color.white);
                         boat.setBorder(whiteBorder);
                     }
@@ -950,7 +959,7 @@ public class GameModel {
                     //Can be removed later, only here to visually see if adhering to numerical representation
                     boat.setText(boatSize);
                     //boat.setForeground(Color.WHITE);
-                    boat.setUI(new HiddenTextButtonUI());
+                    boat.setUI(hiddenText);
                     player.addBoat(boat);
                     boatSizeList.add(boat);
                 }
@@ -1003,7 +1012,51 @@ public class GameModel {
     }
 
     /**
-     * Method Name: boardClipPlay
+     * MethodName: SetDisableJButtonWhiteText
+     * Purpose: CustomButtonUI is a custom ButtonUI implementation that allows setting the
+     * disabled text color to white while properly centering the text on disabled buttons.
+     *
+     */
+    public class SetDisableJButtonWhiteText extends BasicButtonUI {
+
+        private final Color DISABLED_TEXT_COLOR = Color.WHITE;
+
+        /**
+         * MethodName: paint
+         * Purpose: Overrides the paint method to customize the text appearance on disabled buttons.
+         *
+         * @param g the Graphics object to paint on
+         * @param c the component being painted
+         */
+        @Override
+        public void paint(Graphics g, JComponent c) {
+            AbstractButton button = (AbstractButton) c;
+            ButtonModel model = button.getModel();
+
+            // Check if the button is disabled
+            if (!model.isEnabled()) {
+                g.setColor(DISABLED_TEXT_COLOR);
+
+                // Get the text to be displayed on the button
+                String text = button.getText();
+                // Get the font metrics to calculate the position of the text
+                FontMetrics fm = button.getFontMetrics(button.getFont());
+
+                // Calculate the x and y coordinates to center the text
+                int x = button.getWidth() / 2 - fm.stringWidth(text) / 2;
+                int y = button.getHeight() / 2 + fm.getAscent() / 2 - 1;
+
+                // Draw the text with the disabled text color
+                g.drawString(text, x, y);
+            } else {
+                // Call the superclass paint method for enabled buttons
+                super.paint(g, button);
+            }
+        }
+    }
+
+    /**
+     * Method Name: boardClipPlay f
      * Purpose: Enables button click sound effects
      * Algorithm: try catch new wav file, create new audio stream, return sound
      *
