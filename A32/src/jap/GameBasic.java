@@ -27,12 +27,17 @@ public class GameBasic {
      */
     public static void main(String[] args) {
         Server server = new Server();
+        Client client = new Client();
+
         GameModel gameModel = new GameModel();
         GameView gameView = new GameView();
         GameController gameController = new GameController(gameModel, gameView);
 
         gameView.setResizable(false);
         gameView.setVisible(true);
+
+        client.setResizable(false);
+        client.setVisible(true);
 
         server.setResizable(false);
         server.setVisible(true);

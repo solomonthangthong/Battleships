@@ -34,7 +34,7 @@ public class Server extends JFrame implements ActionListener {
      * Algorithm: Set title, size, location, default close operation
      */
     public void initializeFrame() {
-        setTitle("Battleship Game Server by: Andrew Lorimer & Solomon Thangthong");
+        setTitle("Battleship Game Server");
         setSize(600, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
