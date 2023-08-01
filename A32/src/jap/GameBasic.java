@@ -26,12 +26,16 @@ public class GameBasic {
      * @param args the command-line arguments passed to the program
      */
     public static void main(String[] args) {
+        Server server = new Server();
         GameModel gameModel = new GameModel();
         GameView gameView = new GameView();
         GameController gameController = new GameController(gameModel, gameView);
 
         gameView.setResizable(false);
         gameView.setVisible(true);
+
+        server.setResizable(false);
+        server.setVisible(true);
 
     }
 }

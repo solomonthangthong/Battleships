@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Class Name: GameView
@@ -46,8 +45,7 @@ public class GameView extends JFrame implements ActionListener {
     private static final long serialVersionUID = 1L;
     private GameController gameController;
     private final Menu menuBar;
-    //TODO MATCH BATTESHIP BUTTON TO THE ABOUT
-    private JButton battleshipAbout;
+
     /**
      * Combobox to change GUI language.
      */
@@ -1129,7 +1127,7 @@ public class GameView extends JFrame implements ActionListener {
     /**
      * Method Name:updateLanguage
      * Purpose:method for updating the language to the current selected language
-     * Algorithm: Get the resource bundle for the locale parameter which was input, options are english and french. Then update the text to reflect this selected language
+     * Algorithm: Get the resource bundle for the locale parameter which was input, options are english and French. Then update the text to reflect this selected language
      *
      * @param locale - Property file for environment variables
      */
