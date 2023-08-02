@@ -16,7 +16,7 @@ import java.util.List;
  * @since 11.0.19
  */
 public class Player {
-    private final String playerName;
+    private String playerName;
     private int health;
     private boolean actor;
     private int maxScore;
@@ -39,6 +39,10 @@ public class Player {
         // Initialize max score to 0
         this.maxScore = 0;
         boats = new ArrayList<>();
+    }
+
+    protected void setPlayerName(String name){
+        this.playerName = name;
     }
 
     /**

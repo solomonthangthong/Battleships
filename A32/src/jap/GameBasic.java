@@ -33,7 +33,7 @@ public class GameBasic {
         Server server = new Server(port);
         //this breaks the program
         //  server.acceptConnection();
-        Client client = new Client();
+        Client client = new Client(server);
 //        if (clientSocket != null) {
 //            ClientHandler clientHandler = new ClientHandler(clientSocket);
 //            Thread clientHandlerThread = new Thread(clientHandler);
@@ -42,10 +42,7 @@ public class GameBasic {
 
         GameModel gameModel = new GameModel();
         GameView gameView = new GameView();
-        GameController gameController = new GameController(gameModel, gameView);
-
-        gameView.setResizable(false);
-        gameView.setVisible(true);
+        GameController gameController = new GameController(gameModel, gameView, client);
 
         client.setResizable(false);
         client.setVisible(true);
@@ -53,5 +50,9 @@ public class GameBasic {
         server.setResizable(false);
         server.setVisible(true);
 
+        if (client.getConnectionStatus()){
+            gameView.setResizable(false);
+            gameView.setVisible(true);
+        }
     }
 }

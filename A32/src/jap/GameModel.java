@@ -114,6 +114,14 @@ public class GameModel {
         }
     }
 
+    protected void updatePlayerName(Boolean actor, String name){
+        if (actor){
+            players[0].setPlayerName(name);
+        }else {
+            players[1].setPlayerName(name);
+        }
+    }
+
     /**
      * Method Name: historyLog
      * Purpose: Generic method to print control panel history log in GUI.

@@ -1,6 +1,9 @@
 package jap;
 
+import javax.print.Doc;
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,6 +12,7 @@ import java.io.IOException;
 import java.net.Socket;
 
 public class Client extends JFrame implements ActionListener {
+    private Server server;
     private JPanel clientPanel;
     private JTextField user;
     private JTextField serverAddress;
@@ -26,7 +30,10 @@ public class Client extends JFrame implements ActionListener {
 
     private Socket socket;
 
-    public Client(){
+    private Boolean connectionStatus;
+
+    public Client(Server server) {
+        this.server = server;
         initializeFrame();
         createPanel();
         addPanelsToMainFrame();
@@ -36,13 +43,13 @@ public class Client extends JFrame implements ActionListener {
         setTitle("Battleship Game Client");
         setSize(600, 450);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocation(0,0);
+        setLocation(0, 0);
     }
 
     /**
      *
      */
-    protected void createPanel(){
+    protected void createPanel() {
 
         clientPanel = new JPanel(new BorderLayout());
 
@@ -59,6 +66,24 @@ public class Client extends JFrame implements ActionListener {
         JPanel userComponent = new JPanel();
         JLabel userLabel = new JLabel("User:");
         user = new JTextField(8);
+
+        user.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                updatePlayerNameController();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                updatePlayerNameController();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                updatePlayerNameController();
+            }
+        });
+
         userComponent.add(userLabel);
         userComponent.add(user);
 
@@ -73,11 +98,11 @@ public class Client extends JFrame implements ActionListener {
         portNumber = new JTextField(5);
         portComponent.add(portLabel);
         portComponent.add(portNumber);
-//set default values
+        //set default values
+
         serverAddress.setText(Config.DEFAULT_ADDR);
         portNumber.setText(String.valueOf(Config.DEFAULT_PORT));
         user.setText(String.valueOf(Config.DEFAULT_USER));
-
 
         connect = new JButton("Connect");
         end = new JButton("End");
@@ -88,7 +113,6 @@ public class Client extends JFrame implements ActionListener {
         play = new JButton("Play");
 
 
-
         //action listeners to the buttons
         connect.addActionListener(this);
         end.addActionListener(this);
@@ -97,7 +121,6 @@ public class Client extends JFrame implements ActionListener {
         receiveGame.addActionListener(this);
         sendData.addActionListener(this);
         play.addActionListener(this);
-
 
 
         JPanel buttonComponent = new JPanel(new FlowLayout());
@@ -114,7 +137,6 @@ public class Client extends JFrame implements ActionListener {
         buttonComponent.add(play);
 
 
-
         clientPanel.add(buttonComponent, BorderLayout.CENTER);
 
         console = new JTextArea();
@@ -124,9 +146,7 @@ public class Client extends JFrame implements ActionListener {
 
         clientPanel.add(scrollPane, BorderLayout.SOUTH);
 
-
     }
-
 
 
     /**
@@ -151,6 +171,8 @@ public class Client extends JFrame implements ActionListener {
             connect.setEnabled(false);
             // Enable the "End" button to allow disconnection
             end.setEnabled(true);
+
+            connectionStatus = true;
 
 //create instance of clinet handler and pass socket for connection
             ClientHandler clientHandler = new ClientHandler(socket);
@@ -182,13 +204,22 @@ public class Client extends JFrame implements ActionListener {
     }
 
 
+
+    protected String updatePlayerNameController(){
+        String playerName = user.getText();
+        return playerName;
+    }
+
+    protected Boolean getConnectionStatus(){
+        return connectionStatus;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == connect) {
             // Get the server address and port number from the text fields
             String serverAddressStr = serverAddress.getText();
             int portNumberInt = Integer.parseInt(portNumber.getText());
-
             // Call the connectToServer method to establish the connection
             connectToServer(serverAddressStr, portNumberInt);
     }else if (e.getSource() == end) {
@@ -196,4 +227,6 @@ public class Client extends JFrame implements ActionListener {
             endConnection();
 }
 }
+        }
+    }
 }

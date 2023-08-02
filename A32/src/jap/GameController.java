@@ -33,7 +33,9 @@ import java.io.Serializable;
 public class GameController implements ActionListener {
     private final GameModel gameModel;
     private final GameView gameView;
+    private final Client client;
 
+    private String playerName;
     /**
      * Method Name: GameController
      * Purpose:Public constructor for GameController
@@ -41,11 +43,16 @@ public class GameController implements ActionListener {
      * @param model contains the game logic
      * @param view contains the game display
      */
-    public GameController(GameModel model, GameView view) {
+    public GameController(GameModel model, GameView view, Client client) {
         this.gameModel = model;
         this.gameView = view;
+        this.client = client;
+
         view.registerGameController(this);
         model.setGameController(this);
+
+        // Set player 1 name to what is entered
+        model.updatePlayerName(true, playerName);
 
         model.setUserPlayerButtons(model.createButtonBoard(model.getPlayer(true)));
         model.setOpponentButtons(model.createButtonBoard(model.getPlayer(false)));
@@ -63,8 +70,13 @@ public class GameController implements ActionListener {
         view.createPanelView(gameModel.getBoardSize(), view.getOpponentPanel(), false, view.getProgressPlayer2Panel());
         configurationString(false, gameModel.getOpponentButtons());
         disableUserButtons(true);
+
+        client.registerConnectionChangeListener(this::getConnectionStatus);
     }
 
+    protected void playerName(String name){
+        playerName = name;
+    }
     /**
      * Method Name:handleLanguageButton
      * Purpose: Activate language Changer and log action in history log
