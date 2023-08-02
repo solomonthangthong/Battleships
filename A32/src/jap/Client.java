@@ -5,6 +5,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
+import java.net.Socket;
 
 public class Client extends JFrame implements ActionListener {
     private JPanel clientPanel;
@@ -22,6 +24,8 @@ public class Client extends JFrame implements ActionListener {
     private JTextArea console;
     private JScrollPane scrollPane;
 
+    private Socket socket;
+
     public Client(){
         initializeFrame();
         createPanel();
@@ -32,6 +36,7 @@ public class Client extends JFrame implements ActionListener {
         setTitle("Battleship Game Client");
         setSize(600, 450);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocation(0,0);
     }
 
     /**
@@ -68,6 +73,10 @@ public class Client extends JFrame implements ActionListener {
         portNumber = new JTextField(5);
         portComponent.add(portLabel);
         portComponent.add(portNumber);
+//set default values
+        serverAddress.setText(Config.DEFAULT_ADDR);
+        portNumber.setText(String.valueOf(Config.DEFAULT_PORT));
+        user.setText(String.valueOf(Config.DEFAULT_USER));
 
 
         connect = new JButton("Connect");
@@ -77,6 +86,19 @@ public class Client extends JFrame implements ActionListener {
         receiveGame = new JButton("Receive Game");
         sendData = new JButton("Send Data");
         play = new JButton("Play");
+
+
+
+        //action listeners to the buttons
+        connect.addActionListener(this);
+        end.addActionListener(this);
+        newGame.addActionListener(this);
+        sendGame.addActionListener(this);
+        receiveGame.addActionListener(this);
+        sendData.addActionListener(this);
+        play.addActionListener(this);
+
+
 
         JPanel buttonComponent = new JPanel(new FlowLayout());
 
@@ -91,6 +113,8 @@ public class Client extends JFrame implements ActionListener {
         buttonComponent.add(sendData);
         buttonComponent.add(play);
 
+
+
         clientPanel.add(buttonComponent, BorderLayout.CENTER);
 
         console = new JTextArea();
@@ -103,6 +127,8 @@ public class Client extends JFrame implements ActionListener {
 
     }
 
+
+
     /**
      * Method Name: addPanelsToMainFrame
      * Purpose: Add created panels into the main frame.
@@ -111,9 +137,40 @@ public class Client extends JFrame implements ActionListener {
     protected void addPanelsToMainFrame() {
         Container contentPane = getContentPane();
         contentPane.add(clientPanel);
+
+    }
+
+    public void connectToServer(String serverAddress, int portNumber) {
+        try {
+            // Create a new socket
+            socket = new Socket(serverAddress, portNumber);
+
+            // Connection is successful
+            console.append("Connected to server at " + serverAddress + ":" + portNumber + "\n");
+            // Disable the "Connect" button
+            connect.setEnabled(false);
+            // Enable the "End" button to allow disconnection
+            end.setEnabled(true);
+
+//create instance of clinet handler and pass socket for connection
+            ClientHandler clientHandler = new ClientHandler(socket);
+            Thread clientHandlerThread = new Thread(clientHandler);
+            clientHandlerThread.start();
+
+        } catch (IOException ex) {
+            // Handle connection errors
+            console.append("Connection failed: " + ex.getMessage() + "\n");
+        }
     }
     @Override
     public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == connect) {
+            // Get the server address and port number from the text fields
+            String serverAddressStr = serverAddress.getText();
+            int portNumberInt = Integer.parseInt(portNumber.getText());
 
+            // Call the connectToServer method to establish the connection
+            connectToServer(serverAddressStr, portNumberInt);
     }
+}
 }

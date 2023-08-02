@@ -5,6 +5,10 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.List;
 
 /**
  *
@@ -19,13 +23,31 @@ public class Server extends JFrame implements ActionListener {
 
     private JTextArea console;
     private JScrollPane scrollPane;
+    private ServerSocket serverSocket;
+
+
+    private int port;
+    private boolean finalizeServer;
+    private List<ClientHandler> clients;
+
+    //these were in UML but are unused atm
+    //private Map<Integer,PlayerData> playerData;
+    //private List<PLayerData> rankList;
     /**
      *
      */
-    public Server(){
-    initializeFrame();
-    createPanel();
-    addPanelsToMainFrame();
+    public Server(int port) {
+
+        initializeFrame();
+        createPanel();
+        addPanelsToMainFrame();
+        //when server is instantiated, set the serverSocket given default port
+        try {
+            serverSocket = new ServerSocket(port);
+            console.append("Server started on port " + port + "\n");
+        } catch (IOException ex) {
+            console.append("Error creating server socket: " + ex.getMessage() + "\n");
+        }
     }
 
     /**
@@ -37,6 +59,11 @@ public class Server extends JFrame implements ActionListener {
         setTitle("Battleship Game Server");
         setSize(600, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int screenWidth = screenSize.width;
+        int screenHeight = screenSize.height;
+        setLocation(screenWidth - getWidth(),  0);
     }
 
     /**
@@ -59,6 +86,7 @@ public class Server extends JFrame implements ActionListener {
         JPanel portComponent = new JPanel();
         JLabel portLabel = new JLabel("Port: ");
         portTextField = new JTextField(5);
+        portTextField.setText(String.valueOf(Config.DEFAULT_PORT));
 
         portComponent.add(portLabel);
         portComponent.add(portTextField);
@@ -98,6 +126,19 @@ public class Server extends JFrame implements ActionListener {
         Container contentPane = getContentPane();
         contentPane.add(serverPanel);
     }
+
+
+    public void acceptConnection() {
+        try {
+            // accept connectipon
+            Socket clientSocket = serverSocket.accept();
+        } catch (IOException ex) {
+            // Handle connection errors
+            console.append("Error accepting connection: " + ex.getMessage() + "\n");
+
+        }
+    }
+
 
     @Override
     public void actionPerformed(ActionEvent e) {

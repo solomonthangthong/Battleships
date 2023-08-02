@@ -9,6 +9,8 @@
  */
 package jap;
 
+import java.net.Socket;
+
 /**
  * Class Name: GameBasic
  * Method List: main
@@ -26,8 +28,17 @@ public class GameBasic {
      * @param args the command-line arguments passed to the program
      */
     public static void main(String[] args) {
-        Server server = new Server();
+        //set default port number for initilizing Server
+        int port = Config.DEFAULT_PORT;
+        Server server = new Server(port);
+        //this breaks the program
+        //  server.acceptConnection();
         Client client = new Client();
+//        if (clientSocket != null) {
+//            ClientHandler clientHandler = new ClientHandler(clientSocket);
+//            Thread clientHandlerThread = new Thread(clientHandler);
+//            clientHandlerThread.start();
+//        }
 
         GameModel gameModel = new GameModel();
         GameView gameView = new GameView();
