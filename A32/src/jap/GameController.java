@@ -71,7 +71,7 @@ public class GameController implements ActionListener {
         configurationString(false, gameModel.getOpponentButtons());
         disableUserButtons(true);
 
-        client.registerConnectionChangeListener(this::getConnectionStatus);
+        //client.registerConnectionChangeListener(this::getConnectionStatus);
     }
 
     protected void playerName(String name){
