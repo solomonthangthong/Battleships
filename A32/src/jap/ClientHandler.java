@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.Socket;
 
 public class ClientHandler implements Runnable {
-    private Socket socket;
     private Socket clientSocket;
     private String playerName;
     private String gameConfig;

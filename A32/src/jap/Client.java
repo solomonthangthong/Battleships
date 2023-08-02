@@ -32,8 +32,7 @@ public class Client extends JFrame implements ActionListener {
 
     private Boolean connectionStatus;
 
-    public Client(Server server) {
-        this.server = server;
+    public Client() {
         initializeFrame();
         createPanel();
         addPanelsToMainFrame();

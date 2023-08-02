@@ -45,12 +45,19 @@ public class Server extends JFrame implements ActionListener {
         createPanel();
         addPanelsToMainFrame();
         //when server is instantiated, set the serverSocket given default port
-        try {
+/*        try {
             serverSocket = new ServerSocket(port);
             console.append("Server started on port " + port + "\n");
         } catch (IOException ex) {
             console.append("Error creating server socket: " + ex.getMessage() + "\n");
-        }
+        }*/
+    }
+
+    public static void main(String[] args){
+        int port = Config.DEFAULT_PORT;
+        Server server = new Server(port);
+        server.setResizable(false);
+        server.setVisible(true);
     }
 
     /**
@@ -135,21 +142,22 @@ public class Server extends JFrame implements ActionListener {
 
 
     public void acceptConnection() {
-        try {
-            // accept connectipon
-            Socket clientSocket = serverSocket.accept();
-            ClientHandler clientHandler = new ClientHandler(clientSocket);
+        while(true){
+            try {
+                // accept connection
+                Socket clientSocket = serverSocket.accept();
+                ClientHandler clientHandler = new ClientHandler(clientSocket);
 
-            clientId++;
-            clientHandler.setClientId(clientId);
+                clientId++;
+                clientHandler.setClientId(clientId);
 
-            Thread thread = new Thread(clientHandler);
-            thread.start();
-            console.append("Client " + clientId + " connected: " + clientSocket.getInetAddress().getHostAddress());
-        } catch (IOException ex) {
-            // Handle connection errors
-            console.append("Error accepting connection: " + ex.getMessage() + "\n");
-
+                Thread thread = new Thread(clientHandler);
+                thread.start();
+                console.append("Client " + clientId + " connected: " + clientSocket.getInetAddress().getHostAddress() + "\n");
+            } catch (IOException ex) {
+                // Handle connection errors
+                console.append("Error accepting connection: " + ex.getMessage() + "\n");
+            }
         }
     }
 
@@ -192,16 +200,10 @@ public class Server extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == start) {
-            try {
-                serverSocket.close();
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
-            // Get the server address and port number from the text fields
-            //  String serverAddressStr = serverAddress.getText();
             int portNumberInt = Integer.parseInt(portTextField.getText());
             startServer(portNumberInt);
-            // Call the connectToServer method to establish the connection
+            Thread serverThread = new Thread(this::acceptConnection);
+            serverThread.start();
         }
         if (e.getSource() == end) {
             endConnection();
