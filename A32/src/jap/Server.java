@@ -96,6 +96,8 @@ public class Server extends JFrame implements ActionListener {
         result = new JButton("Results");
         finalize = new JCheckBox("Finalize");
         end = new JButton("End");
+        start.addActionListener(this);
+        end.addActionListener(this);
 
         JPanel buttonComponent = new JPanel(new FlowLayout());
 
@@ -138,10 +140,61 @@ public class Server extends JFrame implements ActionListener {
 
         }
     }
+    public void startServer(int port) {
+        // Check if the server is already running
+        if (serverSocket != null && !serverSocket.isClosed()) {
+            console.append("Server is already running on port " + port + "\n");
+            return;
+        }
+
+        try {
+            serverSocket = new ServerSocket(port);
+            console.append("Server started on port " + port + "\n");
+            end.setEnabled(true);
+            start.setEnabled(false);
+        } catch (IOException ex) {
+            console.append("Error creating server socket: " + ex.getMessage() + "\n");
+        }
+    }
+
+    public void endConnection() {
+        if (serverSocket != null && !serverSocket.isClosed()) {
+            try {
+                int portNumberInt = Integer.parseInt(portTextField.getText());
+                serverSocket.close();
+                console.append("Server closed on port " + portNumberInt + "\n");
+                //re enable start button when connection is ended
+                start.setEnabled(true);
+                //disable the end button
+                end.setEnabled(false);
+            } catch (IOException ex) {
+                console.append("Error closing server socket: " + ex.getMessage() + "\n");
+            }
+        } else {
+            console.append("Server is not running or already closed.\n");
+        }
+    }
 
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == start) {
+            try {
+                serverSocket.close();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+            // Get the server address and port number from the text fields
+          //  String serverAddressStr = serverAddress.getText();
+            int portNumberInt = Integer.parseInt(portTextField.getText());
+           startServer(portNumberInt);
+            // Call the connectToServer method to establish the connection
 
-    }
+    } if( e.getSource() == end){
+
+            endConnection();
+
+
+        }
+}
 }

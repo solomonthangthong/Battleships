@@ -162,6 +162,26 @@ public class Client extends JFrame implements ActionListener {
             console.append("Connection failed: " + ex.getMessage() + "\n");
         }
     }
+    public void endConnection() {
+        try {
+            if (socket != null && !socket.isClosed()) {
+                //close the socket
+                socket.close();
+                console.append("Connection ended.\n");
+                // Re-enable the "Connect" button
+                connect.setEnabled(true);
+                // Disable the "End" button since the connection is closed
+                end.setEnabled(false);
+            } else {
+                console.append("No active connection to end.\n");
+            }
+        } catch (IOException ex) {
+            // Handle connection closing errors
+            console.append("Error ending connection: " + ex.getMessage() + "\n");
+        }
+    }
+
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == connect) {
@@ -171,6 +191,9 @@ public class Client extends JFrame implements ActionListener {
 
             // Call the connectToServer method to establish the connection
             connectToServer(serverAddressStr, portNumberInt);
-    }
+    }else if (e.getSource() == end) {
+            //  close the connection
+            endConnection();
+}
 }
 }
