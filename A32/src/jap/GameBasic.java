@@ -32,7 +32,6 @@ public class GameBasic {
         int port = Config.DEFAULT_PORT;
         Server server = new Server(port);
         //this breaks the program
-        //  server.acceptConnection();
         Client client = new Client(server);
 //        if (clientSocket != null) {
 //            ClientHandler clientHandler = new ClientHandler(clientSocket);
@@ -50,9 +49,13 @@ public class GameBasic {
         server.setResizable(false);
         server.setVisible(true);
 
-        if (client.getConnectionStatus()){
+        gameView.setResizable(false);
+        gameView.setVisible(true);
+
+        server.acceptConnection();
+/*        if (client.getConnectionStatus()){
             gameView.setResizable(false);
             gameView.setVisible(true);
-        }
+        }*/
     }
 }

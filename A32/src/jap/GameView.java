@@ -184,9 +184,9 @@ public class GameView extends JFrame implements ActionListener {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    public void setVisible(boolean visible){
+/*    public void setVisible(boolean visible){
         setVisible(visible);
-    }
+    }*/
 
     /**
      * Method Name: registerGameController

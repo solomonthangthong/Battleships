@@ -25,6 +25,8 @@ public class Server extends JFrame implements ActionListener {
     private JScrollPane scrollPane;
     private ServerSocket serverSocket;
 
+    private Integer clientId = 0;
+
 
     private int port;
     private boolean finalizeServer;
@@ -32,7 +34,8 @@ public class Server extends JFrame implements ActionListener {
 
     //these were in UML but are unused atm
     //private Map<Integer,PlayerData> playerData;
-    //private List<PLayerData> rankList;
+    //private List<PlayerData> rankList;
+
     /**
      *
      */
@@ -63,15 +66,15 @@ public class Server extends JFrame implements ActionListener {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int screenWidth = screenSize.width;
         int screenHeight = screenSize.height;
-        setLocation(screenWidth - getWidth(),  0);
+        setLocation(screenWidth - getWidth(), 0);
     }
 
     /**
      *
      */
-    protected void createPanel(){
+    protected void createPanel() {
 
-       serverPanel = new JPanel(new BorderLayout());
+        serverPanel = new JPanel(new BorderLayout());
 
         // Load and display the logo
         ImageIcon image = new ImageIcon("images/server.png");
@@ -119,6 +122,7 @@ public class Server extends JFrame implements ActionListener {
 
 
     }
+
     /**
      * Method Name: addPanelsToMainFrame
      * Purpose: Add created panels into the main frame.
@@ -134,12 +138,18 @@ public class Server extends JFrame implements ActionListener {
         try {
             // accept connectipon
             Socket clientSocket = serverSocket.accept();
+            clientId++;
+            ClientHandler clientHandler = new ClientHandler(clientSocket);
+            Thread thread = new Thread(clientHandler);
+            thread.start();
+            console.append("Client connected: " + clientSocket.getInetAddress().getHostAddress());
         } catch (IOException ex) {
             // Handle connection errors
             console.append("Error accepting connection: " + ex.getMessage() + "\n");
 
         }
     }
+
     public void startServer(int port) {
         // Check if the server is already running
         if (serverSocket != null && !serverSocket.isClosed()) {
@@ -185,16 +195,13 @@ public class Server extends JFrame implements ActionListener {
                 throw new RuntimeException(ex);
             }
             // Get the server address and port number from the text fields
-          //  String serverAddressStr = serverAddress.getText();
+            //  String serverAddressStr = serverAddress.getText();
             int portNumberInt = Integer.parseInt(portTextField.getText());
-           startServer(portNumberInt);
+            startServer(portNumberInt);
             // Call the connectToServer method to establish the connection
-
-    } if( e.getSource() == end){
-
-            endConnection();
-
-
         }
-}
+        if (e.getSource() == end) {
+            endConnection();
+        }
+    }
 }

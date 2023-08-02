@@ -31,6 +31,7 @@ public class Client extends JFrame implements ActionListener {
     private Socket socket;
 
     private Boolean connectionStatus;
+    private Integer clientId;
 
     public Client(Server server) {
         this.server = server;
@@ -184,6 +185,7 @@ public class Client extends JFrame implements ActionListener {
             console.append("Connection failed: " + ex.getMessage() + "\n");
         }
     }
+
     public void endConnection() {
         try {
             if (socket != null && !socket.isClosed()) {
@@ -204,13 +206,12 @@ public class Client extends JFrame implements ActionListener {
     }
 
 
-
-    protected String updatePlayerNameController(){
+    protected String updatePlayerNameController() {
         String playerName = user.getText();
         return playerName;
     }
 
-    protected Boolean getConnectionStatus(){
+    protected Boolean getConnectionStatus() {
         return connectionStatus;
     }
 
@@ -222,11 +223,10 @@ public class Client extends JFrame implements ActionListener {
             int portNumberInt = Integer.parseInt(portNumber.getText());
             // Call the connectToServer method to establish the connection
             connectToServer(serverAddressStr, portNumberInt);
-    }else if (e.getSource() == end) {
+        } else if (e.getSource() == end) {
             //  close the connection
             endConnection();
-}
-}
         }
     }
 }
+
