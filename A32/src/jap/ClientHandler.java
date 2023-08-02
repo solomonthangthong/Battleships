@@ -1,4 +1,5 @@
 package jap;
+
 import java.io.IOException;
 import java.net.Socket;
 
@@ -8,6 +9,7 @@ public class ClientHandler implements Runnable {
     private String playerName;
     private String gameConfig;
     private String playerData;
+    private Integer clientId;
 
 
     public ClientHandler(Socket clientSocket) {
@@ -17,6 +19,9 @@ public class ClientHandler implements Runnable {
         playerData = "";
     }
 
+    protected void setClientId(Integer clientNumber) {
+        this.clientId = clientNumber;
+    }
 
 
     @Override

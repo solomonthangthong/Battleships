@@ -31,7 +31,6 @@ public class Client extends JFrame implements ActionListener {
     private Socket socket;
 
     private Boolean connectionStatus;
-    private Integer clientId;
 
     public Client(Server server) {
         this.server = server;
@@ -175,7 +174,7 @@ public class Client extends JFrame implements ActionListener {
 
             connectionStatus = true;
 
-//create instance of clinet handler and pass socket for connection
+            //create instance of client handler and pass socket for connection
             ClientHandler clientHandler = new ClientHandler(socket);
             Thread clientHandlerThread = new Thread(clientHandler);
             clientHandlerThread.start();

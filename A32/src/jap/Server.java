@@ -138,11 +138,14 @@ public class Server extends JFrame implements ActionListener {
         try {
             // accept connectipon
             Socket clientSocket = serverSocket.accept();
-            clientId++;
             ClientHandler clientHandler = new ClientHandler(clientSocket);
+
+            clientId++;
+            clientHandler.setClientId(clientId);
+
             Thread thread = new Thread(clientHandler);
             thread.start();
-            console.append("Client connected: " + clientSocket.getInetAddress().getHostAddress());
+            console.append("Client " + clientId + " connected: " + clientSocket.getInetAddress().getHostAddress());
         } catch (IOException ex) {
             // Handle connection errors
             console.append("Error accepting connection: " + ex.getMessage() + "\n");
