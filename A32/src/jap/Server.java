@@ -27,6 +27,8 @@ public class Server extends JFrame implements ActionListener {
 
     private Integer clientId = 0;
 
+    private Thread serverThread;
+
 
     private int port;
     private boolean finalizeServer;
@@ -142,7 +144,7 @@ public class Server extends JFrame implements ActionListener {
 
 
     public void acceptConnection() {
-        while(true){
+        while(!Thread.interrupted()){
             try {
                 // accept connection
                 Socket clientSocket = serverSocket.accept();
@@ -153,10 +155,10 @@ public class Server extends JFrame implements ActionListener {
 
                 Thread thread = new Thread(clientHandler);
                 thread.start();
-                console.append("Client " + clientId + " connected: " + clientSocket.getInetAddress().getHostAddress() + "\n");
+                addNewLine("Client " + clientId + " connected: " + clientSocket.getInetAddress().getHostAddress() + "\n");
             } catch (IOException ex) {
                 // Handle connection errors
-                console.append("Error accepting connection: " + ex.getMessage() + "\n");
+                addNewLine("Error accepting connection: " + ex.getMessage() + "\n");
             }
         }
     }
@@ -164,17 +166,17 @@ public class Server extends JFrame implements ActionListener {
     public void startServer(int port) {
         // Check if the server is already running
         if (serverSocket != null && !serverSocket.isClosed()) {
-            console.append("Server is already running on port " + port + "\n");
+            addNewLine("Server is already running on port " + port + "\n");
             return;
         }
 
         try {
             serverSocket = new ServerSocket(port);
-            console.append("Server started on port " + port + "\n");
+            addNewLine("Server started on port " + port + "\n");
             end.setEnabled(true);
             start.setEnabled(false);
         } catch (IOException ex) {
-            console.append("Error creating server socket: " + ex.getMessage() + "\n");
+            addNewLine("Error creating server socket: " + ex.getMessage() + "\n");
         }
     }
 
@@ -189,23 +191,31 @@ public class Server extends JFrame implements ActionListener {
                 //disable the end button
                 end.setEnabled(false);
             } catch (IOException ex) {
-                console.append("Error closing server socket: " + ex.getMessage() + "\n");
+                addNewLine("Error closing server socket: " + ex.getMessage() + "\n");
             }
         } else {
-            console.append("Server is not running or already closed.\n");
+            addNewLine("Server is not running or already closed.\n");
         }
     }
 
+    private void addNewLine(String line){
+        console.append(line);
+        console.setCaretPosition(console.getDocument().getLength());
+        console.scrollRectToVisible(new Rectangle(console.getPreferredSize()));
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == start) {
             int portNumberInt = Integer.parseInt(portTextField.getText());
             startServer(portNumberInt);
-            Thread serverThread = new Thread(this::acceptConnection);
+            serverThread = new Thread(this::acceptConnection);
             serverThread.start();
         }
         if (e.getSource() == end) {
+            if (serverThread != null){
+                serverThread.interrupt();
+            }
             endConnection();
         }
     }
