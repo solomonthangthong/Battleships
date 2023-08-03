@@ -364,7 +364,7 @@ public class GameController implements ActionListener {
     }
 
     protected void sendGameConfiguration(){
-        String config = gameModel.configurationString(true, gameModel.getUserPlayerButtons());
+        String config = gameModel.configurationString(false, gameModel.getOpponentButtons());
         client.setGameConfiguration(config);
     }
 

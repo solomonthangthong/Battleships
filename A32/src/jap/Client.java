@@ -147,11 +147,9 @@ public class Client extends JFrame implements ActionListener {
 
         clientPanel.add(buttonComponent, BorderLayout.CENTER);
 
-        console = new JTextArea();
-        console.setPreferredSize(new Dimension(600, 125));
+        console = new JTextArea(7, 1);
         console.setEditable(false);
         scrollPane = new JScrollPane(console);
-
         clientPanel.add(scrollPane, BorderLayout.SOUTH);
 
     }
@@ -287,13 +285,13 @@ public class Client extends JFrame implements ActionListener {
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
-            endConnection();
+            //endConnection();
         } else if (e.getSource() == newGame){
             console.append("Creating new MVC game\n");
             gameController.sendGameConfiguration();
             // Add dimensions and game Config
             String message = Config.PROTOCOL_SENDGAME + Config.FIELD_SEPARATOR + gameConfiguration;
-            console.append(message);
+            console.append(message + "\n");
 
             try {
                 writer.write(message);
@@ -302,6 +300,8 @@ public class Client extends JFrame implements ActionListener {
             }catch(IOException ex){
                 throw new RuntimeException(ex);
             }
+        } else if (e.getSource() == sendGame){
+
         }
     }
 }

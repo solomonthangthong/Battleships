@@ -95,7 +95,6 @@ public class ClientHandler implements Runnable {
         try {
             reader.close();
             inputStream.close();
-
             clientSocket.close();
 
             serverInstance.console.append("Client " + clientId + " disconnected.");
