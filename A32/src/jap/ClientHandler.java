@@ -35,11 +35,12 @@ public class ClientHandler implements Runnable {
 
 
     private void processClient() throws IOException {
+        // Not sure if this works ATM
         String protocolID = "";
         String data = "";
         try {
             String protocolMessage;
-
+            // Need to see if debug actually has the protocolMessage
             while ((protocolMessage = reader.readLine()) != null) {
                 String[] splice = protocolMessage.split(Config.PROTOCOL_SEPARATOR);
                 if (splice.length < 2) {
@@ -55,6 +56,7 @@ public class ClientHandler implements Runnable {
         }
 
         // Determine the protocol and execute the corresponding action
+        // I set the protoclID in the while but i am not sure if it has access to the new value
         switch (protocolID) {
             case Config.PROTOCOL_END:
                 handleEndConnection(protocolID, data);
@@ -76,15 +78,15 @@ public class ClientHandler implements Runnable {
 
 
     protected void sendGameConfig(String data) {
-
+        // Implement logic for method
     }
 
     protected void receiveGameConfig(String data) {
-
+        // Implement logic for method
     }
 
     protected void playerData(String data) {
-
+        // Implement logic for method
     }
 
     protected void handleEndConnection(String protocolId, String data) {
@@ -108,6 +110,7 @@ public class ClientHandler implements Runnable {
 
     @Override
     public void run() {
+        // This keeps the method running
         try {
             processClient();
         } catch (IOException e) {

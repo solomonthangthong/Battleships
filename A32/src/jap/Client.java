@@ -267,7 +267,7 @@ public class Client extends JFrame implements ActionListener {
             // Call the connectToServer method to establish the connection
             connectToServer(serverAddressStr, portNumberInt);
 
-            // Open stream
+            // Open stream when connection is connected
             try{
                 outputStream = socket.getOutputStream();
                 writer = new BufferedWriter(new OutputStreamWriter(outputStream));
@@ -277,6 +277,8 @@ public class Client extends JFrame implements ActionListener {
 
         } else if (e.getSource() == end) {
             //sendProtocolEnd();
+
+            // Attempt to send the PROTOCOL to WRITER STREAM
             String message = Config.PROTOCOL_END + Config.PROTOCOL_SEPARATOR;
             try {
                 writer.write(message);
@@ -292,6 +294,14 @@ public class Client extends JFrame implements ActionListener {
             // Add dimensions and game Config
             String message = Config.PROTOCOL_SENDGAME + Config.FIELD_SEPARATOR + gameConfiguration;
             console.append(message);
+
+            try {
+                writer.write(message);
+                writer.newLine();
+                writer.flush();
+            }catch(IOException ex){
+                throw new RuntimeException(ex);
+            }
         }
     }
 }
