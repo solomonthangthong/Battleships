@@ -2,6 +2,7 @@ package jap;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Objects;
 
 public class ClientHandler implements Runnable {
     private Server serverInstance;
@@ -43,13 +44,14 @@ public class ClientHandler implements Runnable {
             // Need to see if debug actually has the protocolMessage
             while ((protocolMessage = reader.readLine()) != null) {
                 String[] splice = protocolMessage.split(Config.PROTOCOL_SEPARATOR);
-                if (splice.length < 2) {
+                if (splice.length > 2) {
                     serverInstance.console.append("Invalid protocol\n");
                     continue;
                 }
                 protocolID = splice[0];
-                data = splice[1];
-            }
+                if (!protocolID.equals(Config.PROTOCOL_END)) {
+                    data = splice[1];
+                }            }
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -59,7 +61,7 @@ public class ClientHandler implements Runnable {
         // I set the protoclID in the while but i am not sure if it has access to the new value
         switch (protocolID) {
             case Config.PROTOCOL_END:
-                handleEndConnection(protocolID, data);
+                handleEndConnection(protocolID);
                 return;
             case Config.PROTOCOL_SENDGAME:
                 sendGameConfig(data);
@@ -89,7 +91,7 @@ public class ClientHandler implements Runnable {
         // Implement logic for method
     }
 
-    protected void handleEndConnection(String protocolId, String data) {
+    protected void handleEndConnection(String protocolID) {
         try {
             reader.close();
             inputStream.close();
@@ -97,7 +99,7 @@ public class ClientHandler implements Runnable {
             clientSocket.close();
 
             serverInstance.console.append("Client " + clientId + " disconnected.");
-            serverInstance.console.append(protocolId + data);
+            serverInstance.console.append(protocolID);
         } catch (IOException ex) {
             serverInstance.disconnectClient(clientSocket);
             System.out.println("Error handling end connection: " + ex.getMessage());
