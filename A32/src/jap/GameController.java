@@ -50,6 +50,7 @@ public class GameController implements ActionListener {
 
         view.registerGameController(this);
         model.setGameController(this);
+        client.setGameController(this);
 
         // Set player 1 name to what is entered
         model.updatePlayerName(true, playerName);
@@ -360,6 +361,11 @@ public class GameController implements ActionListener {
             hello = gameModel.configurationString(false, actorBoard);
             gameModel.setPlayer2Config(hello);
         }
+    }
+
+    protected void sendGameConfiguration(){
+        String config = gameModel.configurationString(true, gameModel.getUserPlayerButtons());
+        client.setGameConfiguration(config);
     }
 
     /**

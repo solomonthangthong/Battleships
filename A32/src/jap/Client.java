@@ -11,6 +11,7 @@ import java.io.*;
 import java.net.Socket;
 
 public class Client extends JFrame implements ActionListener {
+    private GameController gameController;
     private Server server;
     private JPanel clientPanel;
     private JTextField user;
@@ -28,6 +29,9 @@ public class Client extends JFrame implements ActionListener {
     private JScrollPane scrollPane;
 
     private Socket socket;
+
+    private String gameConfiguration;
+    private String dimensionSize;
 
     private Boolean connectionStatus;
 
@@ -152,6 +156,9 @@ public class Client extends JFrame implements ActionListener {
 
     }
 
+    protected void setGameController(GameController controller){
+        this.gameController = controller;
+    }
 
     /**
      * Method Name: addPanelsToMainFrame
@@ -247,6 +254,10 @@ public class Client extends JFrame implements ActionListener {
         return playerName;
     }
 
+    protected void setGameConfiguration(String gameConfig){
+        this.gameConfiguration = gameConfig;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == connect) {
@@ -256,6 +267,7 @@ public class Client extends JFrame implements ActionListener {
             // Call the connectToServer method to establish the connection
             connectToServer(serverAddressStr, portNumberInt);
 
+            // Open stream
             try{
                 outputStream = socket.getOutputStream();
                 writer = new BufferedWriter(new OutputStreamWriter(outputStream));
@@ -274,6 +286,12 @@ public class Client extends JFrame implements ActionListener {
                 throw new RuntimeException(ex);
             }
             endConnection();
+        } else if (e.getSource() == newGame){
+            console.append("Creating new MVC game\n");
+            gameController.sendGameConfiguration();
+            // Add dimensions and game Config
+            String message = Config.PROTOCOL_SENDGAME + Config.FIELD_SEPARATOR + gameConfiguration;
+            console.append(message);
         }
     }
 }
