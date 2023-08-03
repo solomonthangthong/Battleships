@@ -142,6 +142,7 @@ public class Server extends JFrame implements ActionListener {
     }
 
 
+
     public void acceptConnection() {
         while(!Thread.interrupted()){
             try {
@@ -151,6 +152,7 @@ public class Server extends JFrame implements ActionListener {
 
                 clientId++;
                 clientHandler.setClientId(clientId);
+
 
                 Thread thread = new Thread(clientHandler);
                 thread.start();
@@ -174,8 +176,20 @@ public class Server extends JFrame implements ActionListener {
             addNewLine("Server started on port " + port + "\n");
             end.setEnabled(true);
             start.setEnabled(false);
+
         } catch (IOException ex) {
             addNewLine("Error creating server socket: " + ex.getMessage() + "\n");
+        }
+    }
+    public void disconnectClient(Socket clientSocket) {
+        // Find the corresponding ClientHandler in the list
+        for (ClientHandler clientHandler : clients) {
+            if (clientHandler.getClientSocket() == clientSocket) {
+                clientHandler.handleEndConnection();
+                clients.remove(clientHandler);
+                console.append("Client" + clientId + "has been disconnected");
+                break;
+            }
         }
     }
 

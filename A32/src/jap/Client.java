@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.Socket;
 
 public class Client extends JFrame implements ActionListener {
@@ -28,6 +29,7 @@ public class Client extends JFrame implements ActionListener {
     private JTextArea console;
     private JScrollPane scrollPane;
 
+
     private Socket socket;
 
     private Boolean connectionStatus;
@@ -36,6 +38,7 @@ public class Client extends JFrame implements ActionListener {
         initializeFrame();
         createPanel();
         addPanelsToMainFrame();
+
     }
 
     public void initializeFrame() {
@@ -76,6 +79,7 @@ public class Client extends JFrame implements ActionListener {
             public void removeUpdate(DocumentEvent e) {
                 updatePlayerNameController();
             }
+
 
             @Override
             public void changedUpdate(DocumentEvent e) {
@@ -183,11 +187,17 @@ public class Client extends JFrame implements ActionListener {
             console.append("Connection failed: " + ex.getMessage() + "\n");
         }
     }
+public Server getServer(){
+      return  this.server;
+}
 
     public void endConnection() {
         try {
             if (socket != null && !socket.isClosed()) {
-                //close the socket
+
+                //need to figure out way to get instance of server so that I can call this
+             //   server.disconnectClient(socket);
+                // Close the socket
                 socket.close();
                 console.append("Connection ended.\n");
                 // Re-enable the "Connect" button
@@ -200,6 +210,28 @@ public class Client extends JFrame implements ActionListener {
         } catch (IOException ex) {
             // Handle connection closing errors
             console.append("Error ending connection: " + ex.getMessage() + "\n");
+        }
+    }
+
+    public void setServer(Server server) {
+        this.server = server;
+    }
+
+    private void sendProtocolEnd() {
+        try {
+            if (socket != null && !socket.isClosed()) {
+                OutputStream outputStream = socket.getOutputStream();
+                String message = "1" + Config.PROTOCOL_SEPARATOR + Config.PROTOCOL_END;
+                outputStream.write(message.getBytes());
+                outputStream.flush();
+              //  server.disconnectClient(socket);
+              //  server.endConnection();
+                console.append("Protocol 'P0' (End) sent to server.\n");
+            } else {
+                console.append("No active connection to send 'P0'.\n");
+            }
+        } catch (IOException ex) {
+            console.append("Error sending 'P0' protocol: " + ex.getMessage() + "\n");
         }
     }
 
@@ -222,8 +254,14 @@ public class Client extends JFrame implements ActionListener {
             // Call the connectToServer method to establish the connection
             connectToServer(serverAddressStr, portNumberInt);
         } else if (e.getSource() == end) {
-            //  close the connection
+            sendProtocolEnd();
             endConnection();
+
+       //     sendProtocolEnd();
+
+            //  close the connection
+
+
         }
     }
 }
