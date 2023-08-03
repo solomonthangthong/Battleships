@@ -21,7 +21,7 @@ public class Server extends JFrame implements ActionListener {
     private JCheckBox finalize;
     private JButton end;
 
-    private JTextArea console;
+    protected JTextArea console;
     private JScrollPane scrollPane;
     private ServerSocket serverSocket;
 
@@ -148,7 +148,7 @@ public class Server extends JFrame implements ActionListener {
             try {
                 // accept connection
                 Socket clientSocket = serverSocket.accept();
-                ClientHandler clientHandler = new ClientHandler(clientSocket);
+                ClientHandler clientHandler = new ClientHandler(clientSocket, this);
 
                 clientId++;
                 clientHandler.setClientId(clientId);

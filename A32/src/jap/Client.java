@@ -38,7 +38,6 @@ public class Client extends JFrame implements ActionListener {
         initializeFrame();
         createPanel();
         addPanelsToMainFrame();
-
     }
 
     public void initializeFrame() {
@@ -178,7 +177,7 @@ public class Client extends JFrame implements ActionListener {
             connectionStatus = true;
 
             //create instance of client handler and pass socket for connection
-            ClientHandler clientHandler = new ClientHandler(socket);
+            ClientHandler clientHandler = new ClientHandler(socket, server);
             Thread clientHandlerThread = new Thread(clientHandler);
             clientHandlerThread.start();
 
@@ -187,16 +186,17 @@ public class Client extends JFrame implements ActionListener {
             console.append("Connection failed: " + ex.getMessage() + "\n");
         }
     }
-public Server getServer(){
-      return  this.server;
-}
 
-    public void endConnection() {
+    public Server getServer() {
+        return this.server;
+    }
+
+    protected void endConnection() {
         try {
             if (socket != null && !socket.isClosed()) {
 
-                //need to figure out way to get instance of server so that I can call this
-             //   server.disconnectClient(socket);
+                // need to figure out way to get instance of server so that I can call this
+                // server.disconnectClient(socket);
                 // Close the socket
                 socket.close();
                 console.append("Connection ended.\n");
@@ -224,8 +224,8 @@ public Server getServer(){
                 String message = "1" + Config.PROTOCOL_SEPARATOR + Config.PROTOCOL_END;
                 outputStream.write(message.getBytes());
                 outputStream.flush();
-              //  server.disconnectClient(socket);
-              //  server.endConnection();
+                //  server.disconnectClient(socket);
+                //  server.endConnection();
                 console.append("Protocol 'P0' (End) sent to server.\n");
             } else {
                 console.append("No active connection to send 'P0'.\n");
@@ -241,10 +241,6 @@ public Server getServer(){
         return playerName;
     }
 
-    protected Boolean getConnectionStatus() {
-        return connectionStatus;
-    }
-
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == connect) {
@@ -257,7 +253,7 @@ public Server getServer(){
             sendProtocolEnd();
             endConnection();
 
-       //     sendProtocolEnd();
+            //     sendProtocolEnd();
 
             //  close the connection
 
