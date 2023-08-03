@@ -153,7 +153,6 @@ public class Server extends JFrame implements ActionListener {
                 clientId++;
                 clientHandler.setClientId(clientId);
 
-
                 Thread thread = new Thread(clientHandler);
                 thread.start();
                 addNewLine("Client " + clientId + " connected: " + clientSocket.getInetAddress().getHostAddress() + "\n");
@@ -185,7 +184,7 @@ public class Server extends JFrame implements ActionListener {
         // Find the corresponding ClientHandler in the list
         for (ClientHandler clientHandler : clients) {
             if (clientHandler.getClientSocket() == clientSocket) {
-                clientHandler.handleEndConnection();
+                clientHandler.handleEndConnection(null, null);
                 clients.remove(clientHandler);
                 console.append("Client" + clientId + "has been disconnected");
                 break;

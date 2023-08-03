@@ -1,12 +1,7 @@
 package jap;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
-import jap.protocol.*;
-
 
 public class ClientHandler implements Runnable {
     private Server serverInstance;
@@ -16,23 +11,22 @@ public class ClientHandler implements Runnable {
     private String playerData;
     private Integer clientId;
 
-    private ProtocolStreamReader reader;
-    private BufferedReader input;
-    private PrintWriter output;
+    private InputStream inputStream;
+    private BufferedReader reader;
 
     public ClientHandler(Socket clientSocket, Server server) {
         this.clientSocket = clientSocket;
         this.serverInstance = server;
+
+        try {
+            this.inputStream = clientSocket.getInputStream();
+            this.reader = new BufferedReader(new InputStreamReader(inputStream));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         playerName = "";
         gameConfig = "";
         playerData = "";
-/*        // Initialize input and output streams
-        try {
-            input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            output = new PrintWriter(clientSocket.getOutputStream(), true);
-        } catch (IOException ex) {
-            System.out.println("Error creating input/output streams: " + ex.getMessage());
-        }*/
     }
 
     protected void setClientId(Integer clientNumber) {
@@ -40,14 +34,68 @@ public class ClientHandler implements Runnable {
     }
 
 
-    protected void handleEndConnection() {
+    private void processClient() throws IOException {
+        String protocolID = "";
+        String data = "";
         try {
-            // Close input and output streams
-            input.close();
-            output.close();
-            // Close the client socket
+            String protocolMessage;
+
+            while ((protocolMessage = reader.readLine()) != null) {
+                String[] splice = protocolMessage.split(Config.PROTOCOL_SEPARATOR);
+                if (splice.length < 2) {
+                    serverInstance.console.append("Invalid protocol\n");
+                    continue;
+                }
+                protocolID = splice[0];
+                data = splice[1];
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Determine the protocol and execute the corresponding action
+        switch (protocolID) {
+            case Config.PROTOCOL_END:
+                handleEndConnection(protocolID, data);
+                return;
+            case Config.PROTOCOL_SENDGAME:
+                sendGameConfig(data);
+                break;
+            case Config.PROTOCOL_RECVGAME:
+                receiveGameConfig(data);
+                break;
+            case Config.PROTOCOL_DATA:
+                playerData(data);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown protocol ID: " + protocolID);
+        }
+
+    }
+
+
+    protected void sendGameConfig(String data) {
+
+    }
+
+    protected void receiveGameConfig(String data) {
+
+    }
+
+    protected void playerData(String data) {
+
+    }
+
+    protected void handleEndConnection(String protocolId, String data) {
+        try {
+            reader.close();
+            inputStream.close();
+
             clientSocket.close();
-            System.out.println("Client " + clientId + " disconnected.");
+
+            serverInstance.console.append("Client " + clientId + " disconnected.");
+            serverInstance.console.append(protocolId + data);
         } catch (IOException ex) {
             serverInstance.disconnectClient(clientSocket);
             System.out.println("Error handling end connection: " + ex.getMessage());
@@ -58,56 +106,12 @@ public class ClientHandler implements Runnable {
         return clientSocket;
     }
 
-
-    private void processClient() throws IOException{
-        while(true){
-            ProtocolMessage receivedProtocol = reader.readMessage();
-
-            String protocolID = receivedProtocol.getProtocolID();
-            String data = receivedProtocol.getData();
-            // Determine the protocol and execute the corresponding action
-
-            switch (protocolID) {
-                case Config.PROTOCOL_END:
-                    handleP0Protocol(data);
-                    break;
-                case Config.PROTOCOL_SENDGAME:
-                    handleP1Protocol(data);
-                    break;
-                case Config.PROTOCOL_RECVGAME:
-                    handleP2Protocol(data);
-                    break;
-                case Config.PROTOCOL_DATA:
-                    handleP3Protocol(data);
-                    break;
-                default:
-                    throw new IllegalArgumentException("Unknown protocol ID: " + protocolID);
-            }
-
-        }
-    }
-
-    protected void handleP0Protocol(String data){
-
-    }
-
-    protected void handleP1Protocol(String data){
-
-    }
-
-    protected void handleP2Protocol(String data){
-
-    }
-    protected void handleP3Protocol(String data){
-
-    }
-
     @Override
     public void run() {
-        try{
+        try {
             processClient();
-        }catch (IOException e){
-            e.printStackTrace();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }

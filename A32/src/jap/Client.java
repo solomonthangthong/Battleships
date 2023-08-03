@@ -7,9 +7,7 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
 
 public class Client extends JFrame implements ActionListener {
@@ -29,10 +27,14 @@ public class Client extends JFrame implements ActionListener {
     private JTextArea console;
     private JScrollPane scrollPane;
 
-
     private Socket socket;
 
     private Boolean connectionStatus;
+
+    private Integer clientID;
+
+    private OutputStream outputStream;
+    private BufferedWriter writer;
 
     public Client() {
         initializeFrame();
@@ -187,6 +189,10 @@ public class Client extends JFrame implements ActionListener {
         }
     }
 
+    public void setClientID(Integer id){
+        this.clientID = id;
+    }
+
     public Server getServer() {
         return this.server;
     }
@@ -249,15 +255,25 @@ public class Client extends JFrame implements ActionListener {
             int portNumberInt = Integer.parseInt(portNumber.getText());
             // Call the connectToServer method to establish the connection
             connectToServer(serverAddressStr, portNumberInt);
+
+            try{
+                outputStream = socket.getOutputStream();
+                writer = new BufferedWriter(new OutputStreamWriter(outputStream));
+            } catch(IOException b){
+                b.printStackTrace();
+            }
+
         } else if (e.getSource() == end) {
-            sendProtocolEnd();
+            //sendProtocolEnd();
+            String message = Config.PROTOCOL_END + Config.PROTOCOL_SEPARATOR;
+            try {
+                writer.write(message);
+                writer.newLine();
+                writer.flush();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
             endConnection();
-
-            //     sendProtocolEnd();
-
-            //  close the connection
-
-
         }
     }
 }
