@@ -98,7 +98,7 @@ public class ClientHandler implements Runnable {
             clientSocket.close();
 
             serverInstance.console.append("Client " + clientId + " disconnected.");
-            serverInstance.console.append(protocolID);
+            serverInstance.console.append(protocolID + "\n");
         } catch (IOException ex) {
             serverInstance.disconnectClient(clientSocket);
             System.out.println("Error handling end connection: " + ex.getMessage());

@@ -186,7 +186,7 @@ public class Server extends JFrame implements ActionListener {
             if (clientHandler.getClientSocket() == clientSocket) {
                 clientHandler.handleEndConnection(null);
                 clients.remove(clientHandler);
-                console.append("Client" + clientId + "has been disconnected");
+                console.append("Client" + clientId + "has been disconnected\n");
                 break;
             }
         }

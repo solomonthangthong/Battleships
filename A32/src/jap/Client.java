@@ -285,7 +285,7 @@ public class Client extends JFrame implements ActionListener {
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
-            //endConnection();
+            endConnection();
         } else if (e.getSource() == newGame){
             console.append("Creating new MVC game\n");
             gameController.sendGameConfiguration();
