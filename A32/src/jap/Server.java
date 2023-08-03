@@ -122,8 +122,7 @@ public class Server extends JFrame implements ActionListener {
 
         serverPanel.add(buttonComponent, BorderLayout.CENTER);
 
-        console = new JTextArea();
-        console.setPreferredSize(new Dimension(600, 125));
+        console = new JTextArea(7,1);
         console.setEditable(false);
         scrollPane = new JScrollPane(console);
 
