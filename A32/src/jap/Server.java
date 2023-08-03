@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,8 +25,6 @@ public class Server extends JFrame implements ActionListener {
     protected JTextArea console;
     private JScrollPane scrollPane;
     private ServerSocket serverSocket;
-
-    private Integer clientId = 0;
 
     private Thread serverThread;
 
@@ -46,6 +45,7 @@ public class Server extends JFrame implements ActionListener {
         initializeFrame();
         createPanel();
         addPanelsToMainFrame();
+        clients = new ArrayList<>();
         //when server is instantiated, set the serverSocket given default port
 /*        try {
             serverSocket = new ServerSocket(port);
@@ -149,13 +149,13 @@ public class Server extends JFrame implements ActionListener {
                 // accept connection
                 Socket clientSocket = serverSocket.accept();
                 ClientHandler clientHandler = new ClientHandler(clientSocket, this);
-
-                clientId++;
-                clientHandler.setClientId(clientId);
+                clients.add(clientHandler);
+                int clientNumber = clients.indexOf(clientHandler);
+                clientHandler.setClientId(clientNumber);
 
                 Thread thread = new Thread(clientHandler);
                 thread.start();
-                addNewLine("Client " + clientId + " connected: " + clientSocket.getInetAddress().getHostAddress() + "\n");
+                addNewLine("Client " + clientNumber + " connected: " + clientSocket.getInetAddress().getHostAddress() + "\n");
             } catch (IOException ex) {
                 // Handle connection errors
                 addNewLine("Error accepting connection: " + ex.getMessage() + "\n");
@@ -184,9 +184,8 @@ public class Server extends JFrame implements ActionListener {
         // Find the corresponding ClientHandler in the list
         for (ClientHandler clientHandler : clients) {
             if (clientHandler.getClientSocket() == clientSocket) {
-                clientHandler.handleEndConnection(null);
                 clients.remove(clientHandler);
-                console.append("Client" + clientId + "has been disconnected\n");
+                console.append("Client " + clientHandler.getClientId() + " has been disconnected\n");
                 break;
             }
         }

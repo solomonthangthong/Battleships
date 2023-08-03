@@ -34,11 +34,15 @@ public class ClientHandler implements Runnable {
         this.clientId = clientNumber;
     }
 
+    protected Integer getClientId() {
+        return clientId;
+    }
+
 
     private void processClient() throws IOException {
-        // Not sure if this works ATM
         String protocolID = "";
         String data = "";
+
         try {
             String protocolMessage;
             // Need to see if debug actually has the protocolMessage
@@ -51,7 +55,8 @@ public class ClientHandler implements Runnable {
                 protocolID = splice[0];
                 if (!protocolID.equals(Config.PROTOCOL_END)) {
                     data = splice[1];
-                }            }
+                }
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -97,10 +102,9 @@ public class ClientHandler implements Runnable {
             inputStream.close();
             clientSocket.close();
 
-            serverInstance.console.append("Client " + clientId + " disconnected.");
+            serverInstance.disconnectClient(clientSocket);
             serverInstance.console.append(protocolID + "\n");
         } catch (IOException ex) {
-            serverInstance.disconnectClient(clientSocket);
             System.out.println("Error handling end connection: " + ex.getMessage());
         }
     }

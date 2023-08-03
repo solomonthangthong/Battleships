@@ -115,10 +115,15 @@ public class Client extends JFrame implements ActionListener {
         connect = new JButton("Connect");
         end = new JButton("End");
         newGame = new JButton("New Game");
+        newGame.setEnabled(false);
         sendGame = new JButton("Send Game");
+        sendGame.setEnabled(false);
         receiveGame = new JButton("Receive Game");
+        receiveGame.setEnabled(false);
         sendData = new JButton("Send Data");
+        sendData.setEnabled(false);
         play = new JButton("Play");
+        play.setEnabled(false);
 
 
         //action listeners to the buttons
@@ -272,6 +277,12 @@ public class Client extends JFrame implements ActionListener {
             } catch(IOException b){
                 b.printStackTrace();
             }
+
+            newGame.setEnabled(true);
+            sendGame.setEnabled(true);
+            receiveGame.setEnabled(true);
+            sendData.setEnabled(true);
+            play.setEnabled(true);
 
         } else if (e.getSource() == end) {
             //sendProtocolEnd();
