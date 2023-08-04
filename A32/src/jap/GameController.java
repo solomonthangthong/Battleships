@@ -374,6 +374,8 @@ public class GameController implements ActionListener {
         client.setDimensionSize(size);
     }
 
+
+
     /**
      * Method Name:changeBoatColor
      * Purpose: method for changing the color of the boats and tiles on both boards

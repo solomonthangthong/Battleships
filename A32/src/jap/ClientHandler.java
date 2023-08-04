@@ -2,7 +2,6 @@ package jap;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.Objects;
 
 public class ClientHandler implements Runnable {
     private Server serverInstance;
@@ -12,9 +11,16 @@ public class ClientHandler implements Runnable {
     private String playerData;
     private Integer clientId;
 
+    private String gameConfiguration;
+
     private InputStream inputStream;
     private BufferedReader reader;
 
+    /**
+     *
+     * @param clientSocket
+     * @param server
+     */
     public ClientHandler(Socket clientSocket, Server server) {
         this.clientSocket = clientSocket;
         this.serverInstance = server;
@@ -30,15 +36,26 @@ public class ClientHandler implements Runnable {
         playerData = "";
     }
 
+    /**
+     *
+     * @param clientNumber
+     */
     protected void setClientId(Integer clientNumber) {
         this.clientId = clientNumber;
     }
 
+    /**
+     *
+     * @return
+     */
     protected Integer getClientId() {
         return clientId;
     }
 
-
+    /**
+     *
+     * @throws IOException
+     */
     private void processClient() throws IOException {
         String protocolMessage;
         try {
@@ -46,11 +63,15 @@ public class ClientHandler implements Runnable {
                 processProtocol(protocolMessage);
             }
         } catch(IOException e){
-            e.printStackTrace();
+            System.out.print("Socket closed\n");
         }
 
     }
 
+    /**
+     *
+     * @param protocol
+     */
     private void processProtocol(String protocol){
         String protocolWithId = clientId + Config.PROTOCOL_SEPARATOR + protocol;
         String[] spliced = protocolWithId.split(Config.PROTOCOL_SEPARATOR);
@@ -67,11 +88,11 @@ public class ClientHandler implements Runnable {
                     break;
                 case Config.PROTOCOL_SENDGAME:
                     serverInstance.console.append(protocolWithId + "\n");
-                    sendGameConfig(protocolID);
+                    sendGameConfig(data);
                     break;
                 case Config.PROTOCOL_RECVGAME:
                     serverInstance.console.append(protocolWithId + "\n");
-                    receiveGameConfig(protocolID);
+                    receiveGameConfig();
                 case Config.PROTOCOL_DATA:
                     serverInstance.console.append(protocolWithId + "\n");
                     playerData(protocolID);
@@ -82,18 +103,43 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    protected void sendGameConfig(String protocolID) {
+    /**
+     *
+     * @param gameConfig
+     */
+    protected void sendGameConfig(String gameConfig) {
         // Implement logic for method
+        serverInstance.setGameConfiguration(gameConfig);
     }
 
-    protected void receiveGameConfig(String data) {
+    /**
+     *
+     */
+    protected void receiveGameConfig() {
         // Implement logic for method
+        this.gameConfiguration = serverInstance.sendConfigurationToClients();
     }
 
+    /**
+     *
+     * @return
+     */
+    protected String getGameConfig(){
+        return gameConfig;
+    }
+
+    /**
+     *
+     * @param data
+     */
     protected void playerData(String data) {
         // Implement logic for method
     }
 
+    /**
+     *
+     * @param protocolID
+     */
     protected void handleEndConnection(String protocolID) {
         try {
             reader.close();
@@ -107,10 +153,17 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     protected Socket getClientSocket() {
         return clientSocket;
     }
 
+    /**
+     *
+     */
     @Override
     public void run() {
         // This keeps the method running

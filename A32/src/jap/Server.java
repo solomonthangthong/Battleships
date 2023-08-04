@@ -28,10 +28,9 @@ public class Server extends JFrame implements ActionListener {
 
     private Thread serverThread;
 
-
-    private int port;
-    private boolean finalizeServer;
     private List<ClientHandler> clients;
+
+    private String gameConfiguration;
 
     //these were in UML but are unused atm
     //private Map<Integer,PlayerData> playerData;
@@ -55,6 +54,10 @@ public class Server extends JFrame implements ActionListener {
         }*/
     }
 
+    /**
+     *
+     * @param args
+     */
     public static void main(String[] args){
         int port = Config.DEFAULT_PORT;
         Server server = new Server(port);
@@ -142,7 +145,9 @@ public class Server extends JFrame implements ActionListener {
     }
 
 
-
+    /**
+     *
+     */
     public void acceptConnection() {
         while(!Thread.interrupted()){
             try {
@@ -163,6 +168,10 @@ public class Server extends JFrame implements ActionListener {
         }
     }
 
+    /**
+     *
+     * @param port
+     */
     public void startServer(int port) {
         // Check if the server is already running
         if (serverSocket != null && !serverSocket.isClosed()) {
@@ -191,6 +200,9 @@ public class Server extends JFrame implements ActionListener {
         }
     }
 
+    /**
+     *
+     */
     public void endConnection() {
         if (serverSocket != null && !serverSocket.isClosed()) {
             try {
@@ -209,16 +221,32 @@ public class Server extends JFrame implements ActionListener {
         }
     }
 
-    protected void updateGame(){
-
+    /**
+     *
+     * @param config
+     */
+    protected void setGameConfiguration(String config){
+        this.gameConfiguration = config;
     }
 
+    protected String sendConfigurationToClients(){
+        return gameConfiguration;
+    }
+
+    /**
+     *
+     * @param line
+     */
     private void addNewLine(String line){
         console.append(line);
         console.setCaretPosition(console.getDocument().getLength());
         console.scrollRectToVisible(new Rectangle(console.getPreferredSize()));
     }
 
+    /**
+     *
+     * @param e the event to be processed
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == start) {
