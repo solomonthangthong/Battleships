@@ -3,6 +3,18 @@ package jap;
 import java.io.*;
 import java.net.Socket;
 
+/**
+ * Class Name: ClientHandler
+ * Method List:
+ * Constants List: u
+ * <p>
+ * ClientHandler, Handler socket communication from Client to Server
+ *
+ * @author Andrew Lorimer, Solomon Thangthong
+ * @version 1.0
+ * @see Runnable
+ * @since 11.0.19
+ */
 public class ClientHandler implements Runnable {
     private Server serverInstance;
     private Socket clientSocket;
@@ -14,9 +26,16 @@ public class ClientHandler implements Runnable {
     private String gameConfiguration;
 
     private InputStream inputStream;
+
+    private OutputStream outputStream;
     private BufferedReader reader;
 
+    private BufferedWriter writer;
+
     /**
+     * Method Name: ClientHandler
+     * Purpose: Default Constructor
+     * Algorithm: Initialize server, socket, input/output streams, and player data
      *
      * @param clientSocket
      * @param server
@@ -31,12 +50,24 @@ public class ClientHandler implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        try {
+            outputStream = clientSocket.getOutputStream();
+            writer = new BufferedWriter(new OutputStreamWriter(outputStream));
+        } catch (IOException b) {
+            b.printStackTrace();
+        }
+
+
         playerName = "";
         gameConfig = "";
         playerData = "";
     }
 
     /**
+     * Method Name: setClientID
+     * Purpose: Setter Method for ClientID
+     * Algorithm: Set global variable to passed argument
      *
      * @param clientNumber
      */
@@ -45,58 +76,66 @@ public class ClientHandler implements Runnable {
     }
 
     /**
+     * Method Name: getClientID
+     * Purpose: Getter method for client ID
+     * Algorithm: return variable
      *
-     * @return
+     * @return - client ID number
      */
     protected Integer getClientId() {
         return clientId;
     }
 
     /**
-     *
-     * @throws IOException
+     * Method Name: processClient
+     * Purpose: While loop if reader is not null
+     * Algorithm: If not null send to processProtocol method
      */
-    private void processClient() throws IOException {
+    private void processClient() {
         String protocolMessage;
         try {
-            while((protocolMessage = reader.readLine()) != null){
+            while ((protocolMessage = reader.readLine()) != null) {
                 processProtocol(protocolMessage);
             }
-        } catch(IOException e){
+        } catch (IOException e) {
             System.out.print("Socket closed\n");
         }
-
     }
 
     /**
+     * Method Name: processProtocol
+     * Purpose: Parse String from client
+     * Algorithm: Put string into String Array, if length is equal or greater than 3 determine if client number, protocol #, or gameConfiguration
      *
      * @param protocol
      */
-    private void processProtocol(String protocol){
+    private void processProtocol(String protocol) throws IOException {
         String protocolWithId = clientId + Config.PROTOCOL_SEPARATOR + protocol;
         String[] spliced = protocolWithId.split(Config.PROTOCOL_SEPARATOR);
 
-        if (spliced.length >= 3){
+        if (spliced.length >= 3) {
             String clientID = spliced[0];
             String protocolID = spliced[1];
-            String data = spliced [2];
+            String data = spliced[2];
 
-            switch(protocolID){
+            switch (protocolID) {
                 case Config.PROTOCOL_END:
                     serverInstance.console.append(protocolWithId + "\n");
                     handleEndConnection(protocolID);
                     break;
                 case Config.PROTOCOL_SENDGAME:
                     serverInstance.console.append(protocolWithId + "\n");
-                    sendGameConfig(data);
+                    receiveClientGameConfig(data);
                     break;
                 case Config.PROTOCOL_RECVGAME:
-                    serverInstance.console.append(protocolWithId + "\n");
-                    receiveGameConfig();
+                    setGameConfiguration();
+                    serverInstance.console.append(clientID + Config.PROTOCOL_SEPARATOR + protocolID + Config.PROTOCOL_SEPARATOR + gameConfiguration + "\n");
+                    sendGameConfig(clientID, protocolID);
+                    break;
                 case Config.PROTOCOL_DATA:
                     serverInstance.console.append(protocolWithId + "\n");
                     playerData(protocolID);
-
+                    break;
                 default:
                     serverInstance.console.append("Unknown protocol\n");
             }
@@ -104,31 +143,47 @@ public class ClientHandler implements Runnable {
     }
 
     /**
+     * Method Name: receiveClientGameConfig
+     * Purpose: Take client Game Configuration and store it to Server side
+     * Algorithm: Call setter method from Server Instance and set
      *
-     * @param gameConfig
+     * @param gameConfig - String game configuration
      */
-    protected void sendGameConfig(String gameConfig) {
+    protected void receiveClientGameConfig(String gameConfig) {
         // Implement logic for method
         serverInstance.setGameConfiguration(gameConfig);
     }
 
     /**
-     *
+     * Method Name: setGameConfiguration
+     * Purpose: Setter method
+     * Algorithm: Global variable = server Game Configuration
      */
-    protected void receiveGameConfig() {
+    protected void setGameConfiguration() {
         // Implement logic for method
         this.gameConfiguration = serverInstance.sendConfigurationToClients();
     }
 
     /**
-     *
-     * @return
+     * Method Name: sendGameConfig
+     * Purpose: Send Protocol and gameconfiguration to Client side
+     * Algorithm: Create string message and put into write stream for client
      */
-    protected String getGameConfig(){
-        return gameConfig;
+    protected void sendGameConfig(String clientID, String protocolID){
+        String message = clientID + Config.PROTOCOL_SEPARATOR + protocolID + Config.PROTOCOL_SEPARATOR + gameConfiguration + "\n";
+        try {
+            writer.write(message);
+            writer.newLine();
+            writer.flush();
+        } catch (IOException ex) {
+            System.out.print("Message did not send to client\n");
+        }
     }
 
     /**
+     * Method Name: playerData
+     * Purpose: Grab player Object from MVC and pass information to Server side
+     * Algorithm:
      *
      * @param data
      */
@@ -137,6 +192,9 @@ public class ClientHandler implements Runnable {
     }
 
     /**
+     * Method Name: handleEndConnection
+     * Purpose: End the connection between client and server
+     * Algorithm: Close reader, stream, and socket, print message on server end.
      *
      * @param protocolID
      */
@@ -154,23 +212,25 @@ public class ClientHandler implements Runnable {
     }
 
     /**
+     * Method Name: getClientSocket
+     * Purpose: Getter method for clientSocket
+     * Algorithm: return the clientSocket
      *
-     * @return
+     * @return - Local instance of clientSocket
      */
     protected Socket getClientSocket() {
         return clientSocket;
     }
 
     /**
-     *
+     * Method Name: run
+     * Purpose: Override run method of Runnable interface
+     * Algorithm: Start new thread to handle processClient method, which keeps the method running
      */
     @Override
     public void run() {
         // This keeps the method running
-        try {
-            processClient();
-        } catch (IOException e) {
-            System.out.print("Socket closed\n");
-        }
+            Thread receiveProtocol = new Thread(this::processClient);
+            receiveProtocol.start();
     }
 }

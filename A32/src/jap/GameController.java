@@ -52,6 +52,10 @@ public class GameController implements ActionListener {
         model.setGameController(this);
         client.setGameController(this);
 
+        view.setResizable(false);
+        view.setVisible(false);
+
+
         // Set player 1 name to what is entered
         model.updatePlayerName(true, playerName);
 

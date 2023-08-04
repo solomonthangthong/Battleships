@@ -1,6 +1,5 @@
 package jap;
 
-import javax.print.Doc;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -10,9 +9,21 @@ import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.Socket;
 
+/**
+ * Class Name: Client
+ * Method List:
+ * Constants List: u
+ * <p>
+ * Client, Client GUI for user to connect to server,create new game configurations, receive them and play.
+ *
+ * @author Andrew Lorimer, Solomon Thangthong
+ * @version 1.0
+ * @see JFrame
+ * @see ActionListener
+ * @since 11.0.19
+ */
 public class Client extends JFrame implements ActionListener {
     private GameController gameController;
-    private Server server;
     private JPanel clientPanel;
     private JTextField user;
     private JTextField serverAddress;
@@ -32,20 +43,28 @@ public class Client extends JFrame implements ActionListener {
 
     private String gameConfiguration;
     private Integer dimensionSize;
-
-    private Boolean connectionStatus;
-
-    private Integer clientID;
+    private InputStream inputStream;
 
     private OutputStream outputStream;
     private BufferedWriter writer;
 
+    private BufferedReader reader;
+
+    /**
+     * Constructor for Class
+     */
     public Client() {
         initializeFrame();
         createPanel();
         addPanelsToMainFrame();
+
     }
 
+    /**
+     * Method Name: InitializeFrame
+     * Purpose: Method to set up parameters for GUI window
+     * Algorithm: Set title, size, location, default close operation
+     */
     public void initializeFrame() {
         setTitle("Battleship Game Client");
         setSize(600, 450);
@@ -54,7 +73,9 @@ public class Client extends JFrame implements ActionListener {
     }
 
     /**
-     *
+     * Method Name:createPanels
+     * Purpose:create the client GUI and the buttons for the application
+     * Algorithm:create multiple JPanels representing each division of the application, including all the buttons the user can press
      */
     protected void createPanel() {
 
@@ -159,7 +180,7 @@ public class Client extends JFrame implements ActionListener {
 
     }
 
-    protected void setGameController(GameController controller){
+    protected void setGameController(GameController controller) {
         this.gameController = controller;
     }
 
@@ -174,6 +195,14 @@ public class Client extends JFrame implements ActionListener {
 
     }
 
+    /**
+     * Method Name: connectToServer
+     * Purpose: Create socket to connect to server
+     * Algorithm: Create new instance of socket and pass address and portnumber
+     *
+     * @param serverAddress - IP address of server
+     * @param portNumber - Integer value of server port
+     */
     public void connectToServer(String serverAddress, int portNumber) {
         try {
             // Create a new socket
@@ -186,27 +215,17 @@ public class Client extends JFrame implements ActionListener {
             // Enable the "End" button to allow disconnection
             end.setEnabled(true);
 
-            connectionStatus = true;
-
-            //create instance of client handler and pass socket for connection
-            ClientHandler clientHandler = new ClientHandler(socket, server);
-            Thread clientHandlerThread = new Thread(clientHandler);
-            clientHandlerThread.start();
-
         } catch (IOException ex) {
             // Handle connection errors
             console.append("Connection failed: " + ex.getMessage() + "\n");
         }
     }
 
-    public void setClientID(Integer id){
-        this.clientID = id;
-    }
-
-    public Server getServer() {
-        return this.server;
-    }
-
+    /**
+     * Method Name: endConnection
+     * Purpose: End connect to server
+     * Algorithm:
+     */
     protected void endConnection() {
         try {
             if (socket != null && !socket.isClosed()) {
@@ -228,37 +247,127 @@ public class Client extends JFrame implements ActionListener {
         }
     }
 
-
+    /**
+     * Method Name: updatePlayerNameController
+     * Purpose: return playerName from JTextField to update player Object in MVC
+     * Algorithm: get JTextField and return that value
+     *
+     * @return - playerName
+     */
     protected String updatePlayerNameController() {
         String playerName = user.getText();
         return playerName;
     }
 
-    protected void setGameConfiguration(String gameConfig){
+    /**
+     * Method Name: listenForClientHandleMessage
+     * Purpose: Create thread to constantly listen for messages from ClientHandler
+     * Algorithm: Create new thread and start thread
+     */
+    public void listenForClientHandleMessage() {
+        Thread listeningThread = new Thread(this::receiveServerOutput);
+        listeningThread.start();
+    }
+
+    /**
+     * Method Name: receiveServerOutput
+     * Purpose: Parse string information from output stream
+     * Algorithm: While loop, if string is not null splice string into indexes, and use information
+     */
+    private void receiveServerOutput() {
+        String protocolMessage;
+        try {
+            while ((protocolMessage = reader.readLine()) != null) {
+                String[] spliced = protocolMessage.split(Config.PROTOCOL_SEPARATOR);
+                if (spliced.length >= 3) {
+                    String clientID = spliced[0];
+                    String protocolID = spliced[1];
+                    String data = spliced[2];
+                    gameConfiguration = data;
+                    console.append("Received " + protocolMessage);
+                }
+            }
+        } catch (IOException e) {
+            System.out.print("Socket closed\n");
+        }
+    }
+
+    /**
+     * Method Name: setGameConfiguration
+     * Purpose: set Global String game configuration to passed argument
+     * Algorithm: this.variable = passed variable
+     *
+     * @param gameConfig - String game configuration from Server
+     */
+    protected void setGameConfiguration(String gameConfig) {
         this.gameConfiguration = gameConfig;
     }
 
-    protected void setDimensionSize(Integer size){
+    /**
+     * Method Name: setDimensionSize
+     * Purpose: set Global Integer dimensionSize to passed argument
+     * Algorithm: this.variable = passed variable
+     *
+     * @param size - Board dimension size
+     */
+    protected void setDimensionSize(Integer size) {
         this.dimensionSize = size;
     }
 
+    /**
+     * Method Name: sendProtocolToServer
+     * Purpose: Pass protocol message to generic method to reduce duplicated code
+     * Algorithm: Try catch use Buffer and write message to stream
+     *
+     * @param message - Protocol string example 1#P1#4,1000000000444401000000000333003000000030201020302000200100220000
+     */
+    private void sendProtocolToServer(String message){
+        try {
+            writer.write(message);
+            writer.newLine();
+            writer.flush();
+        } catch (IOException ex) {
+            System.out.print("wow");
+        }
+    }
+
+    /**
+     * Method Name: actionPerformed
+     * Purpose: Invoked JButton when an action occurs
+     * Algorithm: If else tree to determine specific actions
+     *
+     * @param e the event to be processed
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == connect) {
             // Get the server address and port number from the text fields
             String serverAddressStr = serverAddress.getText();
+
             int portNumberInt = Integer.parseInt(portNumber.getText());
             // Call the connectToServer method to establish the connection
             connectToServer(serverAddressStr, portNumberInt);
 
-            // Open stream when connection is connected
-            try{
-                outputStream = socket.getOutputStream();
-                writer = new BufferedWriter(new OutputStreamWriter(outputStream));
-            } catch(IOException b){
+            // Open input stream when connection is connected
+            try {
+                this.inputStream = socket.getInputStream();
+                this.reader = new BufferedReader(new InputStreamReader(inputStream));
+            } catch (IOException b) {
                 b.printStackTrace();
             }
 
+            // Open stream when connection is connected
+            try {
+                outputStream = socket.getOutputStream();
+                writer = new BufferedWriter(new OutputStreamWriter(outputStream));
+            } catch (IOException b) {
+                b.printStackTrace();
+            }
+
+            // Thread to listen for incoming messages from Server
+            listenForClientHandleMessage();
+
+            // Enable buttons once connected
             newGame.setEnabled(true);
             sendGame.setEnabled(true);
             receiveGame.setEnabled(true);
@@ -269,34 +378,32 @@ public class Client extends JFrame implements ActionListener {
             //sendProtocolEnd();
 
             String message = Config.PROTOCOL_END + Config.PROTOCOL_SEPARATOR + 0;
-            try {
-                writer.write(message);
-                writer.newLine();
-                writer.flush();
-                endConnection();
-            } catch (IOException ex) {
-                System.out.print("wow");
-            }
-            //endConnection();
+            sendProtocolToServer(message);
+            endConnection();
 
-        } else if (e.getSource() == newGame){
+        } else if (e.getSource() == newGame) {
+            //TODO If new game was pressed already must increment board size
             console.append("Creating new MVC game\n");
             gameController.sendGameConfiguration();
             // Add dimensions and game Config
 
-        } else if (e.getSource() == sendGame){
-            gameController.getDimensionSize();
+        } else if (e.getSource() == sendGame) {
             console.append("Sending Game Configuration to Server\n");
+            gameController.getDimensionSize();
             String message = Config.PROTOCOL_SENDGAME + Config.PROTOCOL_SEPARATOR + dimensionSize + Config.FIELD_SEPARATOR + gameConfiguration;
             console.append(message + "\n");
+            sendProtocolToServer(message);
 
-            try {
-                writer.write(message);
-                writer.newLine();
-                writer.flush();
-            }catch(IOException ex){
-                throw new RuntimeException(ex);
-            }
+        } else if (e.getSource() == receiveGame) {
+            console.append("Receiving Game Configuration from Server\n");
+            String message = Config.PROTOCOL_RECVGAME + Config.PROTOCOL_SEPARATOR + 0;
+            console.append(message + "\n");
+            sendProtocolToServer(message);
+
+        } else if (e.getSource() == sendData) {
+
+        } else if (e.getSource() == play) {
+
         }
     }
 }

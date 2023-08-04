@@ -12,7 +12,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Class Name: Server
+ * Method List:
+ * Constants List: u
+
+ * Server, host server on IP address and accept incoming connections, store user data and game results
  *
+ * @author Andrew Lorimer, Solomon Thangthong
+ * @version 1.0
+ * @see JFrame
+ * @see ActionListener
+ * @since 11.0.19
  */
 public class Server extends JFrame implements ActionListener {
     private JPanel serverPanel;
@@ -37,26 +47,23 @@ public class Server extends JFrame implements ActionListener {
     //private List<PlayerData> rankList;
 
     /**
-     *
+     * Method Name: Server
+     * Purpose: Default constructor
+     * Algorithm: Initialize required components to launch Server GUI
      */
     public Server(int port) {
-
         initializeFrame();
         createPanel();
         addPanelsToMainFrame();
         clients = new ArrayList<>();
-        //when server is instantiated, set the serverSocket given default port
-/*        try {
-            serverSocket = new ServerSocket(port);
-            console.append("Server started on port " + port + "\n");
-        } catch (IOException ex) {
-            console.append("Error creating server socket: " + ex.getMessage() + "\n");
-        }*/
     }
 
     /**
+     * Method Name: main
+     * Purpose: Entry point of the Server application
+     * Algorithm: Use default port upon launch, create new server instance, and set visibility to true.
      *
-     * @param args
+     * @param args - The command-line arguments provided to the application.
      */
     public static void main(String[] args){
         int port = Config.DEFAULT_PORT;
@@ -82,7 +89,9 @@ public class Server extends JFrame implements ActionListener {
     }
 
     /**
-     *
+     * Method Name:createPanels
+     * Purpose:create the server panels containing the buttons for the application
+     * Algorithm:create multiple JPanels representing each division of the application
      */
     protected void createPanel() {
 
@@ -144,9 +153,10 @@ public class Server extends JFrame implements ActionListener {
         contentPane.add(serverPanel);
     }
 
-
     /**
-     *
+     * Method Name: acceptConnection
+     * Purpose: Accept the socket from client side
+     * Algorithm: Accept socket and create new instane of ClientHandler, add new Client Handler to List of clients, and start new thread
      */
     public void acceptConnection() {
         while(!Thread.interrupted()){
@@ -169,8 +179,11 @@ public class Server extends JFrame implements ActionListener {
     }
 
     /**
+     * Method Name: startServer
+     * Purpose:
+     * Algorithm:
      *
-     * @param port
+     * @param port - Integer port value
      */
     public void startServer(int port) {
         // Check if the server is already running
@@ -189,6 +202,14 @@ public class Server extends JFrame implements ActionListener {
             addNewLine("Error creating server socket: " + ex.getMessage() + "\n");
         }
     }
+
+    /**
+     * Method Name: disconnectClient
+     * Purpose: When a client disconnect server will acknowledge
+     * Algorithm: Method is called from ClientHandler and  If client matches from List of clients, remove the client from list.
+     *
+     * @param clientSocket
+     */
     public void disconnectClient(Socket clientSocket) {
         // Find the corresponding ClientHandler in the list
         for (ClientHandler clientHandler : clients) {
@@ -201,7 +222,9 @@ public class Server extends JFrame implements ActionListener {
     }
 
     /**
-     *
+     * Method Name: endConnection
+     * Purpose:
+     * Algorithm:
      */
     public void endConnection() {
         if (serverSocket != null && !serverSocket.isClosed()) {
@@ -222,18 +245,31 @@ public class Server extends JFrame implements ActionListener {
     }
 
     /**
+     * Method Name: setGameConfiguration
+     * Purpose: Setter method for game configuration
+     * Algorithm: Set global variable to passed argument
      *
-     * @param config
+     * @param config - Game Configuration example 1#P1#4,1000000000444401000000000333003000000030201020302000200100220000
      */
     protected void setGameConfiguration(String config){
         this.gameConfiguration = config;
     }
 
+    /**
+     * Method Name: sendConfigurationToClients
+     * Purpose: Getter method for game configuration
+     * Algorithm: Return String for game config
+     *
+     * @return - Game Configuration example 1#P1#4,1000000000444401000000000333003000000030201020302000200100220000
+     */
     protected String sendConfigurationToClients(){
         return gameConfiguration;
     }
 
     /**
+     * Method Name: addNewLine
+     * Purpose: Add new line of text to text area in Server GUI console
+     * Algorithm: append message, set position to new line
      *
      * @param line
      */
@@ -244,6 +280,9 @@ public class Server extends JFrame implements ActionListener {
     }
 
     /**
+     * Method Name: actionPerformed
+     * Purpose: Invoked JButton when an action occurs
+     * Algorithm: If else tree to determine specific actions
      *
      * @param e the event to be processed
      */

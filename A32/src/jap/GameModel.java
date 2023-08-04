@@ -15,7 +15,7 @@ import java.util.List;
 
 /**
  * Class Name: GameModel
- * <p>
+ *
  * Method List: getPlayer, historyLog, setCurrentAction, getCurrentGameLog, getBoardSize, setBoardSize, getUserPlayerButtons, setUserPlayerButtons,
  * setOpponentButtons, getOpponentButtons, setUserBoardPanel, getUserBoardPanel, setOpponentBoardPanel, getOpponentBoardPanel, getNumberOfBoatsForDesign,
  * setNumberOfBoatsForDesign, setSelectedColour, setPlayer1Config, setPlayer2Config, updateButtonState, CreateButtonBoard, HiddenTextButtonUI,
@@ -24,7 +24,7 @@ import java.util.List;
  * <p>
  * Constants List: userButtons, opponentButtons, opponentBoardPanel, players, player1Config, player2Config, boardSize, currentAction, designBoatList, boatSizeSearch, numberOfBoatsForDesign
  * whiteBorder, selectedColour, waterColor, hitBoatColor
- * <p>
+ *
  * Model model, following MVC design pattern, to store data from Controller
  *
  * @author Andrew Lorimer, Solomon Thangthong

@@ -49,9 +49,6 @@ public class GameBasic {
         //server.setResizable(false);
         //server.setVisible(true);
 
-        gameView.setResizable(false);
-        gameView.setVisible(true);
-
         //server.acceptConnection();
 /*        if (client.getConnectionStatus()){
             gameView.setResizable(false);
