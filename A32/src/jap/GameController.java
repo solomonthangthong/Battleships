@@ -366,18 +366,40 @@ public class GameController implements ActionListener {
             gameModel.setPlayer2Config(hello);
         }
     }
+    protected void setMVCVisible(){
+        gameView.setResizable(false);
+        gameView.setVisible(true);
+    }
 
+    /**
+     *
+     */
     protected void sendGameConfiguration(){
         gameModel.setUserPlayerButtons(gameModel.generateBoatSize(true));
         String config = gameModel.configurationString(true, gameModel.getUserPlayerButtons());
         client.setGameConfiguration(config);
     }
 
+    /**
+     *
+     */
     protected void getDimensionSize(){
         Integer size = gameModel.getBoardSize();
         client.setDimensionSize(size);
     }
 
+    /**
+     *
+     * @param gameConfig
+     */
+    protected void receiveGameConfigurationClient(String gameConfig){
+        String[] digitArray = gameConfig.replaceAll("[^0-9]", "").split("");
+
+        for (int index = 0; index < digitArray.length; index++){
+            System.out.print(digitArray[index] + "\n");
+        }
+        //gameModel.setOpponentButtons();
+    }
 
 
     /**

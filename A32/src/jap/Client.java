@@ -284,7 +284,8 @@ public class Client extends JFrame implements ActionListener {
                     String protocolID = spliced[1];
                     String data = spliced[2];
                     gameConfiguration = data;
-                    console.append("Received " + protocolMessage);
+                    console.append("Received " + protocolMessage + "\n");
+                    console.append(gameConfiguration + "\n");
                 }
             }
         } catch (IOException e) {
@@ -395,15 +396,17 @@ public class Client extends JFrame implements ActionListener {
             sendProtocolToServer(message);
 
         } else if (e.getSource() == receiveGame) {
-            console.append("Receiving Game Configuration from Server\n");
             String message = Config.PROTOCOL_RECVGAME + Config.PROTOCOL_SEPARATOR + 0;
+            console.append("Receiving Game Configuration from Server\n");
             console.append(message + "\n");
             sendProtocolToServer(message);
+            // Send String config to MVC
+            gameController.receiveGameConfigurationClient(gameConfiguration);
 
         } else if (e.getSource() == sendData) {
 
         } else if (e.getSource() == play) {
-
+            gameController.setMVCVisible();
         }
     }
 }
