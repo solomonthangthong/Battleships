@@ -209,6 +209,10 @@ public class Server extends JFrame implements ActionListener {
         }
     }
 
+    protected void updateGame(){
+
+    }
+
     private void addNewLine(String line){
         console.append(line);
         console.setCaretPosition(console.getDocument().getLength());

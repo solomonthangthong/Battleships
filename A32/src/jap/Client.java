@@ -31,7 +31,7 @@ public class Client extends JFrame implements ActionListener {
     private Socket socket;
 
     private String gameConfiguration;
-    private String dimensionSize;
+    private Integer dimensionSize;
 
     private Boolean connectionStatus;
 
@@ -210,7 +210,6 @@ public class Client extends JFrame implements ActionListener {
     protected void endConnection() {
         try {
             if (socket != null && !socket.isClosed()) {
-
                 // need to figure out way to get instance of server so that I can call this
                 // server.disconnectClient(socket);
                 // Close the socket
@@ -229,28 +228,6 @@ public class Client extends JFrame implements ActionListener {
         }
     }
 
-    public void setServer(Server server) {
-        this.server = server;
-    }
-
-    private void sendProtocolEnd() {
-        try {
-            if (socket != null && !socket.isClosed()) {
-                OutputStream outputStream = socket.getOutputStream();
-                String message = "1" + Config.PROTOCOL_SEPARATOR + Config.PROTOCOL_END;
-                outputStream.write(message.getBytes());
-                outputStream.flush();
-                //  server.disconnectClient(socket);
-                //  server.endConnection();
-                console.append("Protocol 'P0' (End) sent to server.\n");
-            } else {
-                console.append("No active connection to send 'P0'.\n");
-            }
-        } catch (IOException ex) {
-            console.append("Error sending 'P0' protocol: " + ex.getMessage() + "\n");
-        }
-    }
-
 
     protected String updatePlayerNameController() {
         String playerName = user.getText();
@@ -259,6 +236,10 @@ public class Client extends JFrame implements ActionListener {
 
     protected void setGameConfiguration(String gameConfig){
         this.gameConfiguration = gameConfig;
+    }
+
+    protected void setDimensionSize(Integer size){
+        this.dimensionSize = size;
     }
 
     @Override
@@ -287,21 +268,25 @@ public class Client extends JFrame implements ActionListener {
         } else if (e.getSource() == end) {
             //sendProtocolEnd();
 
-            // Attempt to send the PROTOCOL to WRITER STREAM
             String message = Config.PROTOCOL_END + Config.PROTOCOL_SEPARATOR;
             try {
                 writer.write(message);
                 writer.newLine();
                 writer.flush();
             } catch (IOException ex) {
-                throw new RuntimeException(ex);
+                System.out.print("wow");
             }
-            endConnection();
+            //endConnection();
+
         } else if (e.getSource() == newGame){
             console.append("Creating new MVC game\n");
             gameController.sendGameConfiguration();
             // Add dimensions and game Config
-            String message = Config.PROTOCOL_SENDGAME + Config.FIELD_SEPARATOR + gameConfiguration;
+
+        } else if (e.getSource() == sendGame){
+            gameController.getDimensionSize();
+            console.append("Sending Game Configuration to Server\n");
+            String message = Config.PROTOCOL_SENDGAME + Config.PROTOCOL_SEPARATOR + dimensionSize + Config.FIELD_SEPARATOR + gameConfiguration;
             console.append(message + "\n");
 
             try {
@@ -311,8 +296,6 @@ public class Client extends JFrame implements ActionListener {
             }catch(IOException ex){
                 throw new RuntimeException(ex);
             }
-        } else if (e.getSource() == sendGame){
-
         }
     }
 }

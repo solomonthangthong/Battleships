@@ -40,51 +40,49 @@ public class ClientHandler implements Runnable {
 
 
     private void processClient() throws IOException {
-        String protocolID = "";
-        String data = "";
-
+        String protocolMessage;
         try {
-            String protocolMessage;
-            // Need to see if debug actually has the protocolMessage
-            while ((protocolMessage = reader.readLine()) != null) {
-                String[] splice = protocolMessage.split(Config.PROTOCOL_SEPARATOR);
-                if (splice.length > 2) {
-                    serverInstance.console.append("Invalid protocol\n");
-                    continue;
-                }
-                protocolID = splice[0];
-                if (!protocolID.equals(Config.PROTOCOL_END)) {
-                    data = splice[1];
-                }
+            while((protocolMessage = reader.readLine()) != null){
+                processProtocol(protocolMessage);
             }
-
-        } catch (IOException e) {
+        } catch(IOException e){
             e.printStackTrace();
-        }
-
-        // Determine the protocol and execute the corresponding action
-        // I set the protoclID in the while but i am not sure if it has access to the new value
-        switch (protocolID) {
-            case Config.PROTOCOL_END:
-                handleEndConnection(protocolID);
-                return;
-            case Config.PROTOCOL_SENDGAME:
-                sendGameConfig(data);
-                break;
-            case Config.PROTOCOL_RECVGAME:
-                receiveGameConfig(data);
-                break;
-            case Config.PROTOCOL_DATA:
-                playerData(data);
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown protocol ID: " + protocolID);
         }
 
     }
 
+    private void processProtocol(String protocol){
+        String protocolWithId = clientId + Config.PROTOCOL_SEPARATOR + protocol;
+        String[] spliced = protocolWithId.split(Config.PROTOCOL_SEPARATOR);
 
-    protected void sendGameConfig(String data) {
+        if (spliced.length >= 3){
+            String clientID = spliced[0];
+            String protocolID = spliced[1];
+            String data = spliced [2];
+
+            switch(protocolID){
+                case Config.PROTOCOL_END:
+                    serverInstance.console.append(protocolWithId + "\n");
+                    handleEndConnection(protocolID);
+                    break;
+                case Config.PROTOCOL_SENDGAME:
+                    serverInstance.console.append(protocolWithId + "\n");
+                    sendGameConfig(protocolID);
+                    break;
+                case Config.PROTOCOL_RECVGAME:
+                    serverInstance.console.append(protocolWithId + "\n");
+                    receiveGameConfig(protocolID);
+                case Config.PROTOCOL_DATA:
+                    serverInstance.console.append(protocolWithId + "\n");
+                    playerData(protocolID);
+
+                default:
+                    serverInstance.console.append("Unknown protocol\n");
+            }
+        }
+    }
+
+    protected void sendGameConfig(String protocolID) {
         // Implement logic for method
     }
 
@@ -119,7 +117,7 @@ public class ClientHandler implements Runnable {
         try {
             processClient();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.print("Socket closed\n");
         }
     }
 }

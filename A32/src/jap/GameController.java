@@ -369,6 +369,11 @@ public class GameController implements ActionListener {
         client.setGameConfiguration(config);
     }
 
+    protected void getDimensionSize(){
+        Integer size = gameModel.getBoardSize();
+        client.setDimensionSize(size);
+    }
+
     /**
      * Method Name:changeBoatColor
      * Purpose: method for changing the color of the boats and tiles on both boards
