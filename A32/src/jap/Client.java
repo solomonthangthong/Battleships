@@ -268,11 +268,12 @@ public class Client extends JFrame implements ActionListener {
         } else if (e.getSource() == end) {
             //sendProtocolEnd();
 
-            String message = Config.PROTOCOL_END + Config.PROTOCOL_SEPARATOR;
+            String message = Config.PROTOCOL_END + Config.PROTOCOL_SEPARATOR + 0;
             try {
                 writer.write(message);
                 writer.newLine();
                 writer.flush();
+                endConnection();
             } catch (IOException ex) {
                 System.out.print("wow");
             }
