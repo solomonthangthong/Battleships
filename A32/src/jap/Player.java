@@ -20,8 +20,8 @@ public class Player {
     private int health;
     private boolean actor;
     private int maxScore;
-    private Match[] matches;
 
+    private int gameLength;
     private List<Boat> boats;
 
 
@@ -41,8 +41,52 @@ public class Player {
         boats = new ArrayList<>();
     }
 
+    /**
+     *
+     * @param name
+     */
     protected void setPlayerName(String name){
         this.playerName = name;
+    }
+
+    /**
+     *
+     * @return
+     */
+    protected String getPlayerName(){
+        return playerName;
+    }
+
+    /**
+     *
+     * @param score
+     */
+    protected void setMaxScore(Integer score){
+        this.maxScore = score;
+    }
+
+    /**
+     *
+     * @return
+     */
+    protected Integer getPoints(){
+        return maxScore;
+    }
+
+    /**
+     *
+     * @param time
+     */
+    protected void setGameLength(Integer time){
+        this.gameLength = time;
+    }
+
+    /**
+     *
+     * @return
+     */
+    protected Integer getTime(){
+        return gameLength;
     }
 
     /**

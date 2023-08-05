@@ -1,14 +1,13 @@
 package jap;
 
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
+import javax.sound.sampled.*;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.plaf.basic.BasicButtonUI;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
 import java.util.List;
@@ -75,6 +74,9 @@ public class GameModel {
 
     private SetDisableJButtonWhiteText setDisabledWhite;
 
+    private Clip hit;
+    private Clip miss;
+
     /**
      * Constructor for GameModel class
      */
@@ -95,6 +97,9 @@ public class GameModel {
         numberOfBoatsForDesign = 0;
         hiddenText = new HiddenTextButtonUI();
         setDisabledWhite = new SetDisableJButtonWhiteText();
+
+        hit = loadClip("resources/hit.wav");
+        miss = loadClip("resources/miss.wav");
 
     }
     protected void setGameController(GameController controller){
@@ -123,15 +128,33 @@ public class GameModel {
             players[1].setPlayerName(name);
         }
     }
-    public static void updateUserPoints() {
+
+    /**
+     *
+     */
+    protected static void updateUserPoints() {
         userPoints++;
     }
-    public static void updateComputerPoints() {
+
+    /**
+     *
+     */
+    protected static void updateComputerPoints() {
         computerPoints++;
     }
-    public static int getUserPoints() {
+
+    /**
+     *
+     * @return
+     */
+    protected static int getUserPoints() {
         return userPoints;
     }
+
+    /**
+     *
+     * @return
+     */
     public static int getComputerPoints() {
         return computerPoints;
     }
@@ -388,7 +411,6 @@ public class GameModel {
      */
     protected void setPlayer1Config(String config) {
         this.player1Config = config;
-        System.out.print(player1Config + "\n");
     }
 
     /**
@@ -400,7 +422,7 @@ public class GameModel {
      */
     protected void setPlayer2Config(String config) {
         this.player2Config = config;
-        System.out.print(player2Config + "\n");
+        System.out.print("[setPlayer2Config] " + player2Config + "\n");
     }
 
     /**
@@ -439,10 +461,9 @@ public class GameModel {
                 button.setForeground(Color.white);
                 button.setEnabled(false);
                 button.setUI(setDisabledWhite);
-/*                hitMissSound = boardClipPlay(false);
                 if (who) {
-                    hitMissSound.start();
-                }*/
+                    playClip(miss);
+                }
             }
             // if Boat is passed, and state is NOT HIT, state becomes hit
         } else if (boat != null && reset) {
@@ -459,10 +480,9 @@ public class GameModel {
             boat.setForeground(Color.white);
             boat.setEnabled(false);
             boat.setUI(setDisabledWhite);
-/*            hitMissSound = boardClipPlay(true);
             if (who) {
-                hitMissSound.start();
-            }*/
+                playClip(hit);
+            }
         }
 
         return button;
@@ -520,18 +540,21 @@ public class GameModel {
                     String value = Character.toString(digitArray.charAt(index));
                     if (value.equals("0")){
                         buttons[row][col] = new JButton();
+                        buttons[row][col].setName("[" + (row)  + "]" + "[" + (col)+ "]");
                         ButtonState state = new ButtonState(buttons[row][col]);
+                        buttons[row][col].setBackground(selectedColour);
                         buttons[row][col].setForeground(Color.white);
                         buttons[row][col].setBorderPainted(true);
                         buttons[row][col].setBorder(whiteBorder);
                         state.setState(State.DEFAULT);
                         buttons[row][col].setUI(hiddenText);
                     } else {
-                        Boat boat = new Boat(Integer.valueOf(value), true);
-                        boat.setBackground(Color.BLUE);
+                        Boat boat = new Boat(Integer.parseInt(value), true);
+                        boat.setBackground(selectedColour);
+                        boat.setBorder(whiteBorder);
                         boat.setForeground(Color.white);
-                        boat.setBoatLength(size);
-                        boat.setText(size);
+                        boat.setBoatLength(Integer.parseInt(value));
+                        boat.setText(Integer.parseInt(value));
                         boat.setUI(hiddenText);
                         buttons[row][col] = boat;
                     }
@@ -1115,30 +1138,43 @@ public class GameModel {
     }
 
     /**
-     * Method Name: boardClipPlay f
-     * Purpose: Enables button click sound effects
-     * Algorithm: try catch new wav file, create new audio stream, return sound
+     * Method Name: loadClip
+     * Purpose: Initialize the sound files
+     * Algorithm: Try catch use file path and return the sound file
      *
-     * @return - If file is found, return click sound effect, else return null
+     * @param filePath - String relative path location
+     * @return - Sound clip
      */
-    private Clip boardClipPlay(Boolean hit) {
-        AudioInputStream audioInputStream;
-        try {
-            // Create 2nd audio input stream so 2 sounds can occur at same time
-            if (hit) {
-                audioInputStream = AudioSystem.getAudioInputStream(new File("resources/hit.wav").getAbsoluteFile());
-            } else {
-                audioInputStream = AudioSystem.getAudioInputStream(new File("resources/miss.wav").getAbsoluteFile());
-            }
-
-            // Get clip from audio file and open it
-            Clip clip = AudioSystem.getClip();
-            clip.open(audioInputStream);
-            // Return audio file to be executed
-            return clip;
-        } catch (Exception e) {
-            e.printStackTrace();
+    private Clip loadClip(String filePath){
+        try{
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(filePath).getAbsoluteFile());
+            Clip sound = AudioSystem.getClip();
+            sound.open(audioInputStream);
+            return sound;
+        } catch (UnsupportedAudioFileException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (LineUnavailableException e) {
+            throw new RuntimeException(e);
         }
-        return null;
     }
+
+    /**
+     * Method Name: playClip
+     * Purpose: Play hit or miss sound
+     * Algorithm: Check if sound is already playing, if not play the hit/miss sound
+     *
+     * @param clip - Sound file
+     */
+    private void playClip(Clip clip){
+        if (clip != null){
+            if (clip.isRunning()){
+                clip.stop();
+            }
+            clip.setFramePosition(0);
+            clip.start();
+        }
+    }
+
 }

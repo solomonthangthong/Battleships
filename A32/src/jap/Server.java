@@ -9,13 +9,15 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Class Name: Server
  * Method List:
  * Constants List: u
-
+ * <p>
  * Server, host server on IP address and accept incoming connections, store user data and game results
  *
  * @author Andrew Lorimer, Solomon Thangthong
@@ -42,9 +44,9 @@ public class Server extends JFrame implements ActionListener {
 
     private String gameConfiguration;
 
-    //these were in UML but are unused atm
-    //private Map<Integer,PlayerData> playerData;
-    //private List<PlayerData> rankList;
+    private Map<Integer, Player> playerMap;
+    private Integer playerCount;
+    private List<Player> rankList;
 
     /**
      * Method Name: Server
@@ -56,6 +58,8 @@ public class Server extends JFrame implements ActionListener {
         createPanel();
         addPanelsToMainFrame();
         clients = new ArrayList<>();
+        playerMap = new HashMap<>();
+        playerCount = 0;
     }
 
     /**
@@ -65,7 +69,7 @@ public class Server extends JFrame implements ActionListener {
      *
      * @param args - The command-line arguments provided to the application.
      */
-    public static void main(String[] args){
+    public static void main(String[] args) {
         int port = Config.DEFAULT_PORT;
         Server server = new Server(port);
         server.setResizable(false);
@@ -135,7 +139,7 @@ public class Server extends JFrame implements ActionListener {
 
         serverPanel.add(buttonComponent, BorderLayout.CENTER);
 
-        console = new JTextArea(7,1);
+        console = new JTextArea(7, 1);
         console.setEditable(false);
         scrollPane = new JScrollPane(console);
 
@@ -160,7 +164,7 @@ public class Server extends JFrame implements ActionListener {
      * Algorithm: Accept socket and create new instane of ClientHandler, add new Client Handler to List of clients, and start new thread
      */
     public void acceptConnection() {
-        while(!Thread.interrupted()){
+        while (!Thread.interrupted()) {
             try {
                 // accept connection
                 Socket clientSocket = serverSocket.accept();
@@ -252,7 +256,7 @@ public class Server extends JFrame implements ActionListener {
      *
      * @param config - Game Configuration example 1#P1#4,1000000000444401000000000333003000000030201020302000200100220000
      */
-    protected void setGameConfiguration(String config){
+    protected void setGameConfiguration(String config) {
         this.gameConfiguration = config;
     }
 
@@ -263,7 +267,7 @@ public class Server extends JFrame implements ActionListener {
      *
      * @return - Game Configuration example 1#P1#4,1000000000444401000000000333003000000030201020302000200100220000
      */
-    protected String sendConfigurationToClients(){
+    protected String sendConfigurationToClients() {
         return gameConfiguration;
     }
 
@@ -274,17 +278,37 @@ public class Server extends JFrame implements ActionListener {
      *
      * @param line
      */
-    protected void addNewLine(String line){
+    protected void addNewLine(String line) {
         console.append(line);
         console.setCaretPosition(console.getDocument().getLength());
         console.scrollRectToVisible(new Rectangle(console.getPreferredSize()));
     }
 
+    /**
+     * Method Name: addPlayerToList
+     * Purpose: add Player Object to Map
+     * Algorithm: For loop if list of ClientHandlers match socket, add player Object to Map
+     */
+    protected void addPlayerToList(Player player, Socket clientSocket) {
+        // index to increment for enhanced for loop
+        int index = 0;
+        for (ClientHandler clientHandler : clients) {
+            if (clientHandler.getClientSocket() == clientSocket) {
+                playerMap.put(index, player);
+            }
+            index++;
+        }
+    }
 
+    /**
+     * Method Name:
+     * Purpose:
+     * Algorithm:
+     */
     private void showPlayerDataPopup() {
         // Prepare the data to show in the pop-up box
         StringBuilder playerData = new StringBuilder();
-        for (ClientHandler clientHandler : clients) {
+/*        for (ClientHandler clientHandler : clients) {
             String playerName = clientHandler.getUserName();
             int userPoints = clientHandler.getUserPoints();
             int computerPoints = clientHandler.getComputerPoints();
@@ -294,11 +318,22 @@ public class Server extends JFrame implements ActionListener {
                     .append("\n Computer Points: ").append(computerPoints)
                     .append("\n Time: ").append(time)
                     .append("\n");
+        }*/
+        // Loop through playerMap to grab information
+        for (Map.Entry<Integer, Player> entry : playerMap.entrySet()) {
+            int playerId = entry.getKey();
+            Player player = entry.getValue();
+            String playerName = player.getPlayerName();
+            int points = player.getPoints();
+            int time = player.getTime();
+            playerData.append("Game Results:\nPlayer[" + playerId + "]: " + playerName + ", Points: " + points + ", Time: " + time + "\n");
+
         }
 
         // Show the pop-up box with the player data
         JOptionPane.showMessageDialog(this, playerData.toString(), "Player Data", JOptionPane.INFORMATION_MESSAGE);
     }
+
     /**
      * Method Name: actionPerformed
      * Purpose: Invoked JButton when an action occurs
@@ -315,11 +350,12 @@ public class Server extends JFrame implements ActionListener {
             serverThread.start();
         }
         if (e.getSource() == end) {
-            if (serverThread != null){
+            if (serverThread != null) {
                 serverThread.interrupt();
             }
             endConnection();
-        } if ( e.getSource() == result) {
+        }
+        if (e.getSource() == result) {
             showPlayerDataPopup();
         }
     }

@@ -29,30 +29,11 @@ public class GameBasic {
      */
     public static void main(String[] args) {
         //set default port number for initilizing Server
-        int port = Config.DEFAULT_PORT;
-        //Server server = new Server(port);
-        //this breaks the program
         Client client = new Client();
-//        if (clientSocket != null) {
-//            ClientHandler clientHandler = new ClientHandler(clientSocket);
-//            Thread clientHandlerThread = new Thread(clientHandler);
-//            clientHandlerThread.start();
-//        }
-
         GameModel gameModel = new GameModel();
         GameView gameView = new GameView();
         GameController gameController = new GameController(gameModel, gameView, client);
-
         client.setResizable(false);
         client.setVisible(true);
-
-        //server.setResizable(false);
-        //server.setVisible(true);
-
-        //server.acceptConnection();
-/*        if (client.getConnectionStatus()){
-            gameView.setResizable(false);
-            gameView.setVisible(true);
-        }*/
     }
 }

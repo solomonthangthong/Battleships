@@ -32,22 +32,17 @@ public class Client extends JFrame implements ActionListener {
     private JTextField portNumber;
     private JButton connect;
     private JButton end;
-
     private JButton newGame;
     private JButton sendGame;
     private JButton receiveGame;
     private JButton sendData;
     private JButton play;
     private JTextArea console;
-    private JScrollPane scrollPane;
-
-    private Socket socket;
-
     private String gameConfiguration;
     private Integer dimensionSize;
-    private InputStream inputStream;
+    private Boolean gameConfigReceived;
 
-    private OutputStream outputStream;
+    private Socket socket;
     private BufferedWriter writer;
 
     private BufferedReader reader;
@@ -177,7 +172,7 @@ public class Client extends JFrame implements ActionListener {
 
         console = new JTextArea(7, 1);
         console.setEditable(false);
-        scrollPane = new JScrollPane(console);
+        JScrollPane scrollPane = new JScrollPane(console);
 
         clientPanel.add(scrollPane, BorderLayout.SOUTH);
 
@@ -188,9 +183,9 @@ public class Client extends JFrame implements ActionListener {
      * Purpose: Add new line of text to text area in Server GUI console
      * Algorithm: append message, set position to new line
      *
-     * @param line
+     * @param line - String message for Console
      */
-    private void addNewLine(String line){
+    private void addNewLine(String line) {
         console.append(line);
         console.setCaretPosition(console.getDocument().getLength());
         console.scrollRectToVisible(new Rectangle(console.getPreferredSize()));
@@ -217,7 +212,7 @@ public class Client extends JFrame implements ActionListener {
      * Algorithm: Create new instance of socket and pass address and portnumber
      *
      * @param serverAddress - IP address of server
-     * @param portNumber - Integer value of server port
+     * @param portNumber    - Integer value of server port
      */
     public void connectToServer(String serverAddress, int portNumber) {
         try {
@@ -297,10 +292,10 @@ public class Client extends JFrame implements ActionListener {
             while ((protocolMessage = reader.readLine()) != null) {
                 String[] spliced = protocolMessage.split(Config.PROTOCOL_SEPARATOR);
                 if (spliced.length >= 3) {
-                    String clientID = spliced[0];
+                   /* String clientID = spliced[0];
                     String protocolID = spliced[1];
-                    String data = spliced[2];
-                    gameConfiguration = data;
+                    String data = spliced[2];*/
+                    gameConfiguration = spliced[2];
                     addNewLine("Received " + protocolMessage + "\n");
                     messageQueue.offer(gameConfiguration);
                 }
@@ -321,6 +316,10 @@ public class Client extends JFrame implements ActionListener {
         this.gameConfiguration = gameConfig;
     }
 
+    protected String getGameConfiguration(){
+        return gameConfiguration;
+    }
+
     /**
      * Method Name: setDimensionSize
      * Purpose: set Global Integer dimensionSize to passed argument
@@ -329,7 +328,7 @@ public class Client extends JFrame implements ActionListener {
      * @param size - Board dimension size
      */
     protected void setDimensionSize(Integer size) {
-        this.dimensionSize = size;
+        this.dimensionSize = size - 1;
     }
 
     /**
@@ -339,7 +338,7 @@ public class Client extends JFrame implements ActionListener {
      *
      * @param message - Protocol string example 1#P1#4,1000000000444401000000000333003000000030201020302000200100220000
      */
-    private void sendProtocolToServer(String message){
+    private void sendProtocolToServer(String message) {
         try {
             writer.write(message);
             writer.newLine();
@@ -370,7 +369,7 @@ public class Client extends JFrame implements ActionListener {
 
             // Open input stream when connection is connected
             try {
-                this.inputStream = socket.getInputStream();
+                InputStream inputStream = socket.getInputStream();
                 this.reader = new BufferedReader(new InputStreamReader(inputStream));
             } catch (IOException b) {
                 b.printStackTrace();
@@ -378,7 +377,7 @@ public class Client extends JFrame implements ActionListener {
 
             // Open stream when connection is connected
             try {
-                outputStream = socket.getOutputStream();
+                OutputStream outputStream = socket.getOutputStream();
                 writer = new BufferedWriter(new OutputStreamWriter(outputStream));
             } catch (IOException b) {
                 b.printStackTrace();
@@ -396,6 +395,7 @@ public class Client extends JFrame implements ActionListener {
             receiveGame.setEnabled(true);
             sendData.setEnabled(true);
             play.setEnabled(true);
+            gameConfigReceived = false;
 
         } else if (e.getSource() == end) {
             //sendProtocolEnd();
@@ -407,8 +407,12 @@ public class Client extends JFrame implements ActionListener {
         } else if (e.getSource() == newGame) {
             //TODO If new game was pressed already must increment board size
             addNewLine("Creating new MVC game\n");
-            gameController.sendGameConfiguration();
             // Add dimensions and game Config
+            if (dimensionSize != 10){
+                dimensionSize++;
+                gameController.clientDimensionToModel(dimensionSize);
+                gameController.sendGameConfiguration();
+            }
 
         } else if (e.getSource() == sendGame) {
             addNewLine("Sending Game Configuration to Server\n");
@@ -428,6 +432,7 @@ public class Client extends JFrame implements ActionListener {
                 String config = messageQueue.take();
                 addNewLine(config + "\n");
                 gameController.receiveGameConfigurationClient(config);
+                gameConfigReceived = true;
             } catch (InterruptedException ex) {
                 throw new RuntimeException(ex);
             }
@@ -435,17 +440,22 @@ public class Client extends JFrame implements ActionListener {
 
         } else if (e.getSource() == sendData) {
             ///get the points and time from the MVC
-            int userPoints = GameModel.getUserPoints();
+            int userPoints = gameController.getUserPoints();
             int computerPoints = GameModel.getComputerPoints();
             String userName = user.getText();
-
             int time = GameView.getTime();
+
             String message = Config.PROTOCOL_DATA + Config.PROTOCOL_SEPARATOR + userName + "," + userPoints + "," + computerPoints + "," + time + "\n";
-        //clientID # protcolID (P3) # playerData
+            //clientID # protcolID (P3) # playerData
             sendProtocolToServer(message);
 
         } else if (e.getSource() == play) {
-            gameController.setMVCVisible();
+            if (gameConfigReceived){
+                gameController.setMVCVisible();
+            } else {
+                JOptionPane.showMessageDialog(null, "Must receive gameConfiguration from Server to play", "Warning", JOptionPane.WARNING_MESSAGE);
+            }
+
         }
     }
 }

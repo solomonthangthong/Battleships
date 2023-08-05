@@ -16,25 +16,22 @@ import java.net.Socket;
  * @since 11.0.19
  */
 public class ClientHandler implements Runnable {
-    private Server serverInstance;
-    private Socket clientSocket;
-    private String playerName;
-    private String gameConfig;
-    private String playerData;
+    private final Server serverInstance;
+    private final Socket clientSocket;
+
     private Integer clientId;
     private Integer boardSize;
-    private String userName;
 
     private String gameConfiguration;
 
     private InputStream inputStream;
 
-    private OutputStream outputStream;
+    //private OutputStream outputStream;
     private BufferedReader reader;
 
     private BufferedWriter writer;
-    private int  userPoints;
-    private String time;
+    //private int userPoints;
+    //private String time;
     private int computerPoints;
 
     /**
@@ -42,8 +39,8 @@ public class ClientHandler implements Runnable {
      * Purpose: Default Constructor
      * Algorithm: Initialize server, socket, input/output streams, and player data
      *
-     * @param clientSocket
-     * @param server
+     * @param clientSocket - Socket connection
+     * @param server - Server object
      */
     public ClientHandler(Socket clientSocket, Server server) {
         this.clientSocket = clientSocket;
@@ -57,16 +54,12 @@ public class ClientHandler implements Runnable {
         }
 
         try {
-            outputStream = clientSocket.getOutputStream();
+            OutputStream outputStream = clientSocket.getOutputStream();
             writer = new BufferedWriter(new OutputStreamWriter(outputStream));
         } catch (IOException b) {
             b.printStackTrace();
         }
 
-
-        playerName = "";
-        gameConfig = "";
-        playerData = "";
     }
 
     /**
@@ -74,7 +67,7 @@ public class ClientHandler implements Runnable {
      * Purpose: Setter Method for ClientID
      * Algorithm: Set global variable to passed argument
      *
-     * @param clientNumber
+     * @param clientNumber - Client Number
      */
     protected void setClientId(Integer clientNumber) {
         this.clientId = clientNumber;
@@ -112,7 +105,7 @@ public class ClientHandler implements Runnable {
      * Purpose: Parse String from client
      * Algorithm: Put string into String Array, if length is equal or greater than 3 determine if client number, protocol #, or gameConfiguration
      *
-     * @param protocol
+     * @param protocol - String of protocol message
      */
     private void processProtocol(String protocol) throws IOException {
         String protocolWithId = clientId + Config.PROTOCOL_SEPARATOR + protocol;
@@ -141,7 +134,6 @@ public class ClientHandler implements Runnable {
                     break;
                 case Config.PROTOCOL_DATA:
                     serverInstance.addNewLine(protocolWithId + "\n");
-
 
                     // Pass the data to the playerData method to update the player-related variables
                     playerData(data);
@@ -179,7 +171,7 @@ public class ClientHandler implements Runnable {
      * Purpose: Send Protocol and gameconfiguration to Client side
      * Algorithm: Create string message and put into write stream for client
      */
-    protected void sendGameConfig(String clientID, String protocolID){
+    protected void sendGameConfig(String clientID, String protocolID) {
         String message = clientID + Config.PROTOCOL_SEPARATOR + protocolID + Config.PROTOCOL_SEPARATOR + gameConfiguration + "\n";
         try {
             writer.write(message);
@@ -195,7 +187,7 @@ public class ClientHandler implements Runnable {
      * Purpose: Grab player Object from MVC and pass information to Server side
      * Algorithm:
      *
-     * @param data
+     * @param data -
      */
     protected void playerData(String data) {
         // Split the data using the delimiter ","
@@ -204,37 +196,25 @@ public class ClientHandler implements Runnable {
         // Check if the data contains all the required information
         if (playerData.length == 4) {
             // Update the player-related variables
-             userName = playerData[0];
-            userPoints = Integer.parseInt(playerData[1]);
+            String userName = playerData[0];
+            int userPoints = Integer.parseInt(playerData[1]);
             computerPoints = Integer.parseInt(playerData[2]);
-            time = playerData[3];
+            int time = Integer.parseInt(playerData[3]);
 
+            Player player = new Player(userName, true);
+            player.setMaxScore(userPoints);
+            player.setGameLength(time);
 
+            serverInstance.addPlayerToList(player, clientSocket);
         }
     }
 
-    public String getUserName() {
-
-        return userName;
-    }
-
-    public int getUserPoints() {
-        return userPoints;
-    }
-
-    public int getComputerPoints() {
-        return computerPoints;
-    }
-
-    public String getTime() {
-        return time;
-    }
     /**
      * Method Name: handleEndConnection
      * Purpose: End the connection between client and server
      * Algorithm: Close reader, stream, and socket, print message on server end.
      *
-     * @param protocolID
+     * @param protocolID Protocol ID
      */
     protected void handleEndConnection(String protocolID) {
         try {
@@ -268,7 +248,7 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
         // This keeps the method running
-            Thread receiveProtocol = new Thread(this::processClient);
-            receiveProtocol.start();
+        Thread receiveProtocol = new Thread(this::processClient);
+        receiveProtocol.start();
     }
 }

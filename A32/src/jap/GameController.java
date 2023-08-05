@@ -19,7 +19,7 @@ import java.io.Serializable;
  * historyLog, updateModelViewBoard, configurationString, changeBoatColor, transferDesignToUserPanel, getButtons, getBoatSize, openDesignBoat,
  * resetDesignBoatArrayList, checkOrientation, randomBoatPlacement, getRemainingBoats, resetRemainingBoat, startGame, resetGame, setColorVariables,
  * setBoatVisible, boardButtonEvent, disableUserButtons, isValid, randomSelection, performHitMissLogic, HiddenTextButtonUI, actionPerformed
- *
+ * <p>
  * Constants List: gameModel, gameView
  * Controller model, following MVC design pattern, to handle User actions from View
  *
@@ -34,14 +34,15 @@ public class GameController implements ActionListener {
     private final GameModel gameModel;
     private final GameView gameView;
     private final Client client;
-
     private String playerName;
+    private Boolean blockRandomizeForOpponent;
+
     /**
      * Method Name: GameController
      * Purpose:Public constructor for GameController
      *
      * @param model contains the game logic
-     * @param view contains the game display
+     * @param view  contains the game display
      */
     public GameController(GameModel model, GameView view, Client client) {
         this.gameModel = model;
@@ -69,6 +70,7 @@ public class GameController implements ActionListener {
         view.createPanels();
         view.addPanelsToMainFrame();
 
+        blockRandomizeForOpponent = false;
 
         view.createPanelView(gameModel.getBoardSize(), view.getUserPanel(), true, view.getProgressPlayer1Panel());
         randomBoatPlacement(false);
@@ -79,15 +81,16 @@ public class GameController implements ActionListener {
         //client.registerConnectionChangeListener(this::getConnectionStatus);
     }
 
-    protected void playerName(String name){
+    protected void playerName(String name) {
         playerName = name;
     }
+
     /**
      * Method Name:handleLanguageButton
      * Purpose: Activate language Changer and log action in history log
      * Algorithm: call history log and language changer in GameView
      *
-     * @param eventSource the language button
+     * @param eventSource      the language button
      * @param controlPanelText the text to be displayed in history log
      */
     protected void handleLanguageButton(Object eventSource, JLabel controlPanelText) {
@@ -100,7 +103,7 @@ public class GameController implements ActionListener {
      * Purpose: Take input from user to change board dimensions
      * Algorithm: Call history log, setBoardSize in the gameModel. Create Panels and update progressBar.
      *
-     * @param eventSource the object from which the actionPerformed event originated.
+     * @param eventSource      the object from which the actionPerformed event originated.
      * @param controlPanelText the message to be displayed
      */
     protected void handleDimensionComboBox(Object eventSource, JLabel controlPanelText) {
@@ -127,7 +130,7 @@ public class GameController implements ActionListener {
      * Purpose: open the design window to allow user to make changes to their board.
      * Algorithm: Make new JFrame and use gameView methods to alter the view
      *
-     * @param eventSource the object from which the actionPerformed event originated.
+     * @param eventSource      the object from which the actionPerformed event originated.
      * @param controlPanelText the message to be displayed
      */
     protected void handleDesignBoatPlacement(Object eventSource, JLabel controlPanelText) {
@@ -144,19 +147,21 @@ public class GameController implements ActionListener {
      * Purpose:get user and opponent panels and randomly populate boats on both boards.
      * Algorithm: using both user and opponent panels, update the model view board and call randBoatPLacement.
      *
-     * @param eventSource the object from which the actionPerformed event originated.
+     * @param eventSource      the object from which the actionPerformed event originated.
      * @param controlPanelText the message to be displayed
      */
     protected void handleRandBoatPlacement(Object eventSource, JLabel controlPanelText) {
         historyLog(eventSource, controlPanelText);
         updateModelViewBoard(gameModel.getBoardSize(), gameView.getUserPanel(), gameView.getOpponentPanel());
 
-        // Need to see if GameModel Buttons are updated with Boat
-        randomBoatPlacement(false);
+        // Comment out opponent because we receive gameConfiguration and replace it with that
+        //randomBoatPlacement(false);
+        receiveGameConfigurationClient(client.getGameConfiguration());
         randomBoatPlacement(true);
 
         // Refresh View
         gameView.createPanelView(gameModel.getBoardSize(), gameView.getUserPanel(), true, gameView.getProgressPlayer1Panel());
+        // Comment out opponent because we receive gameConfiguration
         gameView.createPanelView(gameModel.getBoardSize(), gameView.getOpponentPanel(), false, gameView.getProgressPlayer2Panel());
 
         // Create String Representation
@@ -173,7 +178,7 @@ public class GameController implements ActionListener {
      * Purpose:handle click event on the play button, disable all other buttons except reset.
      * Algorithm: if else logic for getting the method for board set up, then calling startGame()
      *
-     * @param eventSource the object from which the actionPerformed event originated.
+     * @param eventSource      the object from which the actionPerformed event originated.
      * @param controlPanelText the message to be displayed
      */
     protected void handlePlayButton(Object eventSource, JLabel controlPanelText) {
@@ -193,7 +198,7 @@ public class GameController implements ActionListener {
      * Purpose: handle user click on reset button to reset the game boards and timer.
      * Algorithm: call reset gme method in game model and re enable the control panel buttons
      *
-     * @param eventSource the object from which the actionPerformed event originated.
+     * @param eventSource      the object from which the actionPerformed event originated.
      * @param controlPanelText the message to be displayed
      */
     protected void handleResetButton(Object eventSource, JLabel controlPanelText) {
@@ -208,12 +213,11 @@ public class GameController implements ActionListener {
      * Purpose: Action method for chaging the size of a boat when in design mode
      * Algorithm:call method in gameview to update the boat size selected.
      *
-     * @param eventSource the object from which the actionPerformed event originated.
+     * @param eventSource      the object from which the actionPerformed event originated.
      * @param controlPanelText the message to be displayed
      */
     protected void handleBoatSizeSelector(Object eventSource, JLabel controlPanelText) {
         historyLog(eventSource, controlPanelText);
-        System.out.print((int) gameView.getBoatSizeSelector().getSelectedItem());
         gameView.setBoatSizeSelectorValue((int) gameView.getBoatSizeSelector().getSelectedItem());
     }
 
@@ -222,7 +226,7 @@ public class GameController implements ActionListener {
      * Purpose: Handles when radiobutoons on board are clicked, checking their orientation on the board
      * Algorithm: update history log and check the orientation of the boat represented by radio buttons
      *
-     * @param eventSource the object from which the actionPerformed event originated.
+     * @param eventSource      the object from which the actionPerformed event originated.
      * @param controlPanelText the message to be displayed
      */
     protected void handleJRadioOrientation(Object eventSource, JLabel controlPanelText) {
@@ -235,7 +239,7 @@ public class GameController implements ActionListener {
      * Purpose: handle when the user presses reset button in design mode
      * Algorithm: call reset on the boats and remove all boats from the design mode instance
      *
-     * @param eventSource the object from which the actionPerformed event originated.
+     * @param eventSource      the object from which the actionPerformed event originated.
      * @param controlPanelText the message to be displayed
      */
     protected void handleResetLayout(Object eventSource, JLabel controlPanelText) {
@@ -250,7 +254,7 @@ public class GameController implements ActionListener {
      * Purpose: handle when the user presses save in the design mode
      * Algorithm: using if -else logic to ensure all boats are placed before saving, after that, set the buttons on the design board to the ones on the main board
      *
-     * @param eventSource the object from which the actionPerformed event originated.
+     * @param eventSource      the object from which the actionPerformed event originated.
      * @param controlPanelText the message to be displayed
      */
     protected void handleSaveLayout(Object eventSource, JLabel controlPanelText) {
@@ -275,7 +279,7 @@ public class GameController implements ActionListener {
      * Purpose: handle button clicks in main window, contains logic for handlling clicks in design mode and logic for when play button has been clicked
      * Algorithm: check if play button has been clicked, detect when user or robot has clicked all of the boats
      *
-     * @param eventSource the object from which the actionPerformed event originated.
+     * @param eventSource      the object from which the actionPerformed event originated.
      * @param controlPanelText the message to be displayed
      */
     protected void handleJButtonClicks(Object eventSource, JLabel controlPanelText) {
@@ -366,45 +370,94 @@ public class GameController implements ActionListener {
             gameModel.setPlayer2Config(hello);
         }
     }
-    protected void setMVCVisible(){
+
+    /**
+     * Method Name: setMVCVisibkle
+     * Purpose: Once Client receives configuration set the game window to visible
+     * Algorithm: Set visiblity to true
+     */
+    protected void setMVCVisible() {
         gameView.setResizable(false);
         gameView.setVisible(true);
     }
 
     /**
-     *
+     * Method Name: sendGameConfiguration
+     * Purpose: Create the client user buttons and create string send to server
+     * Algorithm: Create 2D JButton array, create string representation, send to server
      */
-    protected void sendGameConfiguration(){
+    protected void sendGameConfiguration() {
         gameModel.setUserPlayerButtons(gameModel.generateBoatSize(true));
         String config = gameModel.configurationString(true, gameModel.getUserPlayerButtons());
         client.setGameConfiguration(config);
     }
 
     /**
-     *
+     * Method Name: getDimensionSize
+     * Purpose: Grab boardSize from Model and set it in Client
+     * Algorithm: Getter methods and set
      */
-    protected void getDimensionSize(){
+    protected void getDimensionSize() {
         Integer size = gameModel.getBoardSize();
         client.setDimensionSize(size);
     }
 
     /**
+     * Method Name: getUserPoints
+     * Purpose: Getter method for user points
+     * Algorithm: Return points
+     *
+     * @return - User accumulated points
+     */
+    protected Integer getUserPoints() {
+        return gameModel.getUserPoints();
+    }
+
+    /**
+     * Method Name: receiveGameConfigurationClient
+     * Purpose: Split string configuration and build both user and opponent boards, refresh view
+     * Algorithm: String split setBoardSize, create 2D JButton arrays for both players, refresh view
      *
      * @param gameConfig
      */
-    protected void receiveGameConfigurationClient(String gameConfig){
+    protected void receiveGameConfigurationClient(String gameConfig) {
+        blockRandomizeForOpponent = true;
         // Split game arary string into individual components
-        String[] digitArray = gameConfig.replaceAll("[^0-9]", "").split("");
         String[] digit = gameConfig.split(Config.FIELD_SEPARATOR);
-        for (int i = 0; i < digitArray.length; i++){
-            System.out.print(digitArray[i]);
-        }
+
         // First index is board size
-        gameModel.setBoardSize(Integer.valueOf(digitArray[0]));
+        gameModel.setBoardSize(Integer.valueOf(digit[0]));
         String withoutSize = digit[1];
-        // Send into gameModel Method
-        gameModel.createBoardFromString(Integer.valueOf(digitArray[0]), withoutSize);
-        gameView.updateBoard(gameModel.getOpponentButtons(), gameModel.getOpponentBoardPanel());
+        // Change the dimension dropdown first because if below resets the gameConfig
+        gameView.getDimensionComboBox().setSelectedItem(Integer.parseInt(digit[0]));
+
+        // Create Board For opponent side from String pass size, and string config
+        gameModel.createBoardFromString(Integer.valueOf(digit[0]), withoutSize);
+
+        // Create User board
+        gameModel.setUserPlayerButtons(gameModel.createButtonBoard(gameModel.getPlayer(true)));
+
+        // Set Buttons in View
+        gameView.setBoardButtons(true, getButtons(true));
+        gameView.setBoardButtons(false, getButtons(false));
+
+        // Refresh view and change the dimension box to the selected size
+        gameView.createPanelView(Integer.parseInt(digit[0]), gameView.getOpponentPanel(), false, gameView.getProgressPlayer2Panel());
+        gameView.createPanelView(Integer.parseInt(digit[0]), gameView.getUserPanel(), true, gameView.getProgressPlayer1Panel());
+
+
+    }
+
+    /**
+     * Method Name: clientDimensionToModel
+     * Purpose: Set Model boardSize variable to the passed argument
+     * Algorithm: if else to determine user or machine, call gameModel methods
+     *
+     * @param size
+     */
+    protected void clientDimensionToModel(Integer size) {
+        gameModel.setBoardSize(size);
+        gameView.getDimensionComboBox().setSelectedItem(size);
     }
 
 
@@ -413,9 +466,9 @@ public class GameController implements ActionListener {
      * Purpose: method for changing the color of the boats and tiles on both boards
      * Algorithm: use if else logic to check if a button on the board is a boat or default tile, use parameters from color changing gui to update these
      *
-     * @param buttons 2D JButton array
+     * @param buttons    2D JButton array
      * @param actorPanel User/or Machine JPanel
-     * @param actor - True = User, False = Machine
+     * @param actor      - True = User, False = Machine
      * @param unselected set Color to unselect based on User Selection
      */
     protected void changeBoatColor(JButton[][] buttons, JPanel actorPanel, Boolean actor, Color unselected) {
@@ -450,9 +503,9 @@ public class GameController implements ActionListener {
      * Purpose: transfers the board made in design mode to the user panel for play
      * Algorithm: in the game model convert the Jbuttons to boats and set both panels. call game view to update the game boards
      *
-     * @param selectedDimension Selected boat size
-     * @param replace JButton convert to Boat
-     * @param userBoardPanel User view JPanel
+     * @param selectedDimension  Selected boat size
+     * @param replace            JButton convert to Boat
+     * @param userBoardPanel     User view JPanel
      * @param opponentBoardPanel Machine view JPanel
      */
     protected void transferDesignToUserPanel(Integer selectedDimension, JButton[][] replace, JPanel userBoardPanel, JPanel opponentBoardPanel) {
@@ -582,8 +635,8 @@ public class GameController implements ActionListener {
      * Purpose:resets the user and opponent panels after reset is clicked. reset all boats in both panels
      * Algorithm:using if else logic, determine if we are acting on user board or opponent board, loop thru entire board array and reset all buttons
      *
-     * @param actor True = User, False = Machine
-     * @param userBoardPanel User JPanel
+     * @param actor              True = User, False = Machine
+     * @param userBoardPanel     User JPanel
      * @param opponentBoardPanel Opponent JPanel
      */
     protected void resetGame(Boolean actor, JPanel userBoardPanel, JPanel opponentBoardPanel) {
@@ -627,8 +680,8 @@ public class GameController implements ActionListener {
      * Algorithm: update the color of each property in the game model
      *
      * @param unselected - a color for a button that does not have a boat or water
-     * @param water - a color representing the water
-     * @param hitBoat - a color property representing a hitBoat
+     * @param water      - a color representing the water
+     * @param hitBoat    - a color property representing a hitBoat
      */
     protected void setColorVariables(Color unselected, Color water, Color hitBoat) {
         gameModel.setSelectedColour(unselected, water, hitBoat);
@@ -731,9 +784,9 @@ public class GameController implements ActionListener {
      * Purpose: Method is used to determine if a randomly selected sqaure or user selected sqaure contains a boat, resulting in either a hit or miss
      * Algorithm:check if selected button is a boat, check who selected the button (user or opponent) and update the button state given that selection
      *
-     * @param button the selected button by the user or opponent
+     * @param button           the selected button by the user or opponent
      * @param controlPanelText Message for the history log
-     * @param who - the actor who selected a button
+     * @param who              - the actor who selected a button
      */
     private void performHitMissLogic(JButton button, JLabel controlPanelText, Boolean who) {
         if (button instanceof Boat) {
@@ -743,7 +796,7 @@ public class GameController implements ActionListener {
             JProgressBar progress;
             if (who) {
                 // False is opponent ProgressBar
-                GameModel.updateUserPoints();
+                gameModel.updateUserPoints();
                 progress = gameView.getProgressBar(false);
                 int currentValue = progress.getValue();
                 int decrementValue = 1;
@@ -751,7 +804,7 @@ public class GameController implements ActionListener {
                 progress.setValue(newValue);
 
             } else {
-                GameModel.updateComputerPoints();
+                gameModel.updateComputerPoints();
                 progress = gameView.getProgressBar(true);
                 int currentValue = progress.getValue();
                 int decrementValue = 1;
@@ -768,7 +821,6 @@ public class GameController implements ActionListener {
     /**
      * Method Name:HiddenTextButton
      * Purpose: Custom ButtonUI implementation that hides the grayed-out text of a disabled JButton.
-     *
      */
     private static class HiddenTextButtonUI extends BasicButtonUI {
         @Override
