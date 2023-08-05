@@ -38,7 +38,8 @@ public class Client extends JFrame implements ActionListener {
     private JButton sendData;
     private JButton play;
     private JTextArea console;
-    private String gameConfiguration;
+    private String playerGameConfiguration;
+    private String opponentGameConfiguration;
     private Integer dimensionSize;
     private Boolean gameConfigReceived;
 
@@ -226,6 +227,37 @@ public class Client extends JFrame implements ActionListener {
             // Enable the "End" button to allow disconnection
             end.setEnabled(true);
 
+
+            // Open input stream when connection is connected
+            try {
+                InputStream inputStream = socket.getInputStream();
+                this.reader = new BufferedReader(new InputStreamReader(inputStream));
+            } catch (IOException b) {
+                b.printStackTrace();
+            }
+
+            // Open stream when connection is connected
+            try {
+                OutputStream outputStream = socket.getOutputStream();
+                writer = new BufferedWriter(new OutputStreamWriter(outputStream));
+            } catch (IOException b) {
+                b.printStackTrace();
+            }
+
+            // Thread to listen for incoming messages from Server
+            listenForClientHandleMessage();
+
+            // Grab default board size then Increment in Handler
+            gameController.getDimensionSize();
+
+            // Enable buttons once connected
+            newGame.setEnabled(true);
+            sendGame.setEnabled(true);
+            receiveGame.setEnabled(true);
+            sendData.setEnabled(true);
+            play.setEnabled(true);
+            gameConfigReceived = false;
+
         } catch (IOException ex) {
             // Handle connection errors
             addNewLine("Connection failed: " + ex.getMessage() + "\n");
@@ -240,6 +272,10 @@ public class Client extends JFrame implements ActionListener {
     protected void endConnection() {
         try {
             if (socket != null && !socket.isClosed()) {
+
+                String message = Config.PROTOCOL_END + Config.PROTOCOL_SEPARATOR + 0;
+                sendProtocolToServer(message);
+
                 // need to figure out way to get instance of server so that I can call this
                 // server.disconnectClient(socket);
                 // Close the socket
@@ -249,6 +285,13 @@ public class Client extends JFrame implements ActionListener {
                 connect.setEnabled(true);
                 // Disable the "End" button since the connection is closed
                 end.setEnabled(false);
+
+                newGame.setEnabled(false);
+                sendGame.setEnabled(false);
+                receiveGame.setEnabled(false);
+                sendData.setEnabled(false);
+                play.setEnabled(false);
+                gameConfigReceived = false;
             } else {
                 addNewLine("No active connection to end.\n");
             }
@@ -295,9 +338,9 @@ public class Client extends JFrame implements ActionListener {
                    /* String clientID = spliced[0];
                     String protocolID = spliced[1];
                     String data = spliced[2];*/
-                    gameConfiguration = spliced[2];
+                    opponentGameConfiguration = spliced[2];
                     addNewLine("Received " + protocolMessage + "\n");
-                    messageQueue.offer(gameConfiguration);
+                    messageQueue.offer(opponentGameConfiguration);
                 }
             }
         } catch (IOException e) {
@@ -312,12 +355,12 @@ public class Client extends JFrame implements ActionListener {
      *
      * @param gameConfig - String game configuration from Server
      */
-    protected void setGameConfiguration(String gameConfig) {
-        this.gameConfiguration = gameConfig;
+    protected void setPlayerGameConfiguration(String gameConfig) {
+        this.playerGameConfiguration = gameConfig;
     }
 
-    protected String getGameConfiguration(){
-        return gameConfiguration;
+    protected String getOpponentGameConfiguration() {
+        return opponentGameConfiguration;
     }
 
     /**
@@ -358,57 +401,24 @@ public class Client extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == connect) {
-            // Get the server address and port number from the text fields
-            String serverAddressStr = serverAddress.getText();
-
-            messageQueue = new ArrayBlockingQueue<>(10);
-
             int portNumberInt = Integer.parseInt(portNumber.getText());
-            // Call the connectToServer method to establish the connection
-            connectToServer(serverAddressStr, portNumberInt);
 
-            // Open input stream when connection is connected
-            try {
-                InputStream inputStream = socket.getInputStream();
-                this.reader = new BufferedReader(new InputStreamReader(inputStream));
-            } catch (IOException b) {
-                b.printStackTrace();
+            if (Integer.toString(portNumberInt).length() == 5) {
+                // Get the server address and port number from the text fields
+                String serverAddressStr = serverAddress.getText();
+                messageQueue = new ArrayBlockingQueue<>(10);
+
+                // Call the connectToServer method to establish the connection
+                connectToServer(serverAddressStr, portNumberInt);
+
+            } else {
+                JOptionPane.showMessageDialog(null, "Port enter is out of range. Please enter a 5 digit port number.\n", "Warning", JOptionPane.WARNING_MESSAGE);
             }
-
-            // Open stream when connection is connected
-            try {
-                OutputStream outputStream = socket.getOutputStream();
-                writer = new BufferedWriter(new OutputStreamWriter(outputStream));
-            } catch (IOException b) {
-                b.printStackTrace();
-            }
-
-            // Thread to listen for incoming messages from Server
-            listenForClientHandleMessage();
-
-            // Grab default board size then Increment in Handler
-            gameController.getDimensionSize();
-
-            // Enable buttons once connected
-            newGame.setEnabled(true);
-            sendGame.setEnabled(true);
-            receiveGame.setEnabled(true);
-            sendData.setEnabled(true);
-            play.setEnabled(true);
-            gameConfigReceived = false;
-
-        } else if (e.getSource() == end) {
-            //sendProtocolEnd();
-
-            String message = Config.PROTOCOL_END + Config.PROTOCOL_SEPARATOR + 0;
-            sendProtocolToServer(message);
-            endConnection();
-
         } else if (e.getSource() == newGame) {
-            //TODO If new game was pressed already must increment board size
+
             addNewLine("Creating new MVC game\n");
             // Add dimensions and game Config
-            if (dimensionSize != 10){
+            if (dimensionSize != 10) {
                 dimensionSize++;
                 gameController.clientDimensionToModel(dimensionSize);
                 gameController.sendGameConfiguration();
@@ -416,7 +426,7 @@ public class Client extends JFrame implements ActionListener {
 
         } else if (e.getSource() == sendGame) {
             addNewLine("Sending Game Configuration to Server\n");
-            String message = Config.PROTOCOL_SENDGAME + Config.PROTOCOL_SEPARATOR + dimensionSize + Config.FIELD_SEPARATOR + gameConfiguration;
+            String message = Config.PROTOCOL_SENDGAME + Config.PROTOCOL_SEPARATOR + dimensionSize + Config.FIELD_SEPARATOR + playerGameConfiguration;
             addNewLine(message + "\n");
             sendProtocolToServer(message);
 
@@ -434,7 +444,7 @@ public class Client extends JFrame implements ActionListener {
                 gameController.receiveGameConfigurationClient(config);
                 gameConfigReceived = true;
             } catch (InterruptedException ex) {
-                throw new RuntimeException(ex);
+                addNewLine("Message could not send. Try again.\n");
             }
 
 
@@ -450,12 +460,15 @@ public class Client extends JFrame implements ActionListener {
             sendProtocolToServer(message);
 
         } else if (e.getSource() == play) {
-            if (gameConfigReceived){
+            if (gameConfigReceived) {
                 gameController.setMVCVisible();
             } else {
                 JOptionPane.showMessageDialog(null, "Must receive gameConfiguration from Server to play", "Warning", JOptionPane.WARNING_MESSAGE);
             }
 
+        } else if (e.getSource() == end) {
+            //sendProtocolEnd();
+            endConnection();
         }
     }
 }

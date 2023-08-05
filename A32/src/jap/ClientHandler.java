@@ -20,18 +20,14 @@ public class ClientHandler implements Runnable {
     private final Socket clientSocket;
 
     private Integer clientId;
-    private Integer boardSize;
 
     private String gameConfiguration;
 
     private InputStream inputStream;
 
-    //private OutputStream outputStream;
     private BufferedReader reader;
 
     private BufferedWriter writer;
-    //private int userPoints;
-    //private String time;
     private int computerPoints;
 
     /**
@@ -109,6 +105,7 @@ public class ClientHandler implements Runnable {
      */
     private void processProtocol(String protocol) throws IOException {
         String protocolWithId = clientId + Config.PROTOCOL_SEPARATOR + protocol;
+        serverInstance.addNewLine("[Debug print]: " + protocolWithId + "\n");
         String[] spliced = protocolWithId.split(Config.PROTOCOL_SEPARATOR);
 
         if (spliced.length >= 3) {
@@ -122,9 +119,10 @@ public class ClientHandler implements Runnable {
                     handleEndConnection(protocolID);
                     break;
                 case Config.PROTOCOL_SENDGAME:
-                    serverInstance.console.append(protocolWithId + "\n");
-                    String[] dimension = data.split(Config.FIELD_SEPARATOR);
-                    boardSize = Integer.valueOf(dimension[0]);
+                    //serverInstance.console.append(protocolWithId + "\n");
+                    serverInstance.addNewLine("[Debug print protocolID for Send]: " + protocolID + "\n");
+                    serverInstance.addNewLine("[Debug print GameConfiguration for Send]: " + data + "\n");
+                    //serverInstance.console.append(data + "\n");
                     receiveClientGameConfig(data);
                     break;
                 case Config.PROTOCOL_RECVGAME:

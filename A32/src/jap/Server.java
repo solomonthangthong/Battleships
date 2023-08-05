@@ -345,9 +345,13 @@ public class Server extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == start) {
             int portNumberInt = Integer.parseInt(portTextField.getText());
+            if (Integer.toString(portNumberInt).length() == 5) {
             startServer(portNumberInt);
             serverThread = new Thread(this::acceptConnection);
             serverThread.start();
+            } else {
+                JOptionPane.showMessageDialog(null, "Port enter is out of range. Please enter a 5 digit port number.\n", "Warning", JOptionPane.WARNING_MESSAGE);
+            }
         }
         if (e.getSource() == end) {
             if (serverThread != null) {
@@ -356,7 +360,12 @@ public class Server extends JFrame implements ActionListener {
             endConnection();
         }
         if (e.getSource() == result) {
-            showPlayerDataPopup();
+            if (!playerMap.isEmpty()){
+                showPlayerDataPopup();
+            } else {
+                JOptionPane.showMessageDialog(null, "No player has been recorded yet. Please allow clients to connect, play games, and store their data.\n", "Warning", JOptionPane.WARNING_MESSAGE);
+            }
+
         }
     }
 }

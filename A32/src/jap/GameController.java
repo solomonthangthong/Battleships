@@ -156,7 +156,7 @@ public class GameController implements ActionListener {
 
         // Comment out opponent because we receive gameConfiguration and replace it with that
         //randomBoatPlacement(false);
-        receiveGameConfigurationClient(client.getGameConfiguration());
+        receiveGameConfigurationClient(client.getOpponentGameConfiguration());
         randomBoatPlacement(true);
 
         // Refresh View
@@ -389,7 +389,7 @@ public class GameController implements ActionListener {
     protected void sendGameConfiguration() {
         gameModel.setUserPlayerButtons(gameModel.generateBoatSize(true));
         String config = gameModel.configurationString(true, gameModel.getUserPlayerButtons());
-        client.setGameConfiguration(config);
+        client.setPlayerGameConfiguration(config);
     }
 
     /**
