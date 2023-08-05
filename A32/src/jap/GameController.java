@@ -395,13 +395,16 @@ public class GameController implements ActionListener {
     protected void receiveGameConfigurationClient(String gameConfig){
         // Split game arary string into individual components
         String[] digitArray = gameConfig.replaceAll("[^0-9]", "").split("");
+        String[] digit = gameConfig.split(Config.FIELD_SEPARATOR);
         for (int i = 0; i < digitArray.length; i++){
             System.out.print(digitArray[i]);
         }
-/*        // First index is board size
+        // First index is board size
         gameModel.setBoardSize(Integer.valueOf(digitArray[0]));
+        String withoutSize = digit[1];
         // Send into gameModel Method
-        gameModel.createBoardFromString(digitArray);*/
+        gameModel.createBoardFromString(Integer.valueOf(digitArray[0]), withoutSize);
+        gameView.updateBoard(gameModel.getOpponentButtons(), gameModel.getOpponentBoardPanel());
     }
 
 

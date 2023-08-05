@@ -493,27 +493,38 @@ public class GameModel {
         return buttons;
     }
 
-    protected void createBoardFromString(String[] digitArray){
-        int dimensions = boardSize * 2;
-        JButton[][] buttons = new JButton[dimensions][dimensions];
+    protected void createBoardFromString(Integer size, String digitArray){
+        int rows = size * 2;
+        int cols = (int) Math.ceil((double) digitArray.length() / rows);
+        JButton[][] buttons = new JButton[rows][cols];
 
-        for (int i = 0; i < dimensions * dimensions; i++) {
-            int row = i / dimensions;
-            int col = i % dimensions;
-
-            if (digitArray[i].equals("0")){
-                buttons[row][col] = new JButton();
-                ButtonState state = new ButtonState(buttons[row][col]);
-                buttons[row][col].setForeground(Color.white);
-                buttons[row][col].setBorderPainted(true);
-                buttons[row][col].setBorder(whiteBorder);
-                state.setState(State.DEFAULT);
-                buttons[row][col].setUI(hiddenText);
-            } else {
-                buttons[row][col].setName("Convert");
-                buttons[row][col].setText(String.valueOf(digitArray[i]));
+        int index = 0;
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                if (index < digitArray.length()) {
+                    String value = Character.toString(digitArray.charAt(index));
+                    if (value.equals("0")){
+                        buttons[row][col] = new JButton();
+                        ButtonState state = new ButtonState(buttons[row][col]);
+                        buttons[row][col].setForeground(Color.white);
+                        buttons[row][col].setBorderPainted(true);
+                        buttons[row][col].setBorder(whiteBorder);
+                        state.setState(State.DEFAULT);
+                        buttons[row][col].setUI(hiddenText);
+                    } else {
+                        Boat boat = new Boat(Integer.valueOf(value), true);
+                        boat.setBackground(Color.BLUE);
+                        boat.setForeground(Color.white);
+                        boat.setBoatLength(size);
+                        boat.setText(size);
+                        boat.setUI(hiddenText);
+                        buttons[row][col] = boat;
+                    }
+                    index++;
+                }
             }
         }
+
         // I WANT TO USE THIS METHOD BUT IT MESSES UP MY RESET IN GAMEMODEL
         //convertDesignJButtonsToBoat(true, buttons);
         setOpponentButtons(buttons);
