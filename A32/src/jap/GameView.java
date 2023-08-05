@@ -80,10 +80,11 @@ public class GameView extends JFrame implements ActionListener {
      * the amount of remaining Boats
      */
     private int remainingBoats;
+    private static int count;
     /**
      * the timer count
      */
-    private int count;
+
     /**
      * Instance of timer class, to be user in Timer method
      */
@@ -942,6 +943,9 @@ public class GameView extends JFrame implements ActionListener {
             }
         });
         timer.start();
+    }
+    protected static int getTime(){
+        return count;
     }
 
     /**

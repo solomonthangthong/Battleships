@@ -23,6 +23,7 @@ public class ClientHandler implements Runnable {
     private String playerData;
     private Integer clientId;
     private Integer boardSize;
+    private String userName;
 
     private String gameConfiguration;
 
@@ -32,6 +33,9 @@ public class ClientHandler implements Runnable {
     private BufferedReader reader;
 
     private BufferedWriter writer;
+    private int  userPoints;
+    private String time;
+    private int computerPoints;
 
     /**
      * Method Name: ClientHandler
@@ -137,7 +141,10 @@ public class ClientHandler implements Runnable {
                     break;
                 case Config.PROTOCOL_DATA:
                     serverInstance.addNewLine(protocolWithId + "\n");
-                    playerData(protocolID);
+
+
+                    // Pass the data to the playerData method to update the player-related variables
+                    playerData(data);
                     break;
                 default:
                     serverInstance.addNewLine("Unknown protocol\n");
@@ -191,9 +198,37 @@ public class ClientHandler implements Runnable {
      * @param data
      */
     protected void playerData(String data) {
-        // Implement logic for method
+        // Split the data using the delimiter ","
+        String[] playerData = data.split(Config.FIELD_SEPARATOR);
+
+        // Check if the data contains all the required information
+        if (playerData.length == 4) {
+            // Update the player-related variables
+             userName = playerData[0];
+            userPoints = Integer.parseInt(playerData[1]);
+            computerPoints = Integer.parseInt(playerData[2]);
+            time = playerData[3];
+
+
+        }
     }
 
+    public String getUserName() {
+
+        return userName;
+    }
+
+    public int getUserPoints() {
+        return userPoints;
+    }
+
+    public int getComputerPoints() {
+        return computerPoints;
+    }
+
+    public String getTime() {
+        return time;
+    }
     /**
      * Method Name: handleEndConnection
      * Purpose: End the connection between client and server

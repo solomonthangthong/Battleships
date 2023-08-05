@@ -743,6 +743,7 @@ public class GameController implements ActionListener {
             JProgressBar progress;
             if (who) {
                 // False is opponent ProgressBar
+                GameModel.updateUserPoints();
                 progress = gameView.getProgressBar(false);
                 int currentValue = progress.getValue();
                 int decrementValue = 1;
@@ -750,6 +751,7 @@ public class GameController implements ActionListener {
                 progress.setValue(newValue);
 
             } else {
+                GameModel.updateComputerPoints();
                 progress = gameView.getProgressBar(true);
                 int currentValue = progress.getValue();
                 int decrementValue = 1;

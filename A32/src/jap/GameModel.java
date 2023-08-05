@@ -63,6 +63,8 @@ public class GameModel {
     private List<List<Boat>> designBoatList;
     private Integer boatSizeSearch;
     private Integer numberOfBoatsForDesign;
+    private static int computerPoints;
+    private static int userPoints;
 
     private Border whiteBorder;
     private Color selectedColour;
@@ -121,6 +123,19 @@ public class GameModel {
             players[1].setPlayerName(name);
         }
     }
+    public static void updateUserPoints() {
+        userPoints++;
+    }
+    public static void updateComputerPoints() {
+        computerPoints++;
+    }
+    public static int getUserPoints() {
+        return userPoints;
+    }
+    public static int getComputerPoints() {
+        return computerPoints;
+    }
+
 
     /**
      * Method Name: historyLog

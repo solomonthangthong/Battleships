@@ -122,6 +122,7 @@ public class Server extends JFrame implements ActionListener {
         end = new JButton("End");
         start.addActionListener(this);
         end.addActionListener(this);
+        result.addActionListener(this);
 
         JPanel buttonComponent = new JPanel(new FlowLayout());
 
@@ -279,6 +280,25 @@ public class Server extends JFrame implements ActionListener {
         console.scrollRectToVisible(new Rectangle(console.getPreferredSize()));
     }
 
+
+    private void showPlayerDataPopup() {
+        // Prepare the data to show in the pop-up box
+        StringBuilder playerData = new StringBuilder();
+        for (ClientHandler clientHandler : clients) {
+            String playerName = clientHandler.getUserName();
+            int userPoints = clientHandler.getUserPoints();
+            int computerPoints = clientHandler.getComputerPoints();
+            String time = clientHandler.getTime();
+            playerData.append("Player Name: ").append(playerName)
+                    .append("\n User Points: ").append(userPoints)
+                    .append("\n Computer Points: ").append(computerPoints)
+                    .append("\n Time: ").append(time)
+                    .append("\n");
+        }
+
+        // Show the pop-up box with the player data
+        JOptionPane.showMessageDialog(this, playerData.toString(), "Player Data", JOptionPane.INFORMATION_MESSAGE);
+    }
     /**
      * Method Name: actionPerformed
      * Purpose: Invoked JButton when an action occurs
@@ -299,6 +319,8 @@ public class Server extends JFrame implements ActionListener {
                 serverThread.interrupt();
             }
             endConnection();
+        } if ( e.getSource() == result) {
+            showPlayerDataPopup();
         }
     }
 }

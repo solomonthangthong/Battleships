@@ -275,6 +275,7 @@ public class Client extends JFrame implements ActionListener {
         return playerName;
     }
 
+
     /**
      * Method Name: listenForClientHandleMessage
      * Purpose: Create thread to constantly listen for messages from ClientHandler
@@ -433,6 +434,15 @@ public class Client extends JFrame implements ActionListener {
 
 
         } else if (e.getSource() == sendData) {
+            ///get the points and time from the MVC
+            int userPoints = GameModel.getUserPoints();
+            int computerPoints = GameModel.getComputerPoints();
+            String userName = user.getText();
+
+            int time = GameView.getTime();
+            String message = Config.PROTOCOL_DATA + Config.PROTOCOL_SEPARATOR + userName + "," + userPoints + "," + computerPoints + "," + time + "\n";
+        //clientID # protcolID (P3) # playerData
+            sendProtocolToServer(message);
 
         } else if (e.getSource() == play) {
             gameController.setMVCVisible();

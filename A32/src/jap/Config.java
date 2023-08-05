@@ -7,6 +7,7 @@ public class Config {
     public static final String PROTOCOL_SENDGAME = "P1";
     public static final String PROTOCOL_RECVGAME = "P2";
     public static final String PROTOCOL_DATA = "P3";
+
     static final String IMAGE_NAME = "images/game.png";
     static String DEFAULT_USER = "User1";
     static String DEFAULT_ADDR = "localhost";
