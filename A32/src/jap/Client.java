@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.Socket;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 /**
  * Class Name: Client
@@ -49,6 +51,7 @@ public class Client extends JFrame implements ActionListener {
     private BufferedWriter writer;
 
     private BufferedReader reader;
+    private BlockingQueue<String> messageQueue;
 
     /**
      * Constructor for Class
@@ -57,7 +60,6 @@ public class Client extends JFrame implements ActionListener {
         initializeFrame();
         createPanel();
         addPanelsToMainFrame();
-
     }
 
     /**
@@ -176,8 +178,22 @@ public class Client extends JFrame implements ActionListener {
         console = new JTextArea(7, 1);
         console.setEditable(false);
         scrollPane = new JScrollPane(console);
+
         clientPanel.add(scrollPane, BorderLayout.SOUTH);
 
+    }
+
+    /**
+     * Method Name: addNewLine
+     * Purpose: Add new line of text to text area in Server GUI console
+     * Algorithm: append message, set position to new line
+     *
+     * @param line
+     */
+    private void addNewLine(String line){
+        console.append(line);
+        console.setCaretPosition(console.getDocument().getLength());
+        console.scrollRectToVisible(new Rectangle(console.getPreferredSize()));
     }
 
     protected void setGameController(GameController controller) {
@@ -209,7 +225,7 @@ public class Client extends JFrame implements ActionListener {
             socket = new Socket(serverAddress, portNumber);
 
             // Connection is successful
-            console.append("Connected to server at " + serverAddress + ":" + portNumber + "\n");
+            addNewLine("Connected to server at " + serverAddress + ":" + portNumber + "\n");
             // Disable the "Connect" button
             connect.setEnabled(false);
             // Enable the "End" button to allow disconnection
@@ -217,7 +233,7 @@ public class Client extends JFrame implements ActionListener {
 
         } catch (IOException ex) {
             // Handle connection errors
-            console.append("Connection failed: " + ex.getMessage() + "\n");
+            addNewLine("Connection failed: " + ex.getMessage() + "\n");
         }
     }
 
@@ -233,17 +249,17 @@ public class Client extends JFrame implements ActionListener {
                 // server.disconnectClient(socket);
                 // Close the socket
                 socket.close();
-                console.append("Connection ended.\n");
+                addNewLine("Connection ended.\n");
                 // Re-enable the "Connect" button
                 connect.setEnabled(true);
                 // Disable the "End" button since the connection is closed
                 end.setEnabled(false);
             } else {
-                console.append("No active connection to end.\n");
+                addNewLine("No active connection to end.\n");
             }
         } catch (IOException ex) {
             // Handle connection closing errors
-            console.append("Error ending connection: " + ex.getMessage() + "\n");
+            addNewLine("Error ending connection: " + ex.getMessage() + "\n");
         }
     }
 
@@ -284,8 +300,8 @@ public class Client extends JFrame implements ActionListener {
                     String protocolID = spliced[1];
                     String data = spliced[2];
                     gameConfiguration = data;
-                    console.append("Received " + protocolMessage + "\n");
-                    console.append(gameConfiguration + "\n");
+                    addNewLine("Received " + protocolMessage + "\n");
+                    messageQueue.offer(gameConfiguration);
                 }
             }
         } catch (IOException e) {
@@ -345,6 +361,8 @@ public class Client extends JFrame implements ActionListener {
             // Get the server address and port number from the text fields
             String serverAddressStr = serverAddress.getText();
 
+            messageQueue = new ArrayBlockingQueue<>(10);
+
             int portNumberInt = Integer.parseInt(portNumber.getText());
             // Call the connectToServer method to establish the connection
             connectToServer(serverAddressStr, portNumberInt);
@@ -368,6 +386,9 @@ public class Client extends JFrame implements ActionListener {
             // Thread to listen for incoming messages from Server
             listenForClientHandleMessage();
 
+            // Grab default board size then Increment in Handler
+            gameController.getDimensionSize();
+
             // Enable buttons once connected
             newGame.setEnabled(true);
             sendGame.setEnabled(true);
@@ -384,24 +405,32 @@ public class Client extends JFrame implements ActionListener {
 
         } else if (e.getSource() == newGame) {
             //TODO If new game was pressed already must increment board size
-            console.append("Creating new MVC game\n");
+            addNewLine("Creating new MVC game\n");
             gameController.sendGameConfiguration();
             // Add dimensions and game Config
 
         } else if (e.getSource() == sendGame) {
-            console.append("Sending Game Configuration to Server\n");
-            gameController.getDimensionSize();
+            addNewLine("Sending Game Configuration to Server\n");
             String message = Config.PROTOCOL_SENDGAME + Config.PROTOCOL_SEPARATOR + dimensionSize + Config.FIELD_SEPARATOR + gameConfiguration;
-            console.append(message + "\n");
+            addNewLine(message + "\n");
             sendProtocolToServer(message);
 
         } else if (e.getSource() == receiveGame) {
+
             String message = Config.PROTOCOL_RECVGAME + Config.PROTOCOL_SEPARATOR + 0;
-            console.append("Receiving Game Configuration from Server\n");
-            console.append(message + "\n");
+            addNewLine("Receiving Game Configuration from Server\n");
+            addNewLine(message + "\n");
             sendProtocolToServer(message);
+
             // Send String config to MVC
-            gameController.receiveGameConfigurationClient(gameConfiguration);
+            try {
+                String config = messageQueue.take();
+                addNewLine(config + "\n");
+                gameController.receiveGameConfigurationClient(config);
+            } catch (InterruptedException ex) {
+                throw new RuntimeException(ex);
+            }
+
 
         } else if (e.getSource() == sendData) {
 

@@ -215,7 +215,7 @@ public class Server extends JFrame implements ActionListener {
         for (ClientHandler clientHandler : clients) {
             if (clientHandler.getClientSocket() == clientSocket) {
                 clients.remove(clientHandler);
-                console.append("Client " + clientHandler.getClientId() + " has been disconnected\n");
+                addNewLine("Client " + clientHandler.getClientId() + " has been disconnected\n");
                 break;
             }
         }
@@ -231,7 +231,7 @@ public class Server extends JFrame implements ActionListener {
             try {
                 int portNumberInt = Integer.parseInt(portTextField.getText());
                 serverSocket.close();
-                console.append("Server closed on port " + portNumberInt + "\n");
+                addNewLine("Server closed on port " + portNumberInt + "\n");
                 //re enable start button when connection is ended
                 start.setEnabled(true);
                 //disable the end button
@@ -273,7 +273,7 @@ public class Server extends JFrame implements ActionListener {
      *
      * @param line
      */
-    private void addNewLine(String line){
+    protected void addNewLine(String line){
         console.append(line);
         console.setCaretPosition(console.getDocument().getLength());
         console.scrollRectToVisible(new Rectangle(console.getPreferredSize()));

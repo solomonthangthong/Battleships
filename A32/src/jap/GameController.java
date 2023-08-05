@@ -393,12 +393,15 @@ public class GameController implements ActionListener {
      * @param gameConfig
      */
     protected void receiveGameConfigurationClient(String gameConfig){
+        // Split game arary string into individual components
         String[] digitArray = gameConfig.replaceAll("[^0-9]", "").split("");
-
-        for (int index = 0; index < digitArray.length; index++){
-            System.out.print(digitArray[index] + "\n");
+        for (int i = 0; i < digitArray.length; i++){
+            System.out.print(digitArray[i]);
         }
-        //gameModel.setOpponentButtons();
+/*        // First index is board size
+        gameModel.setBoardSize(Integer.valueOf(digitArray[0]));
+        // Send into gameModel Method
+        gameModel.createBoardFromString(digitArray);*/
     }
 
 
@@ -510,6 +513,7 @@ public class GameController implements ActionListener {
      */
     protected void resetDesignBoatArrayList() {
         gameModel.clearDesignBoatList();
+        //TODO NOT SURE COMMENTING THIS OUT BREAKS SOMETHING
         gameModel.convertDesignJButtonsToBoat(false);
         gameModel.populateDesignBoat();
     }

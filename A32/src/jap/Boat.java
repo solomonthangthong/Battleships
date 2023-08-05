@@ -45,7 +45,6 @@ public class Boat extends JButton {
         boatOrientation = orientation;
         isPlaced = false;
         checkedForDesignPlacement = false;
-
     }
 
     /**

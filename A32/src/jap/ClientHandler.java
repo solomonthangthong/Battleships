@@ -22,6 +22,7 @@ public class ClientHandler implements Runnable {
     private String gameConfig;
     private String playerData;
     private Integer clientId;
+    private Integer boardSize;
 
     private String gameConfiguration;
 
@@ -120,24 +121,26 @@ public class ClientHandler implements Runnable {
 
             switch (protocolID) {
                 case Config.PROTOCOL_END:
-                    serverInstance.console.append(protocolWithId + "\n");
+                    serverInstance.addNewLine(protocolWithId + "\n");
                     handleEndConnection(protocolID);
                     break;
                 case Config.PROTOCOL_SENDGAME:
                     serverInstance.console.append(protocolWithId + "\n");
+                    String[] dimension = data.split(Config.FIELD_SEPARATOR);
+                    boardSize = Integer.valueOf(dimension[0]);
                     receiveClientGameConfig(data);
                     break;
                 case Config.PROTOCOL_RECVGAME:
                     setGameConfiguration();
-                    serverInstance.console.append(clientID + Config.PROTOCOL_SEPARATOR + protocolID + Config.PROTOCOL_SEPARATOR + gameConfiguration + "\n");
+                    serverInstance.addNewLine(clientID + Config.PROTOCOL_SEPARATOR + protocolID + Config.PROTOCOL_SEPARATOR + gameConfiguration + "\n");
                     sendGameConfig(clientID, protocolID);
                     break;
                 case Config.PROTOCOL_DATA:
-                    serverInstance.console.append(protocolWithId + "\n");
+                    serverInstance.addNewLine(protocolWithId + "\n");
                     playerData(protocolID);
                     break;
                 default:
-                    serverInstance.console.append("Unknown protocol\n");
+                    serverInstance.addNewLine("Unknown protocol\n");
             }
         }
     }
@@ -205,7 +208,7 @@ public class ClientHandler implements Runnable {
             clientSocket.close();
 
             serverInstance.disconnectClient(clientSocket);
-            serverInstance.console.append(protocolID + "\n");
+            serverInstance.addNewLine(protocolID + "\n");
         } catch (IOException ex) {
             System.out.println("Error handling end connection: " + ex.getMessage());
         }

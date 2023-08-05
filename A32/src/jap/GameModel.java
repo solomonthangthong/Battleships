@@ -493,6 +493,32 @@ public class GameModel {
         return buttons;
     }
 
+    protected void createBoardFromString(String[] digitArray){
+        int dimensions = boardSize * 2;
+        JButton[][] buttons = new JButton[dimensions][dimensions];
+
+        for (int i = 0; i < dimensions * dimensions; i++) {
+            int row = i / dimensions;
+            int col = i % dimensions;
+
+            if (digitArray[i].equals("0")){
+                buttons[row][col] = new JButton();
+                ButtonState state = new ButtonState(buttons[row][col]);
+                buttons[row][col].setForeground(Color.white);
+                buttons[row][col].setBorderPainted(true);
+                buttons[row][col].setBorder(whiteBorder);
+                state.setState(State.DEFAULT);
+                buttons[row][col].setUI(hiddenText);
+            } else {
+                buttons[row][col].setName("Convert");
+                buttons[row][col].setText(String.valueOf(digitArray[i]));
+            }
+        }
+        // I WANT TO USE THIS METHOD BUT IT MESSES UP MY RESET IN GAMEMODEL
+        //convertDesignJButtonsToBoat(true, buttons);
+        setOpponentButtons(buttons);
+    }
+
     /**
      * Method Name: HiddenTextButtonUI
      * Purpose: Custom ButtonUI implementation that hides the grayed-out text of a disabled JButton.
