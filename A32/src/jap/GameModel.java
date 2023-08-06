@@ -121,6 +121,14 @@ public class GameModel {
         }
     }
 
+    /**
+     * Method Name: updatePlayerName
+     * Purpose: Set player name in player object
+     * Algorithm: Setter
+     *
+     * @param actor - True = player, false = bot
+     * @param name - String name
+     */
     protected void updatePlayerName(Boolean actor, String name){
         if (actor){
             players[0].setPlayerName(name);
@@ -130,32 +138,42 @@ public class GameModel {
     }
 
     /**
-     *
+     * Method Name: updateUserPoints
+     * Purpose: Increment user points
+     * Algorithm: Increment
      */
-    protected static void updateUserPoints() {
+    protected void updateUserPoints() {
         userPoints++;
     }
 
     /**
-     *
+     * Method Name: updateComputerPoints
+     * Purpose: Set player name in player object
+     * Algorithm: Setter
      */
-    protected static void updateComputerPoints() {
+    protected void updateComputerPoints() {
         computerPoints++;
     }
 
     /**
+     * Method Name: getUserPoints
+     * Purpose: Getter method for user Points
+     * Algorithm: Getter
      *
-     * @return
+     * @return - user Points
      */
-    protected static int getUserPoints() {
+    protected int getUserPoints() {
         return userPoints;
     }
 
     /**
+     * Method Name: getComputerPoints
+     * Purpose: Getter method for computer points
+     * Algorithm: Getter
      *
-     * @return
+     * @return - computer points
      */
-    public static int getComputerPoints() {
+    protected int getComputerPoints() {
         return computerPoints;
     }
 

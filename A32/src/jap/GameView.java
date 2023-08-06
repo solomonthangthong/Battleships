@@ -1143,11 +1143,11 @@ public class GameView extends JFrame implements ActionListener {
         // Try to load .properties file
         try {
             // For Bat File use resources.language but in Intellij use "language"
-            resourceBundle = ResourceBundle.getBundle("language", locale);
+            resourceBundle = ResourceBundle.getBundle("resources.language", locale);
         } catch (MissingResourceException e) {
             // Fallback to the default locale (e.g., English)
             // For Bat File use resources.language but in Intellij use "language"
-            resourceBundle = ResourceBundle.getBundle("language", Locale.ENGLISH);
+            resourceBundle = ResourceBundle.getBundle("resources.language", Locale.ENGLISH);
             e.printStackTrace();
         }
         // Call method to set text for buttons

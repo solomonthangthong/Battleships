@@ -25,6 +25,7 @@ import java.util.concurrent.BlockingQueue;
  * @since 11.0.19
  */
 public class Client extends JFrame implements ActionListener {
+    private static final long serialVersionUID = 1L;
     private GameController gameController;
     private JPanel clientPanel;
     private JTextField user;
@@ -475,7 +476,7 @@ public class Client extends JFrame implements ActionListener {
         } else if (e.getSource() == sendData) {
             ///get the points and time from the MVC
             int userPoints = gameController.getUserPoints();
-            int computerPoints = GameModel.getComputerPoints();
+            int computerPoints = gameController.getComputerPoints();
             String userName = user.getText();
             int time = GameView.getTime();
 

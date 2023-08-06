@@ -43,6 +43,7 @@ public class GameController implements ActionListener {
      *
      * @param model contains the game logic
      * @param view  contains the game display
+     * @param client Client instance
      */
     public GameController(GameModel model, GameView view, Client client) {
         this.gameModel = model;
@@ -422,11 +423,22 @@ public class GameController implements ActionListener {
     }
 
     /**
+     * Method Name: getComputerPoints
+     * Purpose: Getter method for user points
+     * Algorithm: Return points
+     *
+     * @return - User accumulated points
+     */
+    protected Integer getComputerPoints() {
+        return gameModel.getComputerPoints();
+    }
+
+    /**
      * Method Name: receiveGameConfigurationClient
      * Purpose: Split string configuration and build both user and opponent boards, refresh view
      * Algorithm: String split setBoardSize, create 2D JButton arrays for both players, refresh view
      *
-     * @param gameConfig
+     * @param gameConfig - String game configuration
      */
     protected void receiveGameConfigurationClient(String gameConfig) {
         blockRandomizeForOpponent = true;
@@ -462,7 +474,7 @@ public class GameController implements ActionListener {
      * Purpose: Set Model boardSize variable to the passed argument
      * Algorithm: if else to determine user or machine, call gameModel methods
      *
-     * @param size
+     * @param size - Board size from game config
      */
     protected void clientDimensionToModel(Integer size) {
         gameModel.setBoardSize(size);

@@ -168,6 +168,9 @@ public class ClientHandler implements Runnable {
      * Method Name: sendGameConfig
      * Purpose: Send Protocol and gameconfiguration to Client side
      * Algorithm: Create string message and put into write stream for client
+     *
+     * @param clientID - client ID number
+     * @param protocolID - protocol ID
      */
     protected void sendGameConfig(String clientID, String protocolID) {
         String message = clientID + Config.PROTOCOL_SEPARATOR + protocolID + Config.PROTOCOL_SEPARATOR + gameConfiguration + "\n";

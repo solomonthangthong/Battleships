@@ -297,6 +297,9 @@ public class Server extends JFrame implements ActionListener {
      * Method Name: addPlayerToList
      * Purpose: add Player Object to Map
      * Algorithm: For loop if list of ClientHandlers match socket, add player Object to Map
+     *
+     * @param player - Player object
+     * @param clientSocket - Client socket connection to server
      */
     protected void addPlayerToList(Player player, Socket clientSocket) {
         // index to increment for enhanced for loop
