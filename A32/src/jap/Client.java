@@ -292,7 +292,8 @@ public class Client extends JFrame implements ActionListener {
                 sendData.setEnabled(false);
                 play.setEnabled(false);
                 gameConfigReceived = false;
-                opponentGameConfiguration = "";
+                opponentGameConfiguration =  null;
+                playerGameConfiguration = null;
             } else {
                 addNewLine("No active connection to end.\n");
             }

@@ -241,6 +241,7 @@ public class Server extends JFrame implements ActionListener {
                 start.setEnabled(true);
                 //disable the end button
                 end.setEnabled(false);
+                serverThread.stop();
             } catch (IOException ex) {
                 addNewLine("Error closing server socket: " + ex.getMessage() + "\n");
             }

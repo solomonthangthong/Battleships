@@ -157,6 +157,8 @@ public class GameController implements ActionListener {
         // Comment out opponent because we receive gameConfiguration and replace it with that
         //randomBoatPlacement(false);
         receiveGameConfigurationClient(client.getOpponentGameConfiguration());
+        // Since we dont use randBoatPlacement and use String Config need to clear actionListeners from updateModelViewBoard
+        gameView.updateBoard(gameModel.getOpponentButtons(), gameView.getOpponentPanel());
         randomBoatPlacement(true);
 
         // Refresh View
