@@ -292,6 +292,7 @@ public class Client extends JFrame implements ActionListener {
                 sendData.setEnabled(false);
                 play.setEnabled(false);
                 gameConfigReceived = false;
+                opponentGameConfiguration = "";
             } else {
                 addNewLine("No active connection to end.\n");
             }
@@ -336,11 +337,25 @@ public class Client extends JFrame implements ActionListener {
                 String[] spliced = protocolMessage.split(Config.PROTOCOL_SEPARATOR);
                 if (spliced.length >= 3) {
                    /* String clientID = spliced[0];
-                    String protocolID = spliced[1];
-                    String data = spliced[2];*/
-                    opponentGameConfiguration = spliced[2];
-                    addNewLine("Received " + protocolMessage + "\n");
-                    messageQueue.offer(opponentGameConfiguration);
+                    String protocolID = spliced[1];*/
+                    String data = spliced[2];
+                    if (!data.equals(opponentGameConfiguration)) {
+                        opponentGameConfiguration = spliced[2];
+                        addNewLine("Received " + protocolMessage + "\n");
+                        messageQueue.offer(opponentGameConfiguration);
+
+                        try {
+                            String config = messageQueue.take();
+                            addNewLine(config + "\n");
+                            gameController.receiveGameConfigurationClient(config);
+                            gameConfigReceived = true;
+                        } catch (InterruptedException ex) {
+                            addNewLine("Message could not send. Try again.\n");
+                        }
+
+                    } else {
+                        JOptionPane.showMessageDialog(null, "This game configuration has already been received.\n", "Warning", JOptionPane.WARNING_MESSAGE);
+                    }
                 }
             }
         } catch (IOException e) {
@@ -432,21 +447,11 @@ public class Client extends JFrame implements ActionListener {
 
         } else if (e.getSource() == receiveGame) {
 
+            // Send String config to MVC
             String message = Config.PROTOCOL_RECVGAME + Config.PROTOCOL_SEPARATOR + 0;
             addNewLine("Receiving Game Configuration from Server\n");
             addNewLine(message + "\n");
             sendProtocolToServer(message);
-
-            // Send String config to MVC
-            try {
-                String config = messageQueue.take();
-                addNewLine(config + "\n");
-                gameController.receiveGameConfigurationClient(config);
-                gameConfigReceived = true;
-            } catch (InterruptedException ex) {
-                addNewLine("Message could not send. Try again.\n");
-            }
-
 
         } else if (e.getSource() == sendData) {
             ///get the points and time from the MVC

@@ -206,6 +206,8 @@ public class GameController implements ActionListener {
         gameView.resetGame(gameModel.getBoardSize());
         gameView.enableControlPanelButtons();
 
+        //TODO If game is reset prior to receiving new GameConfig
+
     }
 
     /**
