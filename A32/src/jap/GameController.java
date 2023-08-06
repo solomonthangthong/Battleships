@@ -110,10 +110,13 @@ public class GameController implements ActionListener {
         // updateModelViewBoard was changeDimensions
         // resizeBoard and change dimension were essentially the same in previous iteration
         historyLog(eventSource, controlPanelText);
+
+        //TODO causing bug where even if board size is change from string config it stays at 4
         gameModel.setBoardSize((int) gameView.getDimensionComboBox().getSelectedItem());
+
         updateModelViewBoard(gameModel.getBoardSize(), gameView.getUserPanel(), gameView.getOpponentPanel());
 
-        // Remove actionListeners and Update Panels
+        // Adds Action Listeners
         gameView.createPanelView(gameModel.getBoardSize(), gameView.getUserPanel(), true, gameView.getProgressPlayer1Panel());
 
         // Instant create new Boats for Machine
@@ -157,6 +160,7 @@ public class GameController implements ActionListener {
         // Comment out opponent because we receive gameConfiguration and replace it with that
         //randomBoatPlacement(false);
         receiveGameConfigurationClient(client.getOpponentGameConfiguration());
+
         // Since we dont use randBoatPlacement and use String Config need to clear actionListeners from updateModelViewBoard
         gameView.updateBoard(gameModel.getOpponentButtons(), gameView.getOpponentPanel());
         randomBoatPlacement(true);
@@ -431,12 +435,15 @@ public class GameController implements ActionListener {
 
         // First index is board size
         gameModel.setBoardSize(Integer.valueOf(digit[0]));
-        String withoutSize = digit[1];
-        // Change the dimension dropdown first because if below resets the gameConfig
-        gameView.getDimensionComboBox().setSelectedItem(Integer.parseInt(digit[0]));
 
-        // Create Board For opponent side from String pass size, and string config
+        String withoutSize = digit[1];
+
+        // Change the dimension dropdown first because if below resets the gameConfig
+        //gameView.getDimensionComboBox().setSelectedItem(Integer.parseInt(digit[0]));
+
+        // Create Board For opponent side from String pass size, and string config, set itself in this method
         gameModel.createBoardFromString(Integer.valueOf(digit[0]), withoutSize);
+
 
         // Create User board
         gameModel.setUserPlayerButtons(gameModel.createButtonBoard(gameModel.getPlayer(true)));
@@ -446,10 +453,8 @@ public class GameController implements ActionListener {
         gameView.setBoardButtons(false, getButtons(false));
 
         // Refresh view and change the dimension box to the selected size
-        gameView.createPanelView(Integer.parseInt(digit[0]), gameView.getOpponentPanel(), false, gameView.getProgressPlayer2Panel());
         gameView.createPanelView(Integer.parseInt(digit[0]), gameView.getUserPanel(), true, gameView.getProgressPlayer1Panel());
-
-
+        gameView.createPanelView(Integer.parseInt(digit[0]), gameView.getOpponentPanel(), false, gameView.getProgressPlayer2Panel());
     }
 
     /**

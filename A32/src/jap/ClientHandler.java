@@ -1,5 +1,6 @@
 package jap;
 
+import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
 
@@ -22,13 +23,13 @@ public class ClientHandler implements Runnable {
     private Integer clientId;
 
     private String gameConfiguration;
+    private Thread receiveProtocol;
 
     private InputStream inputStream;
 
     private BufferedReader reader;
 
     private BufferedWriter writer;
-    private int computerPoints;
 
     /**
      * Method Name: ClientHandler
@@ -46,14 +47,14 @@ public class ClientHandler implements Runnable {
             this.inputStream = clientSocket.getInputStream();
             this.reader = new BufferedReader(new InputStreamReader(inputStream));
         } catch (IOException e) {
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, e.getMessage() + "\n", "Warning", JOptionPane.WARNING_MESSAGE);
         }
 
         try {
             OutputStream outputStream = clientSocket.getOutputStream();
             writer = new BufferedWriter(new OutputStreamWriter(outputStream));
         } catch (IOException b) {
-            b.printStackTrace();
+            JOptionPane.showMessageDialog(null, b.getMessage() + "\n", "Warning", JOptionPane.WARNING_MESSAGE);
         }
 
     }
@@ -92,7 +93,7 @@ public class ClientHandler implements Runnable {
                 processProtocol(protocolMessage);
             }
         } catch (IOException e) {
-            System.out.print("Socket closed\n");
+            JOptionPane.showMessageDialog(null, "The stream for send/receive has been closed.\n", "Warning", JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -105,7 +106,6 @@ public class ClientHandler implements Runnable {
      */
     private void processProtocol(String protocol) throws IOException {
         String protocolWithId = clientId + Config.PROTOCOL_SEPARATOR + protocol;
-        serverInstance.addNewLine("[Debug print]: " + protocolWithId + "\n");
         String[] spliced = protocolWithId.split(Config.PROTOCOL_SEPARATOR);
 
         if (spliced.length >= 3) {
@@ -113,13 +113,14 @@ public class ClientHandler implements Runnable {
             String protocolID = spliced[1];
             String data = spliced[2];
 
+            serverInstance.addNewLine("[Debug print]: clientID " + clientID + ", protocol ID Number " + protocolID + ", data " + data + "\n");
+
             switch (protocolID) {
                 case Config.PROTOCOL_END:
-                    serverInstance.addNewLine(protocolWithId + "\n");
                     handleEndConnection(protocolID);
+                    receiveProtocol.stop();
                     break;
                 case Config.PROTOCOL_SENDGAME:
-                    //serverInstance.console.append(protocolWithId + "\n");
                     serverInstance.addNewLine("[Debug print protocolID for Send]: " + protocolID + "\n");
                     serverInstance.addNewLine("[Debug print GameConfiguration for Send]: " + data + "\n");
                     //serverInstance.console.append(data + "\n");
@@ -175,16 +176,35 @@ public class ClientHandler implements Runnable {
             writer.newLine();
             writer.flush();
         } catch (IOException ex) {
-            System.out.print("Message did not send to client\n");
+            JOptionPane.showMessageDialog(null, "Message did not send to client" + ex.getMessage() + "\n", "Warning", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+    /**
+     * Method Name: sendServerEnd
+     * Purpose: Send protocol messages to server
+     * Algorithm: Try catch write message to stream
+     *
+     * @param clientID - ID number of client
+     * @param protocolID - Protocol ID
+     */
+    protected void sendServerEnd(String clientID, String protocolID){
+        String message = clientID + Config.PROTOCOL_SEPARATOR + protocolID + Config.PROTOCOL_SEPARATOR + 0;
+        try {
+            writer.write(message);
+            writer.newLine();
+            writer.flush();
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null, "Message did not send to client" + ex.getMessage() + "\n", "Warning", JOptionPane.WARNING_MESSAGE);
         }
     }
 
     /**
      * Method Name: playerData
      * Purpose: Grab player Object from MVC and pass information to Server side
-     * Algorithm:
+     * Algorithm: If String array equals four split and create new Player object send to Server for player Map
      *
-     * @param data -
+     * @param data - Player name, game results, time
      */
     protected void playerData(String data) {
         // Split the data using the delimiter ","
@@ -195,7 +215,7 @@ public class ClientHandler implements Runnable {
             // Update the player-related variables
             String userName = playerData[0];
             int userPoints = Integer.parseInt(playerData[1]);
-            computerPoints = Integer.parseInt(playerData[2]);
+            int computerPoints = Integer.parseInt(playerData[2]);
             int time = Integer.parseInt(playerData[3]);
 
             Player player = new Player(userName, true);
@@ -222,7 +242,7 @@ public class ClientHandler implements Runnable {
             serverInstance.disconnectClient(clientSocket);
             serverInstance.addNewLine(protocolID + "\n");
         } catch (IOException ex) {
-            System.out.println("Error handling end connection: " + ex.getMessage());
+            JOptionPane.showMessageDialog(null, "Error handling end connection: " + ex.getMessage() + "\n", "Warning", JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -245,7 +265,7 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
         // This keeps the method running
-        Thread receiveProtocol = new Thread(this::processClient);
+        receiveProtocol = new Thread(this::processClient);
         receiveProtocol.start();
     }
 }

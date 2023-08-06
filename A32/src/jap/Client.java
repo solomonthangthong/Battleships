@@ -36,12 +36,14 @@ public class Client extends JFrame implements ActionListener {
     private JButton sendGame;
     private JButton receiveGame;
     private JButton sendData;
+    private int clickCount;
     private JButton play;
     private JTextArea console;
     private String playerGameConfiguration;
     private String opponentGameConfiguration;
     private Integer dimensionSize;
     private Boolean gameConfigReceived;
+    private Thread listeningThread;
 
     private Socket socket;
     private BufferedWriter writer;
@@ -219,7 +221,6 @@ public class Client extends JFrame implements ActionListener {
         try {
             // Create a new socket
             socket = new Socket(serverAddress, portNumber);
-
             // Connection is successful
             addNewLine("Connected to server at " + serverAddress + ":" + portNumber + "\n");
             // Disable the "Connect" button
@@ -227,13 +228,12 @@ public class Client extends JFrame implements ActionListener {
             // Enable the "End" button to allow disconnection
             end.setEnabled(true);
 
-
             // Open input stream when connection is connected
             try {
                 InputStream inputStream = socket.getInputStream();
                 this.reader = new BufferedReader(new InputStreamReader(inputStream));
             } catch (IOException b) {
-                b.printStackTrace();
+                JOptionPane.showMessageDialog(null, b.getMessage() + "\n", "Warning", JOptionPane.WARNING_MESSAGE);
             }
 
             // Open stream when connection is connected
@@ -241,7 +241,7 @@ public class Client extends JFrame implements ActionListener {
                 OutputStream outputStream = socket.getOutputStream();
                 writer = new BufferedWriter(new OutputStreamWriter(outputStream));
             } catch (IOException b) {
-                b.printStackTrace();
+                JOptionPane.showMessageDialog(null, b.getMessage() + "\n", "Warning", JOptionPane.WARNING_MESSAGE);
             }
 
             // Thread to listen for incoming messages from Server
@@ -257,10 +257,11 @@ public class Client extends JFrame implements ActionListener {
             sendData.setEnabled(true);
             play.setEnabled(true);
             gameConfigReceived = false;
+            clickCount = 0;
 
         } catch (IOException ex) {
             // Handle connection errors
-            addNewLine("Connection failed: " + ex.getMessage() + "\n");
+            JOptionPane.showMessageDialog(null, "Connection failed: " + ex.getMessage() + "\n", "Warning", JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -292,14 +293,17 @@ public class Client extends JFrame implements ActionListener {
                 sendData.setEnabled(false);
                 play.setEnabled(false);
                 gameConfigReceived = false;
-                opponentGameConfiguration =  null;
-                playerGameConfiguration = null;
+                opponentGameConfiguration =  "";
+                playerGameConfiguration = "";
+                gameController.clientDimensionToModel(4);
+                clickCount = 0;
+
             } else {
                 addNewLine("No active connection to end.\n");
             }
         } catch (IOException ex) {
             // Handle connection closing errors
-            addNewLine("Error ending connection: " + ex.getMessage() + "\n");
+            JOptionPane.showMessageDialog(null, "Error ending connection:" + ex.getMessage() + "\n", "Warning", JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -322,7 +326,7 @@ public class Client extends JFrame implements ActionListener {
      * Algorithm: Create new thread and start thread
      */
     public void listenForClientHandleMessage() {
-        Thread listeningThread = new Thread(this::receiveServerOutput);
+        listeningThread = new Thread(this::receiveServerOutput);
         listeningThread.start();
     }
 
@@ -337,10 +341,15 @@ public class Client extends JFrame implements ActionListener {
             while ((protocolMessage = reader.readLine()) != null) {
                 String[] spliced = protocolMessage.split(Config.PROTOCOL_SEPARATOR);
                 if (spliced.length >= 3) {
-                   /* String clientID = spliced[0];
-                    String protocolID = spliced[1];*/
+                    String clientID = spliced[0];
+                    String protocolID = spliced[1];
                     String data = spliced[2];
-                    if (!data.equals(opponentGameConfiguration)) {
+
+                    if (protocolID.equals(Config.PROTOCOL_END)){
+                        endConnection();
+                    }
+
+                    if (!data.equals(opponentGameConfiguration) && !protocolID.equals(Config.PROTOCOL_END)) {
                         opponentGameConfiguration = spliced[2];
                         addNewLine("Received " + protocolMessage + "\n");
                         messageQueue.offer(opponentGameConfiguration);
@@ -348,6 +357,10 @@ public class Client extends JFrame implements ActionListener {
                         try {
                             String config = messageQueue.take();
                             addNewLine(config + "\n");
+
+                            String[] dimension = config.split(Config.FIELD_SEPARATOR);
+                            gameController.clientDimensionToModel(Integer.valueOf(dimension[0]));
+
                             gameController.receiveGameConfigurationClient(config);
                             gameConfigReceived = true;
                         } catch (InterruptedException ex) {
@@ -360,7 +373,7 @@ public class Client extends JFrame implements ActionListener {
                 }
             }
         } catch (IOException e) {
-            System.out.print("Socket closed\n");
+            JOptionPane.showMessageDialog(null, "The stream for send/receive has been closed.\n", "Warning", JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -403,7 +416,7 @@ public class Client extends JFrame implements ActionListener {
             writer.newLine();
             writer.flush();
         } catch (IOException ex) {
-            System.out.print("wow");
+            JOptionPane.showMessageDialog(null, "Failed to send protocol:" + ex.getMessage() + "\n", "Warning", JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -434,10 +447,15 @@ public class Client extends JFrame implements ActionListener {
 
             addNewLine("Creating new MVC game\n");
             // Add dimensions and game Config
-            if (dimensionSize != 10) {
+            if (clickCount < 6) {
                 dimensionSize++;
                 gameController.clientDimensionToModel(dimensionSize);
                 gameController.sendGameConfiguration();
+                clickCount++;
+            }
+
+            if (clickCount == 6){
+                newGame.setEnabled(false);
             }
 
         } else if (e.getSource() == sendGame) {
@@ -474,6 +492,7 @@ public class Client extends JFrame implements ActionListener {
 
         } else if (e.getSource() == end) {
             //sendProtocolEnd();
+            listeningThread.stop();
             endConnection();
         }
     }

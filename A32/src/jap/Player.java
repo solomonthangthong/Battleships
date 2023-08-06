@@ -17,8 +17,8 @@ import java.util.List;
  */
 public class Player {
     private String playerName;
-    private int health;
-    private boolean actor;
+
+    private final boolean actor;
     private int maxScore;
 
     private int gameLength;
@@ -42,48 +42,66 @@ public class Player {
     }
 
     /**
+     * Method Name: setPlayerName
+     * Purpose: setter method for player name
+     * Algorithm: this variable = argument
      *
-     * @param name
+     * @param name - Player name
      */
     protected void setPlayerName(String name){
         this.playerName = name;
     }
 
     /**
+     * Method Name: getPlayerName
+     * Purpose: Getter method
+     * Algorithm: Return player name
      *
-     * @return
+     * @return - String for player name
      */
     protected String getPlayerName(){
         return playerName;
     }
 
     /**
+     * Method Name: setMaxScore
+     * Purpose: Setter method
+     * Algorithm: Set maxscore to passed argument
      *
-     * @param score
+     * @param score - points accumulated during game
      */
     protected void setMaxScore(Integer score){
         this.maxScore = score;
     }
 
     /**
+     * Method Name: getPoints
+     * Purpose: Getter method for points
+     * Algorithm: Return points
      *
-     * @return
+     * @return - Score player accumulated during game
      */
     protected Integer getPoints(){
         return maxScore;
     }
 
     /**
+     * Method Name: setGameLength
+     * Purpose: Setter method for time
+     * Algorithm: global variable = argument passed
      *
-     * @param time
+     * @param time - Game length
      */
     protected void setGameLength(Integer time){
         this.gameLength = time;
     }
 
     /**
+     * Method Name: getTime
+     * Purpose: Getter method for time
+     * Algorithm: Return variable
      *
-     * @return
+     * @return - time
      */
     protected Integer getTime(){
         return gameLength;

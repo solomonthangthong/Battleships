@@ -34,33 +34,32 @@ public class Server extends JFrame implements ActionListener {
     private JCheckBox finalize;
     private JButton end;
 
+    private Boolean acceptClient;
+
     protected JTextArea console;
-    private JScrollPane scrollPane;
     private ServerSocket serverSocket;
 
     private Thread serverThread;
+    private Boolean atLeastOneClient;
 
     private List<ClientHandler> clients;
 
     private String gameConfiguration;
 
-    private Map<Integer, Player> playerMap;
-    private Integer playerCount;
-    private List<Player> rankList;
+    private final Map<Integer, Player> playerMap;
 
     /**
      * Method Name: Server
      * Purpose: Default constructor
      * Algorithm: Initialize required components to launch Server GUI
      */
-    public Server(int port) {
+    public Server() {
         initializeFrame();
         createPanel();
         addPanelsToMainFrame();
-        clients = new ArrayList<>();
         playerMap = new HashMap<>();
-        playerCount = 0;
     }
+
 
     /**
      * Method Name: main
@@ -70,8 +69,7 @@ public class Server extends JFrame implements ActionListener {
      * @param args - The command-line arguments provided to the application.
      */
     public static void main(String[] args) {
-        int port = Config.DEFAULT_PORT;
-        Server server = new Server(port);
+        Server server = new Server();
         server.setResizable(false);
         server.setVisible(true);
     }
@@ -88,7 +86,6 @@ public class Server extends JFrame implements ActionListener {
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int screenWidth = screenSize.width;
-        int screenHeight = screenSize.height;
         setLocation(screenWidth - getWidth(), 0);
     }
 
@@ -123,6 +120,7 @@ public class Server extends JFrame implements ActionListener {
         // If case if there are no games in result dont allow click
         result = new JButton("Results");
         finalize = new JCheckBox("Finalize");
+        finalize.addActionListener(this);
         end = new JButton("End");
         start.addActionListener(this);
         end.addActionListener(this);
@@ -141,7 +139,7 @@ public class Server extends JFrame implements ActionListener {
 
         console = new JTextArea(7, 1);
         console.setEditable(false);
-        scrollPane = new JScrollPane(console);
+        JScrollPane scrollPane = new JScrollPane(console);
 
         serverPanel.add(scrollPane, BorderLayout.SOUTH);
 
@@ -173,12 +171,13 @@ public class Server extends JFrame implements ActionListener {
                 int clientNumber = clients.indexOf(clientHandler);
                 clientHandler.setClientId(clientNumber);
 
-                Thread thread = new Thread(clientHandler);
-                thread.start();
+                Thread clientThread = new Thread(clientHandler);
+                clientThread.start();
+                atLeastOneClient = true;
                 addNewLine("Client " + clientNumber + " connected: " + clientSocket.getInetAddress().getHostAddress() + "\n");
             } catch (IOException ex) {
                 // Handle connection errors
-                addNewLine("Error accepting connection: " + ex.getMessage() + "\n");
+                JOptionPane.showMessageDialog(null, "Error accepting connection: " + ex.getMessage() + "\n", "Warning", JOptionPane.WARNING_MESSAGE);
             }
         }
     }
@@ -213,7 +212,7 @@ public class Server extends JFrame implements ActionListener {
      * Purpose: When a client disconnect server will acknowledge
      * Algorithm: Method is called from ClientHandler and  If client matches from List of clients, remove the client from list.
      *
-     * @param clientSocket
+     * @param clientSocket - Socket created in Client class to communicate to server
      */
     public void disconnectClient(Socket clientSocket) {
         // Find the corresponding ClientHandler in the list
@@ -234,6 +233,7 @@ public class Server extends JFrame implements ActionListener {
     public void endConnection() {
         if (serverSocket != null && !serverSocket.isClosed()) {
             try {
+                serverThread.stop();
                 int portNumberInt = Integer.parseInt(portTextField.getText());
                 serverSocket.close();
                 addNewLine("Server closed on port " + portNumberInt + "\n");
@@ -241,12 +241,15 @@ public class Server extends JFrame implements ActionListener {
                 start.setEnabled(true);
                 //disable the end button
                 end.setEnabled(false);
-                serverThread.stop();
+
+                atLeastOneClient = false;
+                finalize.setSelected(false);
+
             } catch (IOException ex) {
-                addNewLine("Error closing server socket: " + ex.getMessage() + "\n");
+                JOptionPane.showMessageDialog(null, "Error closing server socket: " + ex.getMessage() + "\n", "Warning", JOptionPane.WARNING_MESSAGE);
             }
         } else {
-            addNewLine("Server is not running or already closed.\n");
+            JOptionPane.showMessageDialog(null, "Server is not running or already closed.\n", "Warning", JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -258,7 +261,7 @@ public class Server extends JFrame implements ActionListener {
      * @param config - Game Configuration example 1#P1#4,1000000000444401000000000333003000000030201020302000200100220000
      */
     protected void setGameConfiguration(String config) {
-        if (!config.equals(gameConfiguration)){
+        if (!config.equals(gameConfiguration)) {
             this.gameConfiguration = config;
         } else {
             JOptionPane.showMessageDialog(null, "This configuration has already been received from a client instance.", "Warning", JOptionPane.WARNING_MESSAGE);
@@ -282,7 +285,7 @@ public class Server extends JFrame implements ActionListener {
      * Purpose: Add new line of text to text area in Server GUI console
      * Algorithm: append message, set position to new line
      *
-     * @param line
+     * @param line - String message to append to console
      */
     protected void addNewLine(String line) {
         console.append(line);
@@ -314,17 +317,7 @@ public class Server extends JFrame implements ActionListener {
     private void showPlayerDataPopup() {
         // Prepare the data to show in the pop-up box
         StringBuilder playerData = new StringBuilder();
-/*        for (ClientHandler clientHandler : clients) {
-            String playerName = clientHandler.getUserName();
-            int userPoints = clientHandler.getUserPoints();
-            int computerPoints = clientHandler.getComputerPoints();
-            String time = clientHandler.getTime();
-            playerData.append("Player Name: ").append(playerName)
-                    .append("\n User Points: ").append(userPoints)
-                    .append("\n Computer Points: ").append(computerPoints)
-                    .append("\n Time: ").append(time)
-                    .append("\n");
-        }*/
+
         // Loop through playerMap to grab information
         for (Map.Entry<Integer, Player> entry : playerMap.entrySet()) {
             int playerId = entry.getKey();
@@ -352,26 +345,49 @@ public class Server extends JFrame implements ActionListener {
         if (e.getSource() == start) {
             int portNumberInt = Integer.parseInt(portTextField.getText());
             if (Integer.toString(portNumberInt).length() == 5) {
-            startServer(portNumberInt);
-            serverThread = new Thread(this::acceptConnection);
-            serverThread.start();
+                startServer(portNumberInt);
+                serverThread = new Thread(this::acceptConnection);
+                serverThread.start();
+                acceptClient = true;
+                clients = new ArrayList<>();
             } else {
                 JOptionPane.showMessageDialog(null, "Port enter is out of range. Please enter a 5 digit port number.\n", "Warning", JOptionPane.WARNING_MESSAGE);
             }
-        }
-        if (e.getSource() == end) {
+        } else if (e.getSource() == end) {
             if (serverThread != null) {
                 serverThread.interrupt();
             }
+            for (ClientHandler client: clients){
+                client.sendServerEnd(String.valueOf(client.getClientId()), Config.PROTOCOL_END);
+            }
+
             endConnection();
-        }
-        if (e.getSource() == result) {
-            if (!playerMap.isEmpty()){
+        } else if (e.getSource() == result) {
+            if (!playerMap.isEmpty()) {
                 showPlayerDataPopup();
             } else {
                 JOptionPane.showMessageDialog(null, "No player has been recorded yet. Please allow clients to connect, play games, and store their data.\n", "Warning", JOptionPane.WARNING_MESSAGE);
             }
 
         }
+        if (finalize.isSelected()) {
+            if (atLeastOneClient != null && true){
+                Thread checkThread = new Thread(() -> {
+                    while (clients.size() > 0) {
+                        try {
+                            Thread.sleep(1000); // Adjust the sleep duration as needed
+                        } catch (InterruptedException ignored) {
+                        }
+                    }
+                    endConnection();
+                    System.out.println("Server has been finalized and shut down.");
+                });
+                checkThread.start();
+            } else {
+                JOptionPane.showMessageDialog(null, "No client instance has connected yet.\n", "Warning", JOptionPane.WARNING_MESSAGE);
+                finalize.setSelected(false);
+            }
+        }
     }
 }
+
