@@ -74,12 +74,13 @@ javac -Xlint -cp ".;%SRCDIR%" %SERVERSRC% -d %BINDIR% 2> %BINERR%
 :: ECHO "Running (outside JAR) ........................."
 :: start java -cp ".;bin;/SOFT/copy/dev/java/javafx/lib/*" CST8221.Main
 
-ECHO "3. Creating Jar ..................."
+ECHO "3. Creating Jar Client 1..................."
 cd bin
 ::jar cvfe CST8221.jar Lab . > labs-jar.out 2> labs-jar.err
 jar cvfe %JARNAME% %MAINCLASSBIN% . > ../%JAROUT% 2> ../%JARERR%
+ECHO "3. Creating Jar Client 2..................."
 jar cvfe %CLIENTNAME% %MAINCLASSBIN1% . > ../%JAROUT% 2> ../%JARERR%
-ECHO "3. Creating Jar for Server ..................."
+ECHO "3. Creating Jar Server ..................."
 jar cvfe %JARSERVER% %SERVERBIN% . > ../%JAROUT% 2> ../%JARERR%
 
 ECHO "4. Creating Javadoc ..............."
