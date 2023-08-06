@@ -257,7 +257,12 @@ public class Server extends JFrame implements ActionListener {
      * @param config - Game Configuration example 1#P1#4,1000000000444401000000000333003000000030201020302000200100220000
      */
     protected void setGameConfiguration(String config) {
-        this.gameConfiguration = config;
+        if (!config.equals(gameConfiguration)){
+            this.gameConfiguration = config;
+        } else {
+            JOptionPane.showMessageDialog(null, "This configuration has already been received from a client instance.", "Warning", JOptionPane.WARNING_MESSAGE);
+        }
+
     }
 
     /**

@@ -160,7 +160,6 @@ public class ClientHandler implements Runnable {
      * Algorithm: Global variable = server Game Configuration
      */
     protected void setGameConfiguration() {
-        // Implement logic for method
         this.gameConfiguration = serverInstance.sendConfigurationToClients();
     }
 
