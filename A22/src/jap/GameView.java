@@ -167,10 +167,6 @@ public class GameView extends JFrame implements ActionListener {
         randomizedClick = false;
         designSaved = false;
 
-
-        //play background music
-        //String musicFile = "resources/backgroundMusic.wav";
-        //playBackgroundMusic(musicFile);
     }
 
     /**
@@ -210,7 +206,7 @@ public class GameView extends JFrame implements ActionListener {
                         + "The goal of battleship is to destroy all of the opponent's ships before they destroy yours.\n\n"
                         + "Have fun";
         //add image from images folder
-        ImageIcon icon = new ImageIcon("images/game_about.jpg");
+        ImageIcon icon = new ImageIcon("/images/game_about.jpg");
         //display message and icon
         JOptionPane.showMessageDialog(this, description, "About Battleship", JOptionPane.INFORMATION_MESSAGE, icon);
     }
@@ -1232,13 +1228,8 @@ public class GameView extends JFrame implements ActionListener {
         int buttonSize = Math.min(50, 200 / dimension); // Adjust the button size based on dimension
         int labelSize = Math.min(50, 200 / dimension); // Adjust the button size based on dimension
 
-        // Multiply dimensions by two. Intended result is if board is size 4 make it 8 by 8 grid
-        dimension = dimension * 2;
-        int numRows = dimension;
-        int numCols = dimension;
-
         // Initialize JPanel to hold array of buttons
-        JPanel actorGrid = new JPanel(new GridLayout(numRows, numCols));
+        JPanel actorGrid = new JPanel(new GridLayout(dimension, dimension));
         // Initialize 2D array for buttons
         JButton[][] buttonForGrid;
 
@@ -1260,10 +1251,10 @@ public class GameView extends JFrame implements ActionListener {
         }
 
         // Create column panel to hold column label
-        JPanel columnLabelsPanel = new JPanel(new GridLayout(1, numCols));
+        JPanel columnLabelsPanel = new JPanel(new GridLayout(1, dimension));
         columnLabelsPanel.setBorder(BorderFactory.createEmptyBorder(0, 1000, 0, 1000)); // Add left padding
         //add column and row numbers on user Grid
-        for (int k = 0; k < numCols; k++) {
+        for (int k = 0; k < dimension; k++) {
             //make  new label for each col
             JLabel columnLabels = new JLabel(String.valueOf(k + 1));
 
@@ -1278,9 +1269,9 @@ public class GameView extends JFrame implements ActionListener {
         }
 
         //make a new row panel to hold the labels
-        JPanel rowLabelPanel = new JPanel(new GridLayout(numRows, 1));
+        JPanel rowLabelPanel = new JPanel(new GridLayout(dimension, 1));
         columnLabelsPanel.setBorder(BorderFactory.createEmptyBorder(0, 50, 0, 0));
-        for (int i = 0; i < numRows; i++) {
+        for (int i = 0; i < dimension; i++) {
             //make a new label for each row
             JLabel rowLabel = new JLabel(String.valueOf(i + 1));
             //same dimension as selection box
@@ -1323,11 +1314,8 @@ public class GameView extends JFrame implements ActionListener {
      * @param actorBoardPanel - User Panel or Opponent Panel
      */
     protected void updateBoard(JButton[][] buttons, JPanel actorBoardPanel) {
-
         actorBoardPanel.removeAll();
-
         // Clear previous actionListeners
-        // TODO CHECK IF THIS WORKS WITH NEW REFACTOR
         for (JButton[] buttonRow : buttons) {
             for (JButton button : buttonRow) {
                 ActionListener[] listeners = button.getActionListeners();
@@ -1336,11 +1324,9 @@ public class GameView extends JFrame implements ActionListener {
                 }
             }
         }
-
         // Call Controller to grab GameModel JButtons
         userButtons = gameController.getButtons(true);
         opponentButtons = gameController.getButtons(false);
-
         // Revalidate and Repaint
         actorBoardPanel.revalidate();
         actorBoardPanel.repaint();
@@ -1406,8 +1392,7 @@ public class GameView extends JFrame implements ActionListener {
         });
 
         int buttonSize = Math.min(50, 200 / size); // Adjust the button size based on dimension
-        JPanel designGrid = new JPanel(new GridLayout(size * 2, size * 2));
-
+        JPanel designGrid = new JPanel(new GridLayout(size, size));
 
         // Only loop through instance of Buttons from GameModel to assign action listener
         for (JButton[] row : userButtons) {

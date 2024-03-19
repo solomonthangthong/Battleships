@@ -57,7 +57,6 @@ public class GameController implements ActionListener {
         view.createPanels();
         view.addPanelsToMainFrame();
 
-
         view.createPanelView(gameModel.getBoardSize(), view.getUserPanel(), true, view.getProgressPlayer1Panel());
         randomBoatPlacement(false);
         view.createPanelView(gameModel.getBoardSize(), view.getOpponentPanel(), false, view.getProgressPlayer2Panel());
@@ -272,7 +271,7 @@ public class GameController implements ActionListener {
                 boardButtonEvent(gameView.getOpponentButtons(), eventSource, gameView.getControlPanelText(), gameView.getDesignWindow(), true);
             } while (isValid((JButton) eventSource));
             //computer selects a square
-            JButton selectedButton = randomSelection(selectedDimension * 2);
+            JButton selectedButton = randomSelection(selectedDimension);
             if (selectedButton != null) {
                 disableUserButtons(false);
                 boardButtonEvent(gameView.getUserButtons(), selectedButton, gameView.getControlPanelText(), gameView.getDesignWindow(), false);
@@ -537,7 +536,7 @@ public class GameController implements ActionListener {
             buttons = gameModel.getOpponentButtons();
         }
 
-        int squareBoard = gameModel.getBoardSize() * 2;
+        int squareBoard = gameModel.getBoardSize();
         for (int i = 0; i < squareBoard; i++) {
             for (int j = 0; j < squareBoard; j++) {
                 if (buttons[i][j] instanceof Boat) {
@@ -618,7 +617,7 @@ public class GameController implements ActionListener {
     protected void disableUserButtons(Boolean didMachinePlay) {
         JButton[][] buttons;
         buttons = gameModel.getUserPlayerButtons();
-        Integer size = gameModel.getBoardSize() * 2;
+        Integer size = gameModel.getBoardSize();
 
         // Check if machine played TRUE TO DISABLE, FALSE TO ENABLE?
         if (didMachinePlay) {

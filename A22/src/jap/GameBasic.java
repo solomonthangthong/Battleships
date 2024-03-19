@@ -29,7 +29,6 @@ public class GameBasic {
         GameModel gameModel = new GameModel();
         GameView gameView = new GameView();
         GameController gameController = new GameController(gameModel, gameView);
-
         gameView.setResizable(false);
         gameView.setVisible(true);
 

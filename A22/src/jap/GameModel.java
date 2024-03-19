@@ -456,7 +456,7 @@ public class GameModel {
     protected JButton[][] createButtonBoard(Player player) {
         // Multiply dimensions by two. Intended result is if board is size 4 make it 8 by 8 grid
         whiteBorder = BorderFactory.createLineBorder(Color.white);
-        int dimensions = boardSize * 2;
+        int dimensions = boardSize;
 
         // Initialize 2D array for buttons
         JButton[][] buttons = new JButton[dimensions][dimensions];
@@ -558,9 +558,9 @@ public class GameModel {
         // Decrement Outer loop for Boat Sizes
         for (int boatSize = boardSize; boatSize >= 1; boatSize--) {
             // Decrement inner loop for number of boats
-            for (int boatCount = boardSize - boatSize + 1; boatCount >= 1; boatCount--) {
+            //for (int boatCount = boardSize - boatSize + 1; boatCount >= 1; boatCount--) {
                 createRandomBoat(newBoard, boatSize, boardSize, random, player);
-            }
+            //}
         }
         return newBoard;
     }
@@ -904,8 +904,8 @@ public class GameModel {
         // Loop until boats are placed
         while (!boatPlaced) {
             List<Boat> boatSizeList = new ArrayList<>();
-            int randRow = random.nextInt(2 * dimension);
-            int randCol = random.nextInt(2 * dimension);
+            int randRow = random.nextInt(dimension);
+            int randCol = random.nextInt(dimension);
             // Create colour  with the random RGB values, to distinguish between # of boats
             Color backgroundColor = new Color(red, green, blue);
             // Determine if vertical or horizontal
@@ -985,7 +985,7 @@ public class GameModel {
 
         if (vertical) {
             // Check if ship goes out of bounds vertically
-            if (row + boatSize > 2 * dimension) {
+            if (row + boatSize > dimension) {
                 return true;
             }
             for (int position = 0; position < boatSize; position++) {
@@ -997,7 +997,7 @@ public class GameModel {
             }
         } else {
             // Check if ship goes out of bounds horizontally
-            if (col + boatSize > 2 * dimension) {
+            if (col + boatSize > dimension) {
                 return true;
             }
             for (int position = 0; position < boatSize; position++) {
