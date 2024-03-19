@@ -433,8 +433,6 @@ public class GameController implements ActionListener {
      * Algorithm:clear the current user buttons if they exist, create new button board to place new boats and save them in design boat list
      */
     protected void openDesignBoat() {
-        //gameView.designBoatWindow();
-
         gameModel.clearUserButtonListeners();
         //TODO add logic to check if randomize has been used
         gameModel.setUserPlayerButtons(gameModel.createButtonBoard(gameModel.getPlayer(true)));
