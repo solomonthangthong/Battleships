@@ -11,3 +11,4 @@ A Java-based Battleship game created with the JavaSwing graphical user interface
 2. Randomization: An option to randomize boat placement is available, ensuring varied gameplay experiences.
 
 ## Usage
+1. Run game_launcher.bat to compile and launch the game. 
