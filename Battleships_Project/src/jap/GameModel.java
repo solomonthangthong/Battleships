@@ -395,7 +395,6 @@ public class GameModel {
     protected JButton updateButtonState(JButton button, Boat boat, Boolean reset, Boolean who) {
         // Init ButtonState
         ButtonState state;
-        Clip hitMissSound;
 
         if (button != null) {
             state = new ButtonState(button);
@@ -416,10 +415,6 @@ public class GameModel {
                 button.setForeground(Color.white);
                 button.setEnabled(false);
                 button.setUI(setDisabledWhite);
-/*                hitMissSound = boardClipPlay(false);
-                if (who) {
-                    hitMissSound.start();
-                }*/
             }
             // if Boat is passed, and state is NOT HIT, state becomes hit
         } else if (boat != null && reset) {
@@ -436,10 +431,6 @@ public class GameModel {
             boat.setForeground(Color.white);
             boat.setEnabled(false);
             boat.setUI(setDisabledWhite);
-/*            hitMissSound = boardClipPlay(true);
-            if (who) {
-                hitMissSound.start();
-            }*/
         }
 
         return button;
