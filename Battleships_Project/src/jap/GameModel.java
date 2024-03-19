@@ -395,7 +395,6 @@ public class GameModel {
     protected JButton updateButtonState(JButton button, Boat boat, Boolean reset, Boolean who) {
         // Init ButtonState
         ButtonState state;
-        Clip hitMissSound;
 
         if (button != null) {
             state = new ButtonState(button);
@@ -416,10 +415,6 @@ public class GameModel {
                 button.setForeground(Color.white);
                 button.setEnabled(false);
                 button.setUI(setDisabledWhite);
-/*                hitMissSound = boardClipPlay(false);
-                if (who) {
-                    hitMissSound.start();
-                }*/
             }
             // if Boat is passed, and state is NOT HIT, state becomes hit
         } else if (boat != null && reset) {
@@ -436,10 +431,6 @@ public class GameModel {
             boat.setForeground(Color.white);
             boat.setEnabled(false);
             boat.setUI(setDisabledWhite);
-/*            hitMissSound = boardClipPlay(true);
-            if (who) {
-                hitMissSound.start();
-            }*/
         }
 
         return button;
@@ -557,10 +548,7 @@ public class GameModel {
         Random random = new Random();
         // Decrement Outer loop for Boat Sizes
         for (int boatSize = boardSize; boatSize >= 1; boatSize--) {
-            // Decrement inner loop for number of boats
-            //for (int boatCount = boardSize - boatSize + 1; boatCount >= 1; boatCount--) {
-                createRandomBoat(newBoard, boatSize, boardSize, random, player);
-            //}
+            createRandomBoat(newBoard, boatSize, boardSize, random, player);
         }
         return newBoard;
     }
@@ -576,15 +564,12 @@ public class GameModel {
         for (int boatSize = boardSize; boatSize >= 1; boatSize--) {
             // List for current boat size
             List<Boat> boatSizeList = new ArrayList<>();
-
-            for (int boatCount = boardSize - boatSize + 1; boatCount >= 1; boatCount--) {
-                Boat boat = new Boat(boatSize, true);
-                boat.setText(boatSize);
-                boat.setForeground(Color.WHITE);
-                boatSizeList.add(boat);
-                // Increment numberOfBoats for remaining number
-                numberOfBoatsForDesign++;
-            }
+            Boat boat = new Boat(boatSize, true);
+            boat.setText(boatSize);
+            boat.setForeground(Color.WHITE);
+            boatSizeList.add(boat);
+            // Increment numberOfBoats for remaining number
+            numberOfBoatsForDesign++;
             designBoatList.add(boatSizeList);
         }
 
