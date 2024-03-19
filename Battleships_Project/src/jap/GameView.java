@@ -239,7 +239,6 @@ public class GameView extends JFrame implements ActionListener {
             Timer timer = new Timer(delay, c -> {
                 window.setVisible(false);
                 window.dispose();
-                System.out.println("here");
             });
             timer.setRepeats(false);
             timer.start();
@@ -1193,11 +1192,11 @@ public class GameView extends JFrame implements ActionListener {
      */
     protected void updateProgressBar() {
         int selectedDimensions = (int) dimensionComboBox.getSelectedItem();
-
-        // (D*(D+1)*(D+2))/6 Formula
         int sum = 0;
-        for (int i = 1; i <= selectedDimensions; i++) {
-            sum += (selectedDimensions - i + 1) * i;
+
+        // Loop starts from selectedDimensions and decrements i in each iteration until it reaches 1
+        for (int i = selectedDimensions; i >= 1; i--) {
+            sum += i;
         }
 
         player1Progress.setMaximum(sum);
@@ -1482,28 +1481,6 @@ public class GameView extends JFrame implements ActionListener {
      */
     protected void updateControlPanelText(String text) {
         controlPanelText.setText(text);
-    }
-
-    /**
-     * Method Name: playBackgroundMusic
-     * Purpose: Enables the background music to be played when the jar file is opened.
-     * Algorithm: Try catch, locate new wav File, open audio stream, loop
-     *
-     * @param musicFile - wav file for the background music
-     */
-    protected void playBackgroundMusic(String musicFile) {
-        try {
-            //state the path where audio file is found
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(musicFile).getAbsoluteFile());
-            //get the audio clip defined in AudioSystem
-            Clip clip = AudioSystem.getClip();
-            clip.open(audioInputStream);
-            //open and loop the clip
-            clip.loop(Clip.LOOP_CONTINUOUSLY);
-            clip.start();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     /**

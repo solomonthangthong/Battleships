@@ -365,7 +365,7 @@ public class GameModel {
      */
     protected void setPlayer1Config(String config) {
         this.player1Config = config;
-        System.out.print(player1Config + "\n");
+        System.out.print("Player 1 board configuration " + player1Config + "\n");
     }
 
     /**
@@ -377,7 +377,7 @@ public class GameModel {
      */
     protected void setPlayer2Config(String config) {
         this.player2Config = config;
-        System.out.print(player2Config + "\n");
+        System.out.print("Player 2 board configuration " + player2Config + "\n");
     }
 
     /**
